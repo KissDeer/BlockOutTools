@@ -10,6 +10,33 @@ export function getEditorState() {
   return editorStore().getState();
 }
 
+function cloneJson(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+export function getEditorLevelSnapshot() {
+  return cloneJson(getEditorState().level);
+}
+
+export function replaceEditorLevel(level, options = {}) {
+  if (!level || !Array.isArray(level.shapes) || !Array.isArray(level.entities) || !Array.isArray(level.layers)) {
+    throw new TypeError("不是有效的 LayoutTools 关卡数据");
+  }
+  const state = getEditorState();
+  const nextLevel = cloneJson(level);
+  state.setLevel(nextLevel);
+  state.setSelectedIds([]);
+  state.setActiveTool("select");
+  const activeLayerExists = nextLevel.layers.some((layer) => layer.id === state.activeLayerId);
+  if (!activeLayerExists && nextLevel.layers[0]?.id) {
+    state.setActiveLayerId(nextLevel.layers[0].id);
+  }
+  if (options.recordHistory === true) {
+    state.addToHistory(nextLevel);
+  }
+  return nextLevel;
+}
+
 export function screenToWorld(svg, clientX, clientY) {
   const gridGroup = svg.querySelector(":scope > g > g");
   const matrix = gridGroup?.getScreenCTM?.();

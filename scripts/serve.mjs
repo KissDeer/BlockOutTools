@@ -16,6 +16,7 @@ import {
   snapshotBridgeActors,
 } from "../src/integrations/ue/ue-service.js";
 import { injectVendorStoreBridge } from "../src/runtime/vendor-bridge.mjs";
+import { LocalLevelLibrary } from "../src/server/local-level-library.js";
 
 const HOST = process.env.LAYOUT_TOOLS_HOST ?? "127.0.0.1";
 const PORT = Number.parseInt(process.env.LAYOUT_TOOLS_PORT ?? "4173", 10);
@@ -28,6 +29,14 @@ const blockoutMapping = JSON.parse(
 const parametricBlocks = JSON.parse(
   await readFile(resolve(ROOT, "config/ue-parametric-blocks.json"), "utf8"),
 );
+const localStorageConfig = JSON.parse(
+  await readFile(resolve(ROOT, "config/local-storage.json"), "utf8"),
+);
+const localLevelLibrary = new LocalLevelLibrary({
+  ...localStorageConfig,
+  directory: process.env.LAYOUT_TOOLS_DATA_DIR ?? resolve(ROOT, localStorageConfig.directory),
+});
+await localLevelLibrary.initialize();
 const bridgedVendorSource = injectVendorStoreBridge(
   await readFile(resolve(ROOT, "vendor/layout-tools-0.0.2.js"), "utf8"),
 );
@@ -100,6 +109,25 @@ async function readJsonBody(request) {
 }
 
 async function handleApiRequest(request, response, url) {
+  if (request.method === "GET" && url.pathname === "/api/local-levels") {
+    sendJson(response, 200, await localLevelLibrary.list());
+    return true;
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/local-levels/open") {
+    sendJson(response, 200, await localLevelLibrary.load(url.searchParams.get("file")));
+    return true;
+  }
+
+  if (["POST", "PUT"].includes(request.method) && url.pathname === "/api/local-levels/save") {
+    const body = await readJsonBody(request);
+    sendJson(response, 200, {
+      file: await localLevelLibrary.save(body.fileName, body.level),
+      directory: localLevelLibrary.directory,
+    });
+    return true;
+  }
+
   if (request.method === "GET" && url.pathname === "/api/ue/status") {
     sendJson(response, 200, await getUnrealStatus(projectConfig));
     return true;
@@ -189,7 +217,8 @@ const server = createServer(async (request, response) => {
         sendJson(response, 404, { error: "API endpoint not found." });
       }
     } catch (error) {
-      const status = error instanceof SyntaxError || error instanceof TypeError ? 400 : 503;
+      const status = error.statusCode
+        ?? (error instanceof SyntaxError || error instanceof TypeError ? 400 : 503);
       sendJson(response, status, { error: error.message });
     }
     return;

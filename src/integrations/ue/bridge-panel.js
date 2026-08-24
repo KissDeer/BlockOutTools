@@ -258,6 +258,9 @@ export function mountUeBridge() {
   function setPanelOpen(open) {
     panel.hidden = !open;
     toggle.setAttribute("aria-expanded", String(open));
+    if (open) {
+      window.dispatchEvent(new CustomEvent("layouttools:host-panel-open", { detail: "ue" }));
+    }
   }
 
   function showResult(message, state = "idle") {
@@ -313,6 +316,9 @@ export function mountUeBridge() {
 
   toggle.addEventListener("click", () => setPanelOpen(panel.hidden));
   closeButton.addEventListener("click", () => setPanelOpen(false));
+  window.addEventListener("layouttools:host-panel-open", (event) => {
+    if (event.detail !== "ue") setPanelOpen(false);
+  });
   chooseButton.addEventListener("click", () => fileInput.click());
   blockSearch.addEventListener("input", renderBlocks);
   for (const filterButton of blockFilters) {

@@ -1,0 +1,237 @@
+.local-library-toggle,
+.local-library-panel,
+.local-library-panel button,
+.local-library-panel input,
+.local-library-panel select {
+  font-family: Inter, "Segoe UI", "Microsoft YaHei", sans-serif;
+  letter-spacing: 0;
+}
+
+.local-library-toggle {
+  position: fixed;
+  right: 350px;
+  bottom: 16px;
+  z-index: 80;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #3f4543;
+  border-radius: 6px;
+  color: #fff;
+  background: #202522;
+  box-shadow: 0 8px 22px rgb(0 0 0 / 18%);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.local-library-toggle:hover,
+.local-library-toggle[aria-expanded="true"] {
+  border-color: #d5a63b;
+  background: #493b1d;
+}
+
+.local-library-panel {
+  position: fixed;
+  right: 304px;
+  bottom: 64px;
+  z-index: 80;
+  width: min(360px, calc(100vw - 24px));
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
+  border: 1px solid #3f4543;
+  border-radius: 6px;
+  color: #e7e9e8;
+  background: #202522;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 28%);
+  user-select: none;
+}
+
+.local-library-panel[hidden] {
+  display: none;
+}
+
+.local-library-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #353a38;
+}
+
+.local-library-header > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.local-library-header strong,
+.local-library-current strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.local-library-header span {
+  overflow: hidden;
+  color: #aeb5b2;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: text;
+}
+
+.local-library-icon-button {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 4px;
+  color: #aeb5b2;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.local-library-icon-button:hover:not(:disabled) {
+  color: #fff;
+  background: #343a37;
+}
+
+.local-library-current,
+.local-library-section {
+  display: grid;
+  gap: 7px;
+  padding: 11px 12px;
+  border-bottom: 1px solid #353a38;
+}
+
+.local-library-current span,
+.local-library-section-title,
+.local-library-field > span {
+  color: #8f9894;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.local-library-current small,
+.local-library-file-meta {
+  color: #aeb5b2;
+  font-size: 9px;
+}
+
+.local-library-field {
+  display: grid;
+  gap: 5px;
+}
+
+.local-library-field input,
+.local-library-files {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #48504c;
+  border-radius: 4px;
+  outline: 0;
+  color: #e7e9e8;
+  background: #252a28;
+  font-size: 10px;
+}
+
+.local-library-field input {
+  height: 31px;
+  padding: 0 9px;
+}
+
+.local-library-field input:focus,
+.local-library-files:focus {
+  border-color: #d5a63b;
+}
+
+.local-library-files {
+  height: 142px;
+  padding: 4px;
+}
+
+.local-library-files option {
+  min-height: 24px;
+  padding: 5px 6px;
+}
+
+.local-library-actions {
+  display: grid;
+  grid-template-columns: 1fr 32px;
+  gap: 7px;
+}
+
+.local-library-button {
+  min-height: 32px;
+  padding: 6px 9px;
+  border: 1px solid #48504c;
+  border-radius: 4px;
+  color: #e7e9e8;
+  background: #2a302d;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.local-library-button:hover:not(:disabled) {
+  border-color: #6c7772;
+  background: #343b37;
+}
+
+.local-library-button--primary {
+  border-color: #a97f24;
+  background: #765817;
+}
+
+.local-library-button:disabled,
+.local-library-icon-button:disabled {
+  color: #737b77;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.local-library-refresh {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #48504c;
+  background: #2a302d;
+  font-size: 17px;
+}
+
+.local-library-status {
+  display: block;
+  min-height: 38px;
+  padding: 10px 12px;
+  color: #aeb5b2;
+  background: #1b1f1d;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.local-library-status[data-state="success"] {
+  color: #72dec0;
+}
+
+.local-library-status[data-state="pending"] {
+  color: #e2bf69;
+}
+
+.local-library-status[data-state="error"] {
+  color: #ff8f88;
+}
+
+@media (max-width: 760px) {
+  .local-library-toggle {
+    right: 58px;
+  }
+
+  .local-library-panel {
+    right: 12px;
+    bottom: 58px;
+    max-height: calc(100dvh - 70px);
+  }
+}

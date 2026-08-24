@@ -1,0 +1,6 @@
+{
+  "directory": "data/levels",
+  "autosaveFile": "autosave.json",
+  "autosaveDelayMs": 800,
+  "restoreLastOpened": true
+}

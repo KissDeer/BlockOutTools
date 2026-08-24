@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { once } from "node:events";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 
 const TEST_PORT = 4174;
@@ -29,12 +33,24 @@ async function waitUntilReady(process) {
 }
 
 test("serves the local host and vendor application", async (context) => {
+  const dataDirectory = await mkdtemp(join(tmpdir(), "layout-tools-host-"));
   const server = spawn(process.execPath, ["scripts/serve.mjs"], {
-    env: { ...process.env, LAYOUT_TOOLS_PORT: String(TEST_PORT) },
+    env: {
+      ...process.env,
+      LAYOUT_TOOLS_DATA_DIR: dataDirectory,
+      LAYOUT_TOOLS_PORT: String(TEST_PORT),
+    },
     stdio: "ignore",
   });
 
-  context.after(() => server.kill("SIGTERM"));
+  context.after(async () => {
+    if (server.exitCode === null) {
+      const exited = once(server, "exit");
+      server.kill("SIGTERM");
+      await exited;
+    }
+    await rm(dataDirectory, { recursive: true, force: true });
+  });
   await waitUntilReady(server);
 
   const indexResponse = await fetch(BASE_URL);
@@ -64,4 +80,37 @@ test("serves the local host and vendor application", async (context) => {
   const iconResponse = await fetch(`${BASE_URL}/assets/blockout-icons/Blockout_Box_64.png`);
   assert.equal(iconResponse.status, 200);
   assert.match(iconResponse.headers.get("content-type"), /^image\/png/);
+
+  const level = {
+    name: "HTTP 本地关卡",
+    shapes: [{ id: "floor", type: "rect" }],
+    entities: [],
+    layers: [{ id: "base", name: "Base" }],
+  };
+  const saveResponse = await fetch(`${BASE_URL}/api/local-levels/save`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fileName: "接口测试", level }),
+  });
+  assert.equal(saveResponse.status, 200);
+  assert.equal((await saveResponse.json()).file.name, "接口测试.json");
+
+  const libraryResponse = await fetch(`${BASE_URL}/api/local-levels`);
+  assert.equal(libraryResponse.status, 200);
+  const library = await libraryResponse.json();
+  assert.equal(library.directory, dataDirectory);
+  assert.equal(library.autosaveDelayMs, 800);
+  assert.equal(library.restoreFile, "接口测试.json");
+  assert.deepEqual(library.files.map((file) => file.name), ["接口测试.json"]);
+
+  const openResponse = await fetch(
+    `${BASE_URL}/api/local-levels/open?file=${encodeURIComponent("接口测试.json")}`,
+  );
+  assert.equal(openResponse.status, 200);
+  assert.deepEqual((await openResponse.json()).level, level);
+
+  const unsafeResponse = await fetch(
+    `${BASE_URL}/api/local-levels/open?file=${encodeURIComponent("../package.json")}`,
+  );
+  assert.equal(unsafeResponse.status, 400);
 });

@@ -26,6 +26,17 @@ npm run check
 npm test
 ```
 
+## 本地关卡保存
+
+页面右下角的 `本地` 面板用于管理本机 JSON 关卡文件。编辑内容会在 800 ms 后自动保存；刷新页面或重启服务时，会恢复上次打开的文件。也可以输入文件名另存当前关卡，或从列表选择并打开已有文件。
+
+默认保存目录是 `data/levels/`，默认文件是 `autosave.json`。该目录中的个人关卡和最后打开记录不会提交到 Git。需要把关卡库存到其他位置时，可在启动前指定绝对目录：
+
+```powershell
+$env:LAYOUT_TOOLS_DATA_DIR = "D:\LayoutToolsLevels"
+npm start
+```
+
 ## MYMY / UE 桥接
 
 启动 `E:\Project\MYMY\MYMY.uproject` 并保持默认 MCP 监听 `http://127.0.0.1:8000/mcp`，然后打开网页右下角的 `UE` 面板。
