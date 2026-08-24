@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "projectName": "MYMY",
+  "uprojectPath": "E:/Project/MYMY/MYMY.uproject",
+  "mcpEndpoint": "http://127.0.0.1:8000/mcp",
+  "assetRoot": "/Game/LevelPrototyping/Meshes",
+  "actorFolder": "BlockOutToolsBridge",
+  "actorTag": "BlockOutToolsBridge",
+  "coordinateSystem": {
+    "unit": "centimeter",
+    "webPlane": "X-right/Y-down",
+    "unrealPlane": "X-forward/Y-right/Z-up",
+    "webXToUnreal": "X",
+    "webYToUnreal": "-Y",
+    "webRotationToUnrealYaw": "negative"
+  },
+  "defaults": {
+    "blockHeightCm": 100,
+    "wallHeightCm": 280,
+    "layerMergeToleranceCm": 0.1
+  }
+}

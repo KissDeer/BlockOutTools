@@ -1,0 +1,372 @@
+{
+  "schemaVersion": 1,
+  "pluginName": "Blockout Tools",
+  "pluginVersion": "1.52",
+  "blueprintRoot": "/BlockoutToolsPlugin/Blueprints",
+  "commonParameters": [
+    {
+      "key": "blockout_material_type",
+      "label": "材质类型",
+      "group": "材质",
+      "type": "enum",
+      "enumType": "BlockoutMaterialType",
+      "default": "BLOCKOUT_MATERIAL_TYPE_GRID",
+      "options": [
+        { "value": "BLOCKOUT_MATERIAL_TYPE_GRID", "label": "网格材质" },
+        { "value": "BLOCKOUT_MATERIAL_TYPE_CUSTOM_MATERIAL", "label": "自定义材质" }
+      ]
+    },
+    {
+      "key": "blockout_material_color",
+      "label": "主体颜色",
+      "group": "材质",
+      "type": "color",
+      "default": [0.6458330154, 0.0538190007, 0.0664419979, 1]
+    },
+    {
+      "key": "blockout_material_use_grid",
+      "label": "显示网格",
+      "group": "材质",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "blockout_world_aligned",
+      "label": "世界坐标对齐",
+      "group": "材质",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "blockout_material_grid_size",
+      "label": "网格尺寸",
+      "group": "材质",
+      "type": "number",
+      "unit": "cm",
+      "min": 1,
+      "step": 10,
+      "default": 200
+    },
+    {
+      "key": "blockout_material_checker_luminance",
+      "label": "棋盘亮度",
+      "group": "材质",
+      "type": "number",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "default": 0.3
+    },
+    {
+      "key": "blockout_material_roughness",
+      "label": "粗糙度",
+      "group": "材质",
+      "type": "number",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "default": 1
+    },
+    {
+      "key": "blockout_material_use_top_color",
+      "label": "启用顶面颜色",
+      "group": "材质",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "blockout_material_top_color",
+      "label": "顶面颜色",
+      "group": "材质",
+      "type": "color",
+      "default": [0.0520830005, 0.0520830005, 0.0520830005, 1]
+    },
+    {
+      "key": "blockout_custom_material",
+      "label": "自定义材质路径",
+      "group": "材质",
+      "type": "asset",
+      "default": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom"
+    },
+    {
+      "key": "blockout_enable_collisions",
+      "label": "启用碰撞",
+      "group": "碰撞与渲染",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "blockout_enable_custom_collision",
+      "label": "自定义碰撞预设",
+      "group": "碰撞与渲染",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "blockout_custom_collision_profile_name",
+      "label": "碰撞预设名称",
+      "group": "碰撞与渲染",
+      "type": "string",
+      "default": "None"
+    },
+    {
+      "key": "blockout_cast_shadows",
+      "label": "投射阴影",
+      "group": "碰撞与渲染",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "id": "box",
+      "label": "Box 盒体",
+      "ueLabel": "Blockout Box",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "icon": "/assets/blockout-icons/Blockout_Box_64.png",
+      "planShape": "rectangle",
+      "form": "长方体",
+      "parameters": [
+        { "key": "BoxSize", "label": "尺寸", "type": "vector3", "unit": "cm", "min": 1, "step": 10, "default": [100, 100, 100], "components": ["长度 X", "宽度 Y", "高度 Z"] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "cone",
+      "label": "Cone 圆锥",
+      "ueLabel": "Blockout Cone",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cone.Blockout_Cone",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cone.Blockout_Cone_C",
+      "icon": "/assets/blockout-icons/Blockout_Cone_64.png",
+      "planShape": "circle",
+      "form": "圆形底面圆锥",
+      "parameters": [
+        { "key": "ConeRadius", "label": "半径", "type": "number", "unit": "cm", "min": 1, "step": 5, "default": 50 },
+        { "key": "ConeHeight", "label": "高度", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 100 },
+        { "key": "ConeQuality", "label": "圆周细分级别", "type": "integer", "min": 0, "max": 3, "step": 1, "default": 0 },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "corner-curved",
+      "label": "Corner Curved 弧形转角",
+      "ueLabel": "Blockout Corner Curved",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Corner_Curved.Blockout_Corner_Curved",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Corner_Curved.Blockout_Corner_Curved_C",
+      "icon": "/assets/blockout-icons/Blockout_Corner_Curved_64.png",
+      "planShape": "rectangle",
+      "form": "四分之一圆弧转角",
+      "parameters": [
+        { "key": "CornerCurvedRadius", "label": "转角半径", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 100 },
+        { "key": "CornerCurvedHeight", "label": "高度", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 100 },
+        { "key": "bIsInner", "label": "内转角", "type": "boolean", "default": false },
+        { "key": "CornerCurvedQuality", "label": "圆弧细分级别", "type": "integer", "min": 0, "max": 3, "step": 1, "default": 0 },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "corner-ramp",
+      "label": "Corner Ramp 转角坡道",
+      "ueLabel": "Blockout Corner Ramp",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Corner_Ramp.Blockout_Corner_Ramp",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Corner_Ramp.Blockout_Corner_Ramp_C",
+      "icon": "/assets/blockout-icons/Blockout_Corner_Ramp_64.png",
+      "planShape": "rectangle",
+      "form": "直角转角坡道",
+      "parameters": [
+        { "key": "CornerRampSize", "label": "尺寸", "type": "vector3", "unit": "cm", "min": 1, "step": 10, "default": [100, 100, 100], "components": ["长度 X", "宽度 Y", "高度 Z"] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "cylinder",
+      "label": "Cylinder 圆柱",
+      "ueLabel": "Blockout Cylinder",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder_C",
+      "icon": "/assets/blockout-icons/Blockout_Cylinder_64.png",
+      "planShape": "circle",
+      "form": "圆柱体",
+      "parameters": [
+        { "key": "CylinderRadius", "label": "半径", "type": "number", "unit": "cm", "min": 1, "step": 5, "default": 50 },
+        { "key": "CylinderHeight", "label": "高度", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 100 },
+        { "key": "CylinderQuality", "label": "圆周细分级别", "type": "integer", "min": 0, "max": 3, "step": 1, "default": 0 },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "doorway",
+      "label": "Doorway 门洞",
+      "ueLabel": "Blockout Doorway",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Doorway.Blockout_Doorway",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Doorway.Blockout_Doorway_C",
+      "icon": "/assets/blockout-icons/Blockout_Doorway_64.png",
+      "planShape": "rectangle",
+      "form": "三段式门洞",
+      "parameters": [
+        { "key": "DoorwaySize", "label": "洞口尺寸", "type": "vector3", "unit": "cm", "min": 1, "step": 10, "default": [50, 200, 250], "components": ["墙体厚度 X", "洞口宽度 Y", "洞口高度 Z"] },
+        { "key": "TopThickness", "label": "顶部厚度", "type": "number", "unit": "cm", "min": 0, "step": 5, "default": 50 },
+        { "key": "SideThickness", "label": "侧边厚度", "type": "number", "unit": "cm", "min": 0, "step": 5, "default": 50 },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "railing",
+      "label": "Railing 栏杆",
+      "ueLabel": "Blockout Railing",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Railing.Blockout_Railing",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Railing.Blockout_Railing_C",
+      "icon": "/assets/blockout-icons/Blockout_Railing_64.png",
+      "planShape": "rectangle",
+      "form": "可重复分段栏杆",
+      "parameters": [
+        { "key": "RailingSections", "label": "栏杆段数", "type": "integer", "min": 1, "max": 1000, "step": 1, "default": 2 },
+        { "key": "SectionLenght", "label": "单段长度", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 120 },
+        { "key": "SkewElevation", "label": "末端抬升", "type": "number", "unit": "cm", "step": 10, "default": 0 },
+        { "key": "bHasEndPole", "label": "保留末端立柱", "type": "boolean", "default": true },
+        { "key": "RailingType", "label": "栏杆形式", "type": "enum", "enumType": "BlockoutRailingType", "default": "OPEN", "options": [{ "value": "OPEN", "label": "开放式" }, { "value": "CLOSED", "label": "封闭式" }] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "ramp",
+      "label": "Ramp 坡道",
+      "ueLabel": "Blockout Ramp",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Ramp.Blockout_Ramp",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Ramp.Blockout_Ramp_C",
+      "icon": "/assets/blockout-icons/Blockout_Ramp_64.png",
+      "planShape": "rectangle",
+      "form": "直线坡道",
+      "parameters": [
+        { "key": "RampSize", "label": "尺寸", "type": "vector3", "unit": "cm", "min": 1, "step": 10, "default": [100, 100, 100], "components": ["长度 X", "宽度 Y", "高度 Z"] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "skewbox",
+      "label": "Skewbox 变截面盒体",
+      "ueLabel": "Blockout Skewbox",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Skewbox.Blockout_Skewbox",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Skewbox.Blockout_Skewbox_C",
+      "icon": "/assets/blockout-icons/Blockout_Skewbox_64.png",
+      "planShape": "rectangle",
+      "form": "起止截面可独立编辑的棱柱",
+      "parameters": [
+        { "key": "SkewboxLenght", "label": "长度与偏移", "type": "vector3", "unit": "cm", "step": 10, "default": [100, 0, 50], "components": ["长度 X", "横向偏移 Y", "垂直偏移 Z"] },
+        { "key": "StartSize", "label": "起点截面", "type": "vector2", "unit": "cm", "min": 1, "step": 10, "default": [100, 100], "components": ["宽度", "高度"] },
+        { "key": "EndSize", "label": "终点截面", "type": "vector2", "unit": "cm", "min": 1, "step": 10, "default": [100, 100], "components": ["宽度", "高度"] },
+        { "key": "Alignment", "label": "对齐方式", "type": "enum", "enumType": "BlockoutAlignment", "default": "CENTER", "options": [{ "value": "LEFT", "label": "左" }, { "value": "CENTER", "label": "居中" }, { "value": "RIGHT", "label": "右" }] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "sphere",
+      "label": "Sphere 球体",
+      "ueLabel": "Blockout Sphere",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Sphere.Blockout_Sphere",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Sphere.Blockout_Sphere_C",
+      "icon": "/assets/blockout-icons/Blockout_Sphere_64.png",
+      "planShape": "circle",
+      "form": "球体或半球体",
+      "parameters": [
+        { "key": "SphereRadius", "label": "半径", "type": "number", "unit": "cm", "min": 1, "step": 5, "default": 50 },
+        { "key": "bIsHemisphere", "label": "半球体", "type": "boolean", "default": false },
+        { "key": "SphereQuality", "label": "球面细分级别", "type": "integer", "min": 0, "max": 3, "step": 1, "default": 0 },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "stairs-curved",
+      "label": "Stairs Curved 弧形楼梯",
+      "ueLabel": "Blockout Stairs Curved",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Curved.Blockout_Stairs_Curved",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Curved.Blockout_Stairs_Curved_C",
+      "icon": "/assets/blockout-icons/Blockout_Stairs_Curved_64.png",
+      "planShape": "circle",
+      "form": "可调角度与旋向的弧形楼梯",
+      "parameters": [
+        { "key": "NumberOfSteps", "label": "台阶数", "type": "integer", "min": 1, "max": 1000, "step": 1, "default": 10 },
+        { "key": "StairsAngle", "label": "楼梯角度", "type": "number", "unit": "°", "min": 1, "max": 360, "step": 5, "default": 90 },
+        { "key": "bCounterClockwise", "label": "逆时针", "type": "boolean", "default": false },
+        { "key": "StairsHeight", "label": "总高度", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 100 },
+        { "key": "InnerRadius", "label": "内半径", "type": "number", "unit": "cm", "min": 0, "step": 10, "default": 50 },
+        { "key": "StepWidth", "label": "台阶宽度", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 100 },
+        { "key": "StairsType", "label": "台阶形式", "type": "enum", "enumType": "BlockoutStairsType", "default": "BOX", "options": [{ "value": "BOX", "label": "盒式" }, { "value": "CLOSED", "label": "封闭式" }, { "value": "SLOPED", "label": "斜面式" }] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "stairs-linear",
+      "label": "Stairs Linear 线性楼梯",
+      "ueLabel": "Blockout Stairs Linear",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+      "icon": "/assets/blockout-icons/Blockout_Stairs_Linear_64.png",
+      "planShape": "rectangle",
+      "form": "按总尺寸自动分配台阶的直楼梯",
+      "parameters": [
+        { "key": "StairsSize", "label": "总尺寸", "type": "vector3", "unit": "cm", "min": 1, "step": 10, "default": [100, 100, 100], "components": ["宽度 X", "进深 Y", "高度 Z"] },
+        { "key": "NumberOfSteps", "label": "台阶数", "type": "integer", "min": 1, "max": 1000, "step": 1, "default": 10 },
+        { "key": "StairsType", "label": "台阶形式", "type": "enum", "enumType": "BlockoutStairsType", "default": "BOX", "options": [{ "value": "BOX", "label": "盒式" }, { "value": "CLOSED", "label": "封闭式" }, { "value": "SLOPED", "label": "斜面式" }] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "stairs-linear-manual",
+      "label": "Stairs Linear Manual 手动楼梯",
+      "ueLabel": "Blockout Stairs Linear Manual",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear_Manual.Blockout_Stairs_Linear_Manual",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear_Manual.Blockout_Stairs_Linear_Manual_C",
+      "icon": "/assets/blockout-icons/Blockout_Stairs_Linear_64.png",
+      "planShape": "rectangle",
+      "form": "逐项设定台阶尺寸和间距的直楼梯",
+      "parameters": [
+        { "key": "NumberOfSteps", "label": "台阶数", "type": "integer", "min": 1, "max": 1000, "step": 1, "default": 10 },
+        { "key": "StepWidth", "label": "台阶宽度", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 100 },
+        { "key": "StepDepth", "label": "台阶进深", "type": "number", "unit": "cm", "min": 1, "step": 5, "default": 10 },
+        { "key": "StepHeight", "label": "台阶高度", "type": "number", "unit": "cm", "min": 1, "step": 5, "default": 10 },
+        { "key": "StepDepthSpacing", "label": "水平间距", "type": "number", "unit": "cm", "step": 1, "default": 0 },
+        { "key": "StepHeightSpacing", "label": "垂直间距", "type": "number", "unit": "cm", "step": 1, "default": 0 },
+        { "key": "StairsType", "label": "台阶形式", "type": "enum", "enumType": "BlockoutStairsType", "default": "BOX", "options": [{ "value": "BOX", "label": "盒式" }, { "value": "CLOSED", "label": "封闭式" }, { "value": "SLOPED", "label": "斜面式" }] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "tube",
+      "label": "Tube 圆管",
+      "ueLabel": "Blockout Tube",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Tube.Blockout_Tube",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Tube.Blockout_Tube_C",
+      "icon": "/assets/blockout-icons/Blockout_Tube_64.png",
+      "planShape": "circle",
+      "form": "可调角度的圆弧管体",
+      "parameters": [
+        { "key": "Sections", "label": "圆周分段", "type": "integer", "min": 1, "max": 1000, "step": 1, "default": 8 },
+        { "key": "Angle", "label": "圆弧角度", "type": "number", "unit": "°", "min": 1, "max": 360, "step": 5, "default": 360 },
+        { "key": "Radius", "label": "外半径", "type": "number", "unit": "cm", "min": 1, "step": 5, "default": 50 },
+        { "key": "Height", "label": "高度", "type": "number", "unit": "cm", "min": 1, "step": 10, "default": 100 },
+        { "key": "Thickness", "label": "管壁厚度", "type": "number", "unit": "cm", "min": 0.1, "step": 1, "default": 10 },
+        { "key": "Alignment", "label": "开口对齐", "type": "enum", "enumType": "BlockoutAlignment", "default": "LEFT", "options": [{ "value": "LEFT", "label": "左" }, { "value": "CENTER", "label": "居中" }, { "value": "RIGHT", "label": "右" }] },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    },
+    {
+      "id": "window",
+      "label": "Window 窗洞",
+      "ueLabel": "Blockout Window",
+      "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Window.Blockout_Window",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Window.Blockout_Window_C",
+      "icon": "/assets/blockout-icons/Blockout_Window_64.png",
+      "planShape": "rectangle",
+      "form": "四段式窗洞",
+      "parameters": [
+        { "key": "WindowSize", "label": "洞口尺寸", "type": "vector3", "unit": "cm", "min": 1, "step": 10, "default": [50, 200, 250], "components": ["墙体厚度 X", "洞口宽度 Y", "洞口高度 Z"] },
+        { "key": "TopThickness", "label": "顶部厚度", "type": "number", "unit": "cm", "min": 0, "step": 5, "default": 50 },
+        { "key": "SideThickness", "label": "侧边厚度", "type": "number", "unit": "cm", "min": 0, "step": 5, "default": 50 },
+        { "key": "BottomThickness", "label": "底部厚度", "type": "number", "unit": "cm", "min": 0, "step": 5, "default": 100 },
+        { "key": "bRoundSize", "label": "尺寸取整", "type": "boolean", "default": true }
+      ]
+    }
+  ]
+}

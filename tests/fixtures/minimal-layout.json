@@ -1,0 +1,43 @@
+{
+  "name": "Browser_Dry_Run",
+  "gridSize": 50,
+  "showDimensions": true,
+  "rotationStep": 15,
+  "shapes": [
+    {
+      "id": "browser-test-box",
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 100,
+      "rotation": 0,
+      "color": "#8E8E86",
+      "opacity": 0.5,
+      "area": 20000,
+      "layerId": "base",
+      "ueBlockout": {
+        "assetId": "cube-bottom-corner",
+        "assetPath": "/Game/LevelPrototyping/Meshes/SM_Cube_BottomCorner",
+        "heightCm": 100
+      }
+    }
+  ],
+  "entities": [],
+  "layers": [
+    {
+      "id": "base",
+      "name": "Base Layer",
+      "visible": true,
+      "locked": false,
+      "height": 0,
+      "color": "#8E8E86",
+      "showWalls": true
+    }
+  ],
+  "layerGroups": [],
+  "groups": [],
+  "doorColorConfigs": [],
+  "windowColorConfigs": [],
+  "polygonData": []
+}
