@@ -6,6 +6,10 @@
 
 需要 Node.js 20 或更高版本。
 
+Windows 下直接双击根目录的 `Start-LayoutTools.cmd`，脚本会在最小化的 `LayoutTools Server` 命令窗口中启动服务并打开浏览器。若服务已经启动，则只打开现有页面；若 `4173` 被其他程序占用，会显示错误而不会重复启动。运行期间保留该服务窗口，需要停止时关闭它即可。
+
+也可以在终端中启动：
+
 ```powershell
 npm start
 ```
@@ -25,6 +29,10 @@ npm start
 npm run check
 npm test
 ```
+
+## Codex Skill
+
+项目配套 Skill 位于 `skills/layout-tools-workflow/`，可通过 `$layout-tools-workflow` 调用。它包含网页操作、本地关卡保存、AI 积木、MYMY / UE 桥接和仓库维护说明；后续相关行为或数据契约变化时，应在同一任务中同步更新该 Skill 并运行 Skill 校验。
 
 ## 本地关卡保存
 

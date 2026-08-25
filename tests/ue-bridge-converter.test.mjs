@@ -137,6 +137,63 @@ test("decomposes a legacy wall centerline into scoped UE box actors", () => {
   assert.deepEqual(plan.actors.map((actor) => actor.rotation[1]), [0, -90]);
 });
 
+test("applies the LayoutTools export scale to UE transforms and static geometry", () => {
+  const level = baseLevel([{
+    id: "rect-scaled",
+    type: "rect",
+    x: 10,
+    y: 20,
+    width: 200,
+    height: 100,
+    rotation: 0,
+    layerId: "base",
+  }]);
+  level.layers[0].height = 30;
+  level.exportScale = { unitsPerPixel: 50, unit: "uu" };
+
+  const plan = buildImportPlan(level, mapping, catalog, projectConfig, parametricSchema);
+  assert.deepEqual(plan.unitConversion, {
+    sourceUnitsPerCentimeter: 50,
+    sourceUnit: "uu",
+    unrealCentimetersPerLayoutCentimeter: 50,
+  });
+  assert.deepEqual(plan.actors[0].desiredSizeCm, [10000, 5000, 5000]);
+  assert.deepEqual(plan.actors[0].scale3d, [100, 50, 50]);
+  assert.deepEqual(plan.actors[0].location, [500, -6000, 1500]);
+});
+
+test("scales only centimeter-valued parametric properties", () => {
+  const level = baseLevel([{
+    id: "stairs-scaled",
+    type: "rect",
+    x: 100,
+    y: 200,
+    width: 100,
+    height: 200,
+    rotation: 15,
+    layerId: "base",
+    ueBlockout: {
+      kind: "parametric",
+      blockType: "stairs-linear",
+      parameters: {
+        StairsSize: [100, 200, 300],
+        NumberOfSteps: 12,
+        StairsType: "SLOPED",
+        blockout_material_grid_size: 200,
+      },
+    },
+  }]);
+  level.exportScale = { unitsPerPixel: 2, unit: "m" };
+
+  const plan = buildImportPlan(level, mapping, catalog, projectConfig, parametricSchema);
+  assert.equal(plan.unitConversion.unrealCentimetersPerLayoutCentimeter, 200);
+  assert.deepEqual(plan.actors[0].location, [30000, -60000, 0]);
+  assert.deepEqual(plan.actors[0].parameters.StairsSize, [20000, 40000, 60000]);
+  assert.equal(plan.actors[0].parameters.blockout_material_grid_size, 40000);
+  assert.equal(plan.actors[0].parameters.NumberOfSteps, 12);
+  assert.equal(plan.actors[0].parameters.StairsType, "SLOPED");
+});
+
 test("creates one web palette shape for every parametric Blueprint tool", () => {
   const palette = createBlockPaletteLevel(mapping, catalog, projectConfig, parametricSchema);
   assert.equal(palette.level.shapes.length, 15);

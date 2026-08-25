@@ -173,6 +173,87 @@ function blockGeometry(blockType, parameters) {
   };
 }
 
+export function resizeParametricShape(shape, block, widthValue, depthValue) {
+  if (!shape?.ueBlockout || !block?.blockType) {
+    throw new TypeError("A parameterized shape and block definition are required.");
+  }
+  const width = usableSize(Math.abs(widthValue), shape.width ?? 100);
+  const depth = usableSize(Math.abs(depthValue), shape.height ?? 100);
+  const parameters = normalizeBlockParameters(block, shape.ueBlockout.parameters);
+  const vector = (key) => [...parameters[key]];
+
+  switch (block.blockType) {
+    case "box":
+      parameters.BoxSize = [width, depth, vector("BoxSize")[2]];
+      break;
+    case "corner-ramp":
+      parameters.CornerRampSize = [width, depth, vector("CornerRampSize")[2]];
+      break;
+    case "ramp":
+      parameters.RampSize = [width, depth, vector("RampSize")[2]];
+      break;
+    case "stairs-linear":
+      parameters.StairsSize = [width, depth, vector("StairsSize")[2]];
+      break;
+    case "doorway":
+      parameters.DoorwaySize = [
+        width,
+        Math.max(1, depth - parameters.SideThickness * 2),
+        vector("DoorwaySize")[2],
+      ];
+      break;
+    case "window":
+      parameters.WindowSize = [
+        width,
+        Math.max(1, depth - parameters.SideThickness * 2),
+        vector("WindowSize")[2],
+      ];
+      break;
+    case "railing":
+      parameters.SectionLenght = width / Math.max(1, parameters.RailingSections);
+      break;
+    case "skewbox": {
+      const geometry = blockGeometry(block.blockType, parameters);
+      const depthScale = depth / geometry.depth;
+      const length = vector("SkewboxLenght");
+      const start = vector("StartSize");
+      const end = vector("EndSize");
+      parameters.SkewboxLenght = [width, length[1] * depthScale, length[2]];
+      parameters.StartSize = [start[0] * depthScale, start[1]];
+      parameters.EndSize = [end[0] * depthScale, end[1]];
+      break;
+    }
+    case "stairs-linear-manual": {
+      const count = Math.max(1, parameters.NumberOfSteps);
+      parameters.StepWidth = width;
+      parameters.StepDepth = Math.max(1, depth / count - parameters.StepDepthSpacing);
+      break;
+    }
+    case "corner-curved":
+      parameters.CornerCurvedRadius = Math.max(width, depth);
+      break;
+    case "cone":
+      parameters.ConeRadius = Math.max(width, depth) / 2;
+      break;
+    case "cylinder":
+      parameters.CylinderRadius = Math.max(width, depth) / 2;
+      break;
+    case "sphere":
+      parameters.SphereRadius = Math.max(width, depth) / 2;
+      break;
+    case "stairs-curved":
+      parameters.StepWidth = Math.max(1, Math.max(width, depth) / 2 - parameters.InnerRadius);
+      break;
+    case "tube":
+      parameters.Radius = Math.max(1, Math.max(width, depth) / 2 - parameters.Thickness);
+      break;
+    default:
+      return { ...shape, width, height: depth, area: width * depth };
+  }
+
+  return applyBlockParametersToShape(shape, block, parameters);
+}
+
 function linearToHex(value) {
   const channel = (number) => Math.round(Math.min(1, Math.max(0, number)) * 255)
     .toString(16).padStart(2, "0");

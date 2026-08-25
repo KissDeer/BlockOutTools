@@ -177,10 +177,10 @@ print("${SNAPSHOT_PREFIX}" + json.dumps(actors, separators=(",", ":")))`;
   }));
 }
 
-export async function applyImportPlan(plan, projectConfig, options = {}) {
+export function buildApplyImportPython(plan, projectConfig, options = {}) {
   const encodedPlan = Buffer.from(JSON.stringify(plan), "utf8").toString("base64");
   const replaceExisting = options.replaceExisting === true ? "True" : "False";
-  const code = `import unreal, json, base64
+  return `import unreal, json, base64
 plan = json.loads(base64.b64decode("${encodedPlan}").decode("utf-8"))
 replace_existing = ${replaceExisting}
 bridge_tag = ${JSON.stringify(projectConfig.actorTag)}
@@ -199,6 +199,7 @@ with unreal.ScopedEditorTransaction("Import LayoutTools blockout"):
                 unreal.EditorLevelLibrary.destroy_actor(actor)
 
     for item in plan["actors"]:
+        actor = None
         try:
             location = unreal.Vector(*item["location"])
             pitch, yaw, roll = item["rotation"]
@@ -235,16 +236,23 @@ with unreal.ScopedEditorTransaction("Import LayoutTools blockout"):
                     else:
                         value = raw_value
                     actor.set_editor_property(property_name, value)
-                actor.rerun_construction_scripts()
             actor.set_actor_label(item["label"])
             actor.set_folder_path(item["folder"])
             actor.tags = [unreal.Name(tag) for tag in item["tags"]]
             created.append(actor.get_path_name())
         except Exception as exc:
+            if actor:
+                try:
+                    unreal.EditorLevelLibrary.destroy_actor(actor)
+                except Exception:
+                    pass
             errors.append({"id": item.get("id"), "error": str(exc)})
 
 payload = {"created": created, "removed": removed, "errors": errors}
 print("${APPLY_PREFIX}" + json.dumps(payload, separators=(",", ":")))`;
+}
 
+export async function applyImportPlan(plan, projectConfig, options = {}) {
+  const code = buildApplyImportPython(plan, projectConfig, options);
   return withClient(projectConfig, async (client) => executePythonJson(client, APPLY_PREFIX, code));
 }

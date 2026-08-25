@@ -15,6 +15,15 @@ const CATEGORY_COLORS = Object.freeze({
 
 const DEFAULT_LAYER_ID = "ue-layer-0";
 
+const EXPORT_UNIT_TO_CENTIMETERS = Object.freeze({
+  mm: 0.1,
+  cm: 1,
+  m: 100,
+  inch: 2.54,
+  feet: 30.48,
+  uu: 1,
+});
+
 function assertFiniteNumber(value, field) {
   if (!Number.isFinite(value)) {
     throw new TypeError(`${field} must be a finite number.`);
@@ -24,6 +33,32 @@ function assertFiniteNumber(value, field) {
 function round(value, digits = 6) {
   const factor = 10 ** digits;
   return Math.round((value + Number.EPSILON) * factor) / factor;
+}
+
+function resolveUnitConversion(level) {
+  const configured = level.exportScale;
+  const unitsPerCentimeter = Number(configured?.unitsPerPixel);
+  const sourceUnit = EXPORT_UNIT_TO_CENTIMETERS[configured?.unit] ? configured.unit : "cm";
+  const normalizedUnits = Number.isFinite(unitsPerCentimeter) && unitsPerCentimeter > 0
+    ? unitsPerCentimeter
+    : 1;
+  return {
+    sourceUnitsPerCentimeter: normalizedUnits,
+    sourceUnit,
+    unrealCentimetersPerLayoutCentimeter: normalizedUnits * EXPORT_UNIT_TO_CENTIMETERS[sourceUnit],
+  };
+}
+
+function scaleCentimeterParameters(block, parameters, scale) {
+  const scaled = { ...parameters };
+  for (const definition of [...block.parameters, ...block.commonParameters]) {
+    if (definition.unit !== "cm" || !(definition.key in scaled)) continue;
+    const value = scaled[definition.key];
+    scaled[definition.key] = Array.isArray(value)
+      ? value.map((component) => round(component * scale))
+      : round(value * scale);
+  }
+  return scaled;
 }
 
 function vectorFrom(value, field) {
@@ -222,8 +257,17 @@ function createParametricIndex(parametricSchema) {
   };
 }
 
-function createParametricActorPlan(shape, block, parameters, levelFolder, projectConfig, zBase) {
+function createParametricActorPlan(
+  shape,
+  block,
+  parameters,
+  levelFolder,
+  projectConfig,
+  zBase,
+  unitScaleCm,
+) {
   const footprint = shapeFootprint(shape);
+  const normalizedParameters = normalizeBlockParameters(block, parameters);
   return {
     id: String(shape.id),
     sourceId: String(shape.id),
@@ -235,18 +279,23 @@ function createParametricActorPlan(shape, block, parameters, levelFolder, projec
     blueprintClassPath: block.blueprintClassPath,
     folder: levelFolder,
     tags: [projectConfig.actorTag, `LayoutToolsId:${shape.id}`, `BlockoutType:${block.blockType}`],
-    location: [round(footprint.center[0]), round(-footprint.center[1]), round(zBase)],
+    location: [
+      round(footprint.center[0] * unitScaleCm),
+      round(-footprint.center[1] * unitScaleCm),
+      round(zBase * unitScaleCm),
+    ],
     rotation: [0, round(-(shape.rotation ?? 0)), 0],
     scale3d: [1, 1, 1],
-    parameters: normalizeBlockParameters(block, parameters),
+    parameters: scaleCentimeterParameters(block, normalizedParameters, unitScaleCm),
   };
 }
 
 function wallSegmentPlans(shape, context) {
   const plans = [];
   const points = shape.wallCenterline;
-  const thickness = shape.wallThickness ?? shape.strokeWidth ?? 12;
-  const height = shapeHeight(shape, context.level, context.projectConfig, context.catalogAsset);
+  const thickness = (shape.wallThickness ?? shape.strokeWidth ?? 12) * context.unitScaleCm;
+  const height = shapeHeight(shape, context.level, context.projectConfig, context.catalogAsset)
+    * context.unitScaleCm;
 
   for (let index = 0; index < points.length - 1; index += 1) {
     const start = points[index];
@@ -262,8 +311,11 @@ function wallSegmentPlans(shape, context) {
       actorFolder: context.actorFolder,
       actorTag: context.actorTag,
       asset: context.catalogAsset,
-      centerWeb: [(start.x + end.x) / 2, (start.y + end.y) / 2],
-      dimensions: [length, thickness, height],
+      centerWeb: [
+        (start.x + end.x) / 2 * context.unitScaleCm,
+        (start.y + end.y) / 2 * context.unitScaleCm,
+      ],
+      dimensions: [length * context.unitScaleCm, thickness, height],
       label: `${shape.label ?? "Wall"}_${index + 1}`,
       rotationWeb: Math.atan2(deltaY, deltaX) * 180 / Math.PI,
       sourceId: `${shape.id}:segment:${index}`,
@@ -282,6 +334,8 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
   const warnings = [];
   const levelFolder = `${projectConfig.actorFolder}/${sanitizeName(level.name || "Untitled_Level")}`;
   const parametricIndex = createParametricIndex(parametricSchema);
+  const unitConversion = resolveUnitConversion(level);
+  const unitScaleCm = unitConversion.unrealCentimetersPerLayoutCentimeter;
 
   for (const shape of level.shapes) {
     if (shape.ueBlockout?.kind === "parametric" || shape.ueBlockout?.blockType) {
@@ -298,6 +352,7 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
           levelFolder,
           projectConfig,
           layerHeight(level, shape.layerId),
+          unitScaleCm,
         ));
       } catch (error) {
         warnings.push(`${shape.id ?? "unknown"}: ${error.message}`);
@@ -315,7 +370,7 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
       continue;
     }
 
-    const zBase = layerHeight(level, shape.layerId);
+    const zBase = layerHeight(level, shape.layerId) * unitScaleCm;
     const context = {
       actorFolder: levelFolder,
       actorTag: projectConfig.actorTag,
@@ -324,6 +379,7 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
       projectConfig,
       warnings,
       zBase,
+      unitScaleCm,
     };
     if (shape.wallCenterline?.length >= 2 && !shape.ueBlockout?.assetId && !shape.ueBlockout?.assetPath) {
       actors.push(...wallSegmentPlans(shape, context));
@@ -332,13 +388,13 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
 
     try {
       const footprint = shapeFootprint(shape);
-      const height = shapeHeight(shape, level, projectConfig, catalogAsset);
+      const height = shapeHeight(shape, level, projectConfig, catalogAsset) * unitScaleCm;
       actors.push(createActorPlan({
         actorFolder: levelFolder,
         actorTag: projectConfig.actorTag,
         asset: catalogAsset,
-        centerWeb: footprint.center,
-        dimensions: [footprint.width, footprint.depth, height],
+        centerWeb: footprint.center.map((value) => value * unitScaleCm),
+        dimensions: [footprint.width * unitScaleCm, footprint.depth * unitScaleCm, height],
         label: shape.label ?? mappingEntry.id,
         rotationWeb: shape.rotation ?? 0,
         sourceId: String(shape.id ?? `shape-${actors.length + 1}`),
@@ -365,6 +421,7 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
     actorCount: actors.length,
     actors,
     warnings,
+    unitConversion,
   };
 }
 

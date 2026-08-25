@@ -7,6 +7,7 @@ import {
   createPlacedBlock,
   createUnifiedBlockCatalog,
   normalizeAiLayout,
+  resizeParametricShape,
 } from "../src/integrations/layout/block-catalog.js";
 
 const schema = JSON.parse(await readFile(new URL("../config/ue-parametric-blocks.json", import.meta.url), "utf8"));
@@ -49,6 +50,42 @@ test("doorway side thickness updates the web footprint without moving its center
   assert.equal(changed.height, 380);
   assert.equal(changed.x + changed.width / 2, 300);
   assert.equal(changed.y + changed.height / 2, 200);
+});
+
+test("canvas resizing updates Box footprint and Blueprint size parameters", () => {
+  const block = catalog.find((item) => item.blockType === "box");
+  const placed = createPlacedBlock(block, { x: 500, y: 400 }, "base", {
+    BoxSize: [200, 100, 300],
+  }).item;
+  const resized = resizeParametricShape(placed, block, 350, 250);
+
+  assert.equal(resized.width, 350);
+  assert.equal(resized.height, 250);
+  assert.deepEqual(resized.ueBlockout.parameters.BoxSize, [350, 250, 300]);
+  assert.equal(resized.x + resized.width / 2, 500);
+  assert.equal(resized.y + resized.height / 2, 400);
+});
+
+test("canvas resizing preserves non-plan dimensions for stairs and doorway", () => {
+  const stairs = catalog.find((item) => item.blockType === "stairs-linear");
+  const resizedStairs = resizeParametricShape(
+    createPlacedBlock(stairs, { x: 0, y: 0 }, "base", { StairsSize: [100, 200, 300] }).item,
+    stairs,
+    160,
+    280,
+  );
+  assert.deepEqual(resizedStairs.ueBlockout.parameters.StairsSize, [160, 280, 300]);
+
+  const doorway = catalog.find((item) => item.blockType === "doorway");
+  const resizedDoorway = resizeParametricShape(
+    createPlacedBlock(doorway, { x: 0, y: 0 }, "base", {
+      DoorwaySize: [50, 200, 250], SideThickness: 40, TopThickness: 50,
+    }).item,
+    doorway,
+    80,
+    360,
+  );
+  assert.deepEqual(resizedDoorway.ueBlockout.parameters.DoorwaySize, [80, 280, 250]);
 });
 
 test("places original shapes and entities without UE metadata", () => {

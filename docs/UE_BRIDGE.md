@@ -51,22 +51,25 @@
 
 ## 网页放置、编辑与 AI
 
-右下角 `UE` 面板提供“全部 / UE 积木 / 原有积木”。选择 UE 类型后，参数检查器编辑待放置模板；点击画布可连续放置。取消放置后，在画布中选择参数化积木，检查器会转为编辑该对象，参数变化同步更新二维表现与元数据。
+右下角 `UE` 面板提供“全部 / UE 积木 / 原有积木”。选择 UE 类型后，参数检查器编辑待放置模板；点击画布可连续放置。取消放置后，在画布中选择参数化积木，检查器会转为编辑该对象。矩形参数化积木的画布控制柄与检查器参数双向同步。
 
 支持的 AI 请求格式会追加相同的参数化 Schema。AI 必须输出 `blockType`、Blueprint 类路径和合法参数；未知类型会移除无效 `ueBlockout`，保留普通 LayoutTools 形状。底层 StaticMesh ID 不进入 AI 目录。
 
 ## UE 导入与导出
 
+- UE 面板可用 `使用当前网页` 直接读取画布的最新关卡和换算设置，也可以选择磁盘 JSON。
 - dry-run 只生成 Actor 类型、位置、旋转和属性计划。
 - apply 需要项目名和完整 `.uproject` 路径同时匹配，并经过网页确认。
-- 参数化项通过 Blueprint Asset 加载类、生成 Actor、设置 editor properties，最后重跑 Construction Script。
+- 参数化项通过 Blueprint Asset 加载类、生成 Actor，并用 `set_editor_property` 的编辑器变更通知设置属性和更新构造结果。
 - 原 LayoutTools 形状仍使用 `config/ue-blockout-mapping.json` 的静态网格 fallback。
 - 导出只读取 `BlockOutToolsBridge` 文件夹或标签拥有的 Actor；参数化 Actor 按类路径读取 Schema 中列出的属性。
 - 桥接不会自动保存 UE 关卡。
 
-## 坐标约定
+## 坐标与单位约定
 
-- 两边单位均为厘米。
+- 网页尺寸以网页厘米为基准，导入时读取 JSON 的 `exportScale`。例如 `50 UU = 1cm` 会把坐标、层高、普通几何，以及参数 Schema 中标为 `cm` 的 Blueprint 参数乘以 50；角度、数量、枚举和开关不缩放。
+- 画布边缘尺寸标注显示 `unitsPerPixel` 换算后的目标单位数值；这只是显示适配，不修改网页几何，导入时不会重复缩放。
+- UE 中 `1 UU = 1cm`；缺少或无效的 `exportScale` 时按 `1cm = 1cm` 导入。
 - 网页 `X` 映射 UE `X`，网页向下的 `Y` 映射 UE `-Y`。
 - 网页旋转映射为负 UE Yaw。
 - 图层高度映射 Actor 根节点 `Z`。
@@ -83,4 +86,4 @@
 | `/api/ue/import` | POST | 默认 dry-run；显式模式和项目确认后才 apply |
 | `/api/ue/export` | GET | 读取桥接 Actor 并生成 LayoutTools JSON |
 
-网页必须先完成 dry-run 才会启用 apply 按钮。
+网页必须先完成 dry-run 才会启用 apply 按钮；当前网页在检查后继续变化时，旧计划会失效。

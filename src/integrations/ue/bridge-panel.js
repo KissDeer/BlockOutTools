@@ -14,6 +14,7 @@ import {
   snapToGrid,
   subscribeToEditor,
 } from "../layout/editor-store-adapter.js";
+import { installParametricResize } from "../layout/parametric-resize.js";
 
 const API_ROOT = "/api/ue";
 
@@ -124,6 +125,7 @@ export function mountUeBridge() {
     <div class="ue-bridge-section">
       <div class="ue-bridge-section__title">导入 UE</div>
       <input type="file" accept="application/json,.json" data-ue-file hidden>
+      <button type="button" class="ue-bridge-button ue-bridge-button--primary" data-ue-current>使用当前网页</button>
       <button type="button" class="ue-bridge-button" data-ue-choose>选择 LayoutTools JSON</button>
       <div class="ue-bridge-file" data-ue-file-name>未选择文件</div>
       <div class="ue-bridge-actions">
@@ -152,19 +154,24 @@ export function mountUeBridge() {
   const paletteButton = panel.querySelector("[data-ue-palette]");
   const exportButton = panel.querySelector("[data-ue-export]");
   const fileInput = panel.querySelector("[data-ue-file]");
+  const currentButton = panel.querySelector("[data-ue-current]");
   const chooseButton = panel.querySelector("[data-ue-choose]");
   const fileLabel = panel.querySelector("[data-ue-file-name]");
   const dryRunButton = panel.querySelector("[data-ue-dry-run]");
   const applyButton = panel.querySelector("[data-ue-apply]");
   const replaceInput = panel.querySelector("[data-ue-replace]");
   const result = panel.querySelector("[data-ue-result]");
-  const actionButtons = [paletteButton, exportButton, chooseButton, dryRunButton, applyButton];
+  const actionButtons = [paletteButton, exportButton, currentButton, chooseButton, dryRunButton, applyButton];
   let selectedLevel = null;
+  let levelSource = null;
   let lastPlan = null;
+  let plannedLevel = null;
+  let plannedLevelFingerprint = null;
   let blocks = [];
   let blockFilter = "all";
   let selectedBlockId = null;
   let editorUnsubscribe = null;
+  let resizeCleanup = null;
   const blockDrafts = new Map();
 
   function selectedParametricShape() {
@@ -320,6 +327,19 @@ export function mountUeBridge() {
     if (event.detail !== "ue") setPanelOpen(false);
   });
   chooseButton.addEventListener("click", () => fileInput.click());
+  currentButton.addEventListener("click", () => {
+    const level = getEditorState().level;
+    selectedLevel = level;
+    levelSource = "current";
+    lastPlan = null;
+    plannedLevel = null;
+    plannedLevelFingerprint = null;
+    fileInput.value = "";
+    fileLabel.textContent = `当前网页 · ${level.shapes.length} 个形状`;
+    dryRunButton.disabled = false;
+    applyButton.disabled = true;
+    showResult("当前网页已就绪", "success");
+  });
   blockSearch.addEventListener("input", renderBlocks);
   for (const filterButton of blockFilters) {
     filterButton.addEventListener("click", () => {
@@ -399,7 +419,10 @@ export function mountUeBridge() {
   fileInput.addEventListener("change", async () => {
     const file = fileInput.files?.[0];
     selectedLevel = null;
+    levelSource = null;
     lastPlan = null;
+    plannedLevel = null;
+    plannedLevelFingerprint = null;
     applyButton.disabled = true;
     if (!file) {
       fileLabel.textContent = "未选择文件";
@@ -412,6 +435,7 @@ export function mountUeBridge() {
         throw new Error("不是有效的 LayoutTools JSON");
       }
       selectedLevel = parsed;
+      levelSource = "file";
       fileLabel.textContent = `${file.name} · ${parsed.shapes.length} 个形状`;
       dryRunButton.disabled = false;
       showResult("文件已就绪", "success");
@@ -424,17 +448,27 @@ export function mountUeBridge() {
 
   dryRunButton.addEventListener("click", async () => {
     if (!selectedLevel) return;
+    const importLevel = levelSource === "current" ? getEditorState().level : selectedLevel;
+    lastPlan = null;
+    plannedLevel = null;
+    plannedLevelFingerprint = null;
     setBusy(actionButtons, true);
     showResult("正在生成导入计划...", "loading");
     try {
       lastPlan = await requestJson("/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ level: selectedLevel, mode: "dry-run" }),
+        body: JSON.stringify({ level: importLevel, mode: "dry-run" }),
       });
+      plannedLevel = structuredClone(importLevel);
+      plannedLevelFingerprint = JSON.stringify(importLevel);
       applyButton.disabled = lastPlan.actorCount === 0;
       const warningText = lastPlan.warnings.length > 0 ? ` · ${lastPlan.warnings.length} 条警告` : "";
-      showResult(`${lastPlan.actorCount} 个 UE Actor${warningText}`, lastPlan.warnings.length ? "warning" : "success");
+      const conversion = lastPlan.unitConversion;
+      const conversionText = conversion
+        ? ` · 1cm → ${conversion.sourceUnitsPerCentimeter} ${conversion.sourceUnit}`
+        : "";
+      showResult(`${lastPlan.actorCount} 个 UE Actor${conversionText}${warningText}`, lastPlan.warnings.length ? "warning" : "success");
     } catch (error) {
       showResult(error.message, "error");
     } finally {
@@ -445,7 +479,7 @@ export function mountUeBridge() {
   });
 
   applyButton.addEventListener("click", async () => {
-    if (!selectedLevel || !lastPlan) return;
+    if (!selectedLevel || !lastPlan || !plannedLevel) return;
     const replaceText = replaceInput.checked ? "，并替换同名桥接文件夹中的 Actor" : "";
     if (!window.confirm(`将向 MYMY 当前关卡创建 ${lastPlan.actorCount} 个 Actor${replaceText}。继续吗？`)) {
       return;
@@ -457,7 +491,7 @@ export function mountUeBridge() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          level: selectedLevel,
+          level: plannedLevel,
           mode: "apply",
           confirmProjectName: "MYMY",
           replaceExisting: replaceInput.checked,
@@ -511,10 +545,21 @@ export function mountUeBridge() {
     .then((mappingPayload) => {
       mappingCount.textContent = `${mappingPayload.parametricBlockCount} 类参数化积木`;
       blocks = createUnifiedBlockCatalog(mappingPayload.parametricBlocks);
+      resizeCleanup ??= installParametricResize(blocks);
       installAiBlockBridge(blocks);
       renderBlocks();
       renderInspector();
       editorUnsubscribe ??= subscribeToEditor(() => {
+        if (levelSource === "current" && lastPlan) {
+          const currentFingerprint = JSON.stringify(getEditorState().level);
+          if (currentFingerprint !== plannedLevelFingerprint) {
+            lastPlan = null;
+            plannedLevel = null;
+            plannedLevelFingerprint = null;
+            applyButton.disabled = true;
+            showResult("当前网页已变化，请重新检查导入", "warning");
+          }
+        }
         if (!selectedBlockId && !blockInspector.contains(document.activeElement)) renderInspector();
       });
     })
