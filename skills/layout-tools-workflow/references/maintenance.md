@@ -4,6 +4,8 @@
 
 - `src/runtime/`：加载兼容内核、启动和错误呈现。
 - `src/integrations/layout/`：编辑器 Store 适配、积木目录和 AI Schema 注入。
+- `src/integrations/layout/structure-module-model.js`、`structure-module-panel.js`：自有源图层、内部编辑会话、实例、端口、连接约束和无限组装画布。
+- `src/integrations/layout/structure-preview-3d.js`：手动刷新的 Three.js 组装预览和轨道控制。
 - `src/integrations/local/`、`src/server/`：本地关卡面板与磁盘库。
 - `src/integrations/ue/`：参数化积木 UI、转换、MCP 和 UE 服务。
 - `Start-LayoutTools.cmd`、`scripts/launch-layouttools.mjs`：Windows 一键启动、服务复用和端口冲突检查。
@@ -36,6 +38,12 @@
 - 参数化积木的画布控制柄缩放必须反写 Schema 几何参数；边缘尺寸标注只改变显示单位，不得重复缩放关卡数据。
 - `src/integrations/layout/ai-block-bridge.js` 只为识别到的模型 POST 请求追加 Schema 目录，保留请求头中的认证信息而不把 API Key 复制到提示词或关卡数据。请求 JSON 无法解析时应直接透传，不能阻断原网页 AI。
 - AI 积木目录由 `createUnifiedBlockCatalog()` 从 `config/ue-parametric-blocks.json` 生成；结果应用时必须按同一 Schema 规范化参数和二维几何。不得把这套提示词约束描述成模型对网页控件、MCP 或 UE Blueprint 的直接调用。
+- 无限画布直接创建的楼层模块必须建立 `ownsSourceLayer:true` 的私有源图层；从已有图层导入的兼容模块为 `false`。复用操作不得复制源 shapes/entities；删除模块只能清理自有源图层，不能删除导入的原图层。
+- `模块出入口`必须复用统一积木目录、原画布选择/变换/复制/删除和现有积木检查器，不能另建专用放置或参数栏。内部数据仍是普通矩形，视觉层将其绘制为指向局部 `+X` 的箭头；无限画布的公布端口必须按 `facing` 显示同一正方向。内部形状的 `modulePort:{id,name,z}`、中心点和旋转是编辑来源，`module.ports`是外部组装镜像；旧 graph-only 端口进入内部时自动形状化。删除端口形状要清理相关连接，端口代理不得进入三维预览或 UE 导入。端口没有进出属性，一个实例端口最多连接一条路线；分支通过模块预设的多个端口形成。
+- 无限画布的 `instance.transform` 只负责关系图排版，不得在建立连接或拖动节点时立即改写整个连接网络。`connection.waypoints`保存可增删和拖动的折线点；普通楼梯使用双向箭头，各连接类型维护自己的箭头和线型。`resolveStructureAssemblyGraph()`只在三维刷新、UE dry-run 或导出解析阶段以连通分支首个实例为锚，使端口面对面并应用 `CONNECTION_TYPES` 偏移。
+- 三维预览必须由用户点击刷新后才用 `resolveStructureGraphLevel()`重建；普通编辑只标记待刷新。重建时释放旧 Three.js 几何和材质，并保留轨道交互。参数化 Stairs Linear 必须从 `StairsSize`、`NumberOfSteps`和网页旋转逐级生成，不能退化为单个矩形 Box；`layoutRole:"floor"` 的图层高度代表行走表面，楼板厚度在预览中向下延伸。
+- `structureGraph` 必须随关卡 JSON 保存并对旧文件保持可选；没有该字段时原编辑器、AI、保存和 UE 导入行为不变。UE 导入前用 `resolveStructureGraphLevel()` 展开实例，不能把源模板和实例重复导入。
+- AI 模块契约必须列出固定连接类型，并明确禁止擅自增加用户未指定的端口。当前连接默认距离由 `CONNECTION_TYPES` 单一来源维护，UI、AI 提示和测试必须同步。
 - 改动 AI 桥接时覆盖 Chat Completions、Responses、Anthropic Messages、Gemini 请求体，验证目录不会重复追加、认证信息不会进入请求体，且未知 `blockType` 会降级为原有形状。
 - 静态检查不能替代浏览器呈现证明或 UE Editor 回读。
 
@@ -48,7 +56,7 @@ npm run check
 npm test
 ```
 
-前端行为变化还要通过真实页面验证：页面身份、非空首屏、无错误覆盖层、控制台健康、目标交互和截图。涉及自动保存时验证编辑后保存、刷新恢复、服务重启恢复和文件切换。
+前端行为变化还要通过真实桌面页面验证：页面身份、非空首屏、无错误覆盖层、控制台健康、目标交互和截图。涉及模块工作台时至少验证无限画布放置、双击/按钮进入内部、统一目录放置端口、原画布选择与变换、检查器名称/Z、删除同步、端口公布、返回、复用、一种连接、手动三维刷新、非空像素和轨道交互。本工具按桌面关卡编辑器维护，不要求移动端布局或移动视口回归。涉及自动保存时验证编辑后保存、刷新恢复、服务重启恢复和文件切换。
 
 UE 转换变化要覆盖 dry-run 计划和往返测试；实际 apply 后，若用户授权，还需通过 UE MCP/Editor 回读 Actor 类型、Transform、参数和数量。不要把“API 请求成功”写成“关卡结果已验证”。
 

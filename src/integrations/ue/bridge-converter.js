@@ -1,3 +1,5 @@
+import { resolveStructureGraphLevel } from "../layout/structure-module-model.js";
+
 const CATEGORY_COLORS = Object.freeze({
   architecture: "#7C6F64",
   box: "#8E8E86",
@@ -327,7 +329,7 @@ function wallSegmentPlans(shape, context) {
 }
 
 export function buildImportPlan(levelValue, mapping, catalog, projectConfig, parametricSchema) {
-  const level = validateLayoutLevel(levelValue);
+  const level = resolveStructureGraphLevel(validateLayoutLevel(levelValue));
   const mappingIndex = createMappingIndex(mapping);
   const catalogIndex = normalizeCatalog(catalog);
   const actors = [];

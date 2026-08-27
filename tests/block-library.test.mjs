@@ -17,7 +17,24 @@ test("catalog contains the 15 Blueprint tools and the original LayoutTools block
   assert.equal(catalog.filter((item) => item.source === "ue").length, 15);
   assert.ok(catalog.some((item) => item.blockType === "doorway"));
   assert.ok(catalog.some((item) => item.id === "original-wall"));
+  assert.ok(catalog.some((item) => item.id === "module-port" && item.moduleOnly));
   assert.equal(catalog.some((item) => item.assetId), false);
+});
+
+test("places module ports as ordinary editable shapes", () => {
+  const block = catalog.find((item) => item.id === "module-port");
+  const placed = createPlacedBlock(block, { x: 250, y: 180 }, "module-layer", {
+    name: "东门",
+    z: 120,
+  });
+
+  assert.equal(placed.collection, "shapes");
+  assert.equal(placed.item.type, "rect");
+  assert.equal(placed.item.x + placed.item.width / 2, 250);
+  assert.equal(placed.item.y + placed.item.height / 2, 180);
+  assert.equal(placed.item.modulePort.name, "东门");
+  assert.equal(placed.item.modulePort.z, 120);
+  assert.equal(placed.item.ueBlockout, undefined);
 });
 
 test("places a parametric box with canonical Blueprint metadata", () => {

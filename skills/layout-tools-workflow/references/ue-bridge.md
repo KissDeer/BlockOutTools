@@ -43,6 +43,8 @@ Box 用于地面/平台和墙体。日常搭建与 AI 生成时，优先且通�
 
 在 UE 面板点 `使用当前网页` 可直接采用画布中的最新关卡和 `exportScale`；也可以用 `选择 LayoutTools JSON` 导入磁盘文件。当前网页在 dry-run 后发生变化时，旧计划会失效，必须重新点 `检查导入`。
 
+关卡存在 `structureGraph` 时，dry-run 会先把每个模块实例展开为独立图层、形状和实体，再按实例 X/Y/Z/旋转生成 Actor 计划；模块源图层本身不会重复导入。带 `modulePort` 的矩形是网页内部的端口编辑代理，展开、三维预览和 UE 导入都必须排除它。网页中保存的连接类型和端口用于确定实例相对坐标，目前不会额外创建门、楼梯、电梯或道路 Actor。需要这些连接器进入 UE 时，应在后续明确每种连接对应的 Blockout Tools Blueprint 和参数，再扩展转换器。
+
 Apply 前确认：
 
 - dry-run Actor 数量和警告合理。
@@ -77,6 +79,7 @@ Apply 前确认：
 - 原积木 fallback：`config/ue-blockout-mapping.json`
 - 网页面板：`src/integrations/ue/bridge-panel.js`
 - 数据转换：`src/integrations/ue/bridge-converter.js`
+- 模块展开：`src/integrations/layout/structure-module-model.js`
 - UE 服务：`src/integrations/ue/ue-service.js`
 - MCP 客户端：`src/integrations/ue/mcp-client.js`
 - 详细契约：`docs/UE_BRIDGE.md`

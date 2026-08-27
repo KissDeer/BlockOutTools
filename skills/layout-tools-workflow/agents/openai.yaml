@@ -1,4 +1,4 @@
 interface:
   display_name: "LayoutTools 工作流"
-  short_description: "使用、维护并验证本地 LayoutTools 与 UE 桥接"
-  default_prompt: "使用 $layout-tools-workflow 帮我操作或维护本地 LayoutTools 工具。"
+  short_description: "无限画布模块编辑、积木与 UE 桥接工作流"
+  default_prompt: "使用 $layout-tools-workflow 帮我操作或维护 LayoutTools 无限画布模块、内部积木与 UE 桥接。"

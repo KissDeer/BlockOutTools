@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="./src/styles/boot.css" />
     <link rel="stylesheet" href="./src/styles/local-library.css" />
     <link rel="stylesheet" href="./src/styles/ue-bridge.css" />
+    <link rel="stylesheet" href="./src/styles/structure-modules.css" />
   </head>
   <body>
     <div id="root" aria-live="polite">
@@ -21,6 +22,14 @@
         <span>正在启动 LayoutTools...</span>
       </div>
     </div>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./node_modules/three/build/three.module.js",
+          "three/addons/": "./node_modules/three/examples/jsm/"
+        }
+      }
+    </script>
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>

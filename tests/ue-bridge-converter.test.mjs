@@ -235,3 +235,53 @@ test("builds and round-trips a parameterized Blueprint actor plan", () => {
   assert.deepEqual(exported.level.shapes[0].ueBlockout.parameters.DoorwaySize, [60, 220, 260]);
   assert.equal(exported.level.shapes[0].height, 380);
 });
+
+test("resolves reusable structure instances before building the UE plan", () => {
+  const level = baseLevel([{
+    id: "module-floor",
+    type: "rect",
+    x: 0,
+    y: 0,
+    width: 400,
+    height: 300,
+    rotation: 0,
+    layerId: "base",
+  }]);
+  level.structureGraph = {
+    schemaVersion: 1,
+    modules: [{
+      id: "floor-module",
+      name: "标准楼层",
+      sourceLayerId: "base",
+      origin: { x: 200, y: 150, z: 0 },
+      ports: [],
+    }],
+    instances: [
+      {
+        id: "floor-a",
+        moduleId: "floor-module",
+        name: "楼层 A",
+        transform: { x: 200, y: 150, z: 0, rotation: 0 },
+      },
+      {
+        id: "floor-b",
+        moduleId: "floor-module",
+        name: "楼层 B",
+        transform: { x: 800, y: 150, z: 300, rotation: 0 },
+      },
+    ],
+    connections: [],
+  };
+
+  const plan = buildImportPlan(level, mapping, catalog, projectConfig, parametricSchema);
+
+  assert.equal(plan.actorCount, 2);
+  assert.deepEqual(plan.actors.map((actor) => actor.sourceId), [
+    "module-floor--floor-a",
+    "module-floor--floor-b",
+  ]);
+  assert.deepEqual(plan.actors.map((actor) => actor.location), [
+    [0, -300, 0],
+    [600, -300, 300],
+  ]);
+});

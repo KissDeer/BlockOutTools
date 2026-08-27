@@ -371,6 +371,12 @@ body[data-block-placement-armed="true"] svg[data-canvas-touch] {
   object-fit: contain;
 }
 
+.ue-block-inspector__glyph {
+  justify-self: center;
+  border-color: #e59a42;
+  background: rgb(229 154 66 / 22%);
+}
+
 .ue-block-inspector__header div,
 .ue-block-inspector__header strong,
 .ue-block-inspector__header span {

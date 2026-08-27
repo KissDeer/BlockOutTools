@@ -1,6 +1,7 @@
 import { APP_CONFIG } from "./runtime/app-config.js";
 import { mountLocalLevelLibrary } from "./integrations/local/library-panel.js";
 import { mountExportDimensionLabels } from "./integrations/layout/export-dimension-labels.js";
+import { mountStructureModulePanel } from "./integrations/layout/structure-module-panel.js";
 import { mountUeBridge } from "./integrations/ue/bridge-panel.js";
 import { loadVendorApp } from "./runtime/load-vendor-app.js";
 import { renderBootError } from "./runtime/render-boot-error.js";
@@ -10,6 +11,7 @@ async function bootstrap() {
     await loadVendorApp(APP_CONFIG);
     await mountLocalLevelLibrary();
     mountExportDimensionLabels();
+    mountStructureModulePanel();
     mountUeBridge();
   } catch (error) {
     console.error("LayoutTools failed to start.", error);

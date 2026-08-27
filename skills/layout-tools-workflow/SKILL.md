@@ -1,6 +1,6 @@
 ---
 name: layout-tools-workflow
-description: Use, troubleshoot, extend, and verify the local LayoutTools/BlockOutTools web tool in D:\GameDesgin\BlockOutTools, including local level files, AI-accessible blocks, the MYMY Unreal bridge, and keeping this skill synchronized with later tool changes. Apply when the user mentions this LayoutTools clone, localhost:4173, BlockOutTools web blocks, MYMY import/export, or changes to this repository.
+description: Use, troubleshoot, extend, and verify the local LayoutTools/BlockOutTools web tool in D:\GameDesgin\BlockOutTools, including local level files, reusable floor modules and ports, AI-accessible blocks, the MYMY Unreal bridge, and keeping this skill synchronized with later tool changes. Apply when the user mentions this LayoutTools clone, localhost:4173, floor-module assembly, structureGraph, BlockOutTools web blocks, MYMY import/export, or changes to this repository.
 ---
 
 # LayoutTools Workflow
@@ -11,7 +11,7 @@ Treat the current repository as the source of truth. Before relying on a remembe
 
 ## Route The Task
 
-- For starting the service, explaining the UI, creating layouts, local saves, AI use, or ordinary file import/export, read [references/tool-usage.md](references/tool-usage.md).
+- For starting the service, explaining the UI, creating layouts, assembling reusable floor modules, local saves, AI use, or ordinary file import/export, read [references/tool-usage.md](references/tool-usage.md).
 - For placing parameterized Blockout Tools blocks or importing/exporting between the page and MYMY, also read [references/ue-bridge.md](references/ue-bridge.md).
 - For implementation, debugging, tests, configuration, Git work, or any behavior change, read [references/maintenance.md](references/maintenance.md).
 

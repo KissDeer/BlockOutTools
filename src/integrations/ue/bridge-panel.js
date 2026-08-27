@@ -115,7 +115,7 @@ export function mountUeBridge() {
       <div class="ue-block-placement" data-block-placement>选择积木，然后点击画布放置</div>
     </div>
     <div class="ue-bridge-section ue-block-inspector" data-block-inspector>
-      <div class="ue-block-inspector__empty">选择一种 UE 参数化积木，或在画布中选中已放置积木</div>
+      <div class="ue-block-inspector__empty">选择一种积木，或在画布中选中已放置积木</div>
     </div>
     <div class="ue-bridge-section">
       <div class="ue-bridge-section__title">积木映射</div>
@@ -170,9 +170,20 @@ export function mountUeBridge() {
   let blocks = [];
   let blockFilter = "all";
   let selectedBlockId = null;
+  let moduleEditActive = document.body.dataset.moduleEditActive === "true";
   let editorUnsubscribe = null;
   let resizeCleanup = null;
   const blockDrafts = new Map();
+
+  function selectedModulePortShape() {
+    try {
+      const state = getEditorState();
+      const selectedIds = Array.isArray(state.selectedIds) ? state.selectedIds : [];
+      return state.level.shapes.find((shape) => selectedIds.includes(shape.id) && shape.modulePort);
+    } catch {
+      return null;
+    }
+  }
 
   function selectedParametricShape() {
     try {
@@ -185,11 +196,26 @@ export function mountUeBridge() {
   }
 
   function inspectorContext() {
-    const placementBlock = blocks.find((block) => block.id === selectedBlockId && block.source === "ue");
+    const selectedBlock = blocks.find((block) => block.id === selectedBlockId);
+    if (selectedBlock?.moduleOnly) {
+      const values = blockDrafts.get(selectedBlock.id) ?? { name: "出入口", z: 0 };
+      blockDrafts.set(selectedBlock.id, values);
+      return { mode: "module-port-placement", block: selectedBlock, values };
+    }
+    const placementBlock = selectedBlock?.source === "ue" ? selectedBlock : null;
     if (placementBlock) {
       const values = blockDrafts.get(placementBlock.id) ?? createDefaultBlockParameters(placementBlock);
       blockDrafts.set(placementBlock.id, values);
       return { mode: "placement", block: placementBlock, values };
+    }
+    const modulePortShape = selectedModulePortShape();
+    if (modulePortShape) {
+      return {
+        mode: "module-port-selection",
+        block: blocks.find((block) => block.moduleOnly),
+        shape: modulePortShape,
+        values: modulePortShape.modulePort,
+      };
     }
     const shape = selectedParametricShape();
     const block = blocks.find((item) => item.blockType === shape?.ueBlockout?.blockType);
@@ -220,7 +246,22 @@ export function mountUeBridge() {
   function renderInspector() {
     const context = inspectorContext();
     if (!context) {
-      blockInspector.innerHTML = '<div class="ue-block-inspector__empty">选择一种 UE 参数化积木，或在画布中选中已放置积木</div>';
+      blockInspector.innerHTML = '<div class="ue-block-inspector__empty">选择一种积木，或在画布中选中已放置积木</div>';
+      return;
+    }
+    if (context.mode.startsWith("module-port")) {
+      const placement = context.mode === "module-port-placement";
+      blockInspector.innerHTML = `
+        <header class="ue-block-inspector__header">
+          <span class="ue-block-item__glyph ue-block-inspector__glyph" aria-hidden="true"></span>
+          <div><strong>模块出入口</strong><span>${placement ? "放置参数" : "已放置积木"}</span></div>
+        </header>
+        <div class="ue-block-inspector__fields">
+          <label class="ue-parameter-field"><span>名称</span><input type="text" data-module-port-field="name" value="${escapeHtml(context.values.name ?? "出入口")}"></label>
+          <label class="ue-parameter-field"><span>局部 Z · cm</span><input type="number" step="10" data-module-port-field="z" value="${Number(context.values.z) || 0}"></label>
+        </div>`;
+      blockInspector.dataset.targetMode = context.mode;
+      blockInspector.dataset.targetId = context.shape?.id ?? context.block.id;
       return;
     }
     const geometry = context.block.parameters.map((parameter) => renderParameterInput(parameter, context.values[parameter.key])).join("");
@@ -278,6 +319,7 @@ export function mountUeBridge() {
   function renderBlocks() {
     const query = blockSearch.value.trim().toLocaleLowerCase();
     const visible = blocks.filter((block) => {
+      if (block.moduleOnly && !moduleEditActive) return false;
       if (blockFilter !== "all" && block.source !== blockFilter) return false;
       const haystack = `${block.label} ${block.blockType ?? block.id} ${block.form ?? ""}`.toLocaleLowerCase();
       return !query || haystack.includes(query);
@@ -295,7 +337,7 @@ export function mountUeBridge() {
     : `<span class="ue-block-item__glyph" data-shape="${block.shapeType ?? "entity"}" aria-hidden="true"></span>`}
         <span class="ue-block-item__copy">
           <strong>${block.label}</strong>
-          <small>${block.source === "ue" ? `UE 参数化 · ${block.form}` : "LayoutTools 原有"}</small>
+          <small>${block.source === "ue" ? `UE 参数化 · ${block.form}` : block.moduleOnly ? "模块内部积木" : "LayoutTools 原有"}</small>
         </span>
       </button>
     `).join("");
@@ -313,6 +355,7 @@ export function mountUeBridge() {
   function armPlacement(blockId) {
     const block = blocks.find((item) => item.id === blockId);
     if (!block) return;
+    if (block.moduleOnly && !moduleEditActive) return;
     selectedBlockId = block.id;
     document.body.dataset.blockPlacementArmed = "true";
     blockPlacement.textContent = `已选择 ${block.label} · 点击画布连续放置 · Esc 取消`;
@@ -380,6 +423,24 @@ export function mountUeBridge() {
   }
   blockInspector.addEventListener("input", (event) => handleParameterEdit(event, false));
   blockInspector.addEventListener("change", (event) => handleParameterEdit(event, true));
+  function handleModulePortEdit(event, renderAfter) {
+    const input = event.target.closest("[data-module-port-field]");
+    const context = inspectorContext();
+    if (!input || !context?.mode.startsWith("module-port")) return;
+    const key = input.dataset.modulePortField;
+    const value = key === "z" ? Number(input.value) : input.value;
+    if (context.mode === "module-port-placement") {
+      blockDrafts.set(context.block.id, { ...context.values, [key]: value });
+    } else {
+      replacePlacedShape(context.shape.id, (shape) => ({
+        ...shape,
+        modulePort: { ...shape.modulePort, [key]: value },
+      }));
+    }
+    if (renderAfter) renderInspector();
+  }
+  blockInspector.addEventListener("input", (event) => handleModulePortEdit(event, false));
+  blockInspector.addEventListener("change", (event) => handleModulePortEdit(event, true));
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && selectedBlockId) cancelPlacement();
@@ -387,6 +448,15 @@ export function mountUeBridge() {
   window.addEventListener("layouttools:ai-normalization-warning", (event) => {
     const count = event.detail?.warnings?.length ?? 0;
     if (count > 0) showResult(`AI 结果中有 ${count} 个未知 UE 积木，已按原有形状保留`, "warning");
+  });
+  window.addEventListener("layouttools:module-edit-state", (event) => {
+    moduleEditActive = event.detail?.active === true;
+    const selectedBlock = blocks.find((block) => block.id === selectedBlockId);
+    if (!moduleEditActive && selectedBlock?.moduleOnly) cancelPlacement();
+    else {
+      renderBlocks();
+      renderInspector();
+    }
   });
   document.addEventListener("pointerdown", (event) => {
     if (!selectedBlockId || event.button !== 0) return;
@@ -405,7 +475,7 @@ export function mountUeBridge() {
       const state = getEditorState();
       const block = blocks.find((item) => item.id === selectedBlockId);
       const point = snapToGrid(screenToWorld(svg, event.clientX, event.clientY), state.level.gridSize);
-      const parameters = block.source === "ue" ? blockDrafts.get(block.id) : undefined;
+      const parameters = block.source === "ue" || block.moduleOnly ? blockDrafts.get(block.id) : undefined;
       const placed = createPlacedBlock(block, point, state.activeLayerId, parameters);
       addPlacedBlock(placed);
       blockPlacement.textContent = `已放置 ${block.label} (${Math.round(point.x)}, ${Math.round(point.y)}) · 可继续点击`;

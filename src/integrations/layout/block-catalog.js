@@ -3,6 +3,16 @@ const DEFAULT_OPACITY = 0.5;
 
 const ORIGINAL_BLOCKS = Object.freeze([
   { id: "original-rectangle", source: "original", kind: "shape", shapeType: "rect", label: "矩形", width: 200, height: 150 },
+  {
+    id: "module-port",
+    source: "original",
+    kind: "shape",
+    shapeType: "rect",
+    label: "模块出入口",
+    width: 100,
+    height: 24,
+    moduleOnly: true,
+  },
   { id: "original-circle", source: "original", kind: "shape", shapeType: "circle", label: "圆形", radius: 75 },
   { id: "original-wall", source: "original", kind: "shape", shapeType: "wall", label: "墙体", width: 300, height: 20, wallHeight: 280 },
   { id: "original-ramp", source: "original", kind: "shape", shapeType: "stairs", label: "直坡道", width: 150, height: 300, stairsType: "straight", stairsMode: "ramp" },
@@ -357,6 +367,25 @@ export function createPlacedBlock(block, point, layerId, parameterValues) {
   if (block.source === "ue") {
     const base = centeredRect({ ...block, width: 100, height: 100 }, point, layerId);
     return { collection: "shapes", item: applyBlockParametersToShape(base, block, parameterValues) };
+  }
+
+  if (block.moduleOnly) {
+    const shape = centeredRect(block, point, layerId);
+    const portId = createId("port");
+    return {
+      collection: "shapes",
+      item: {
+        ...shape,
+        id: createId("module-port-shape"),
+        color: "#E59A42",
+        opacity: 0.82,
+        modulePort: {
+          id: portId,
+          name: String(parameterValues?.name ?? "出入口"),
+          z: Number.isFinite(Number(parameterValues?.z)) ? Number(parameterValues.z) : 0,
+        },
+      },
+    };
   }
 
   let shape;

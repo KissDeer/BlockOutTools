@@ -10,6 +10,7 @@ import {
 
 const instruction = createAiCatalogInstruction([
   { source: "original", id: "original-rectangle", kind: "shape", shapeType: "rect" },
+  { source: "original", id: "module-port", kind: "shape", shapeType: "rect", moduleOnly: true },
   {
     source: "ue",
     blockType: "box",
@@ -29,6 +30,11 @@ test("adds the shared block catalog to Chat Completions only once", () => {
   assert.match(once.messages[0].content, new RegExp(CATALOG_MARKER));
   assert.equal(twice.messages[0].content.match(new RegExp(CATALOG_MARKER, "g")).length, 1);
   assert.equal(body.messages[0].content, "Generate a level.");
+  assert.match(once.messages[0].content, /structureGraph/);
+  assert.match(once.messages[0].content, /ownsSourceLayer/);
+  assert.match(once.messages[0].content, /shape\.modulePort/);
+  assert.match(once.messages[0].content, /不得为方便连接而自行新增/);
+  assert.match(once.messages[0].content, /one-way-elevator/);
 });
 
 test("supports Anthropic, Responses and Gemini request formats", () => {
