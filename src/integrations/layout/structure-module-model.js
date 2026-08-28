@@ -594,10 +594,6 @@ export function connectModulePorts(level, values) {
     throw new Error("一个出入口只能建立一条连接");
   }
 
-  if (connectedInstanceIds(graph, values.from.instanceId).has(values.to.instanceId)) {
-    throw new Error("两个模块实例已经通过其他出入口相连");
-  }
-
   const connection = {
     id: values.id ?? createId("connection"),
     type: connectionType.id,

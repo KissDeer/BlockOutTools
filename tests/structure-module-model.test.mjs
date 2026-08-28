@@ -357,6 +357,63 @@ test("removing an instance also removes its connections", () => {
   assert.equal(graph.connections.length, 0);
 });
 
+test("allows parallel routes and cycles when every route uses distinct ports", () => {
+  const created = createModuleFromLayer(baseLevel(), "floor-layer", {
+    moduleId: "module-floor",
+    instanceId: "instance-a",
+  });
+  let level = created.level;
+  for (const [id, x, y, facing] of [
+    ["east", 200, 0, 0],
+    ["west", -200, 0, 180],
+    ["north", 0, -150, 270],
+    ["south", 0, 150, 90],
+  ]) {
+    level = addModulePort(level, created.moduleId, {
+      id,
+      position: { x, y, z: 0 },
+      facing,
+    }).level;
+  }
+  level = duplicateModuleInstance(level, "instance-a", {
+    instanceId: "instance-b",
+    offsetX: 1000,
+    offsetY: 0,
+  }).level;
+  level = duplicateModuleInstance(level, "instance-a", {
+    instanceId: "instance-c",
+    offsetX: 500,
+    offsetY: 900,
+  }).level;
+
+  level = connectModulePorts(level, {
+    id: "route-a-b-1",
+    type: "door",
+    from: { instanceId: "instance-a", portId: "east" },
+    to: { instanceId: "instance-b", portId: "west" },
+  }).level;
+  level = connectModulePorts(level, {
+    id: "route-a-b-2",
+    type: "stairs",
+    from: { instanceId: "instance-a", portId: "south" },
+    to: { instanceId: "instance-b", portId: "north" },
+  }).level;
+  level = connectModulePorts(level, {
+    id: "route-b-c",
+    type: "door",
+    from: { instanceId: "instance-b", portId: "east" },
+    to: { instanceId: "instance-c", portId: "west" },
+  }).level;
+  level = connectModulePorts(level, {
+    id: "route-c-a",
+    type: "door",
+    from: { instanceId: "instance-c", portId: "north" },
+    to: { instanceId: "instance-a", portId: "north" },
+  }).level;
+
+  assert.equal(structureGraph(level).connections.length, 4);
+});
+
 test("does not export a module template when it has no instances", () => {
   const created = createModuleFromLayer(baseLevel(), "floor-layer", {
     moduleId: "module-floor",

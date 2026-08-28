@@ -233,6 +233,7 @@ export function mountStructureModulePanel() {
       <button type="button" class="structure-command structure-command--primary" data-structure-new>新增模块</button>
       <button type="button" class="structure-command" data-structure-import>从当前图层导入</button>
       <button type="button" class="structure-command" data-structure-reuse disabled>复用实例</button>
+      <button type="button" class="structure-command structure-preview-toggle" data-preview-toggle aria-expanded="false" aria-controls="structure-preview-drawer">3D 预览</button>
       <div class="structure-segmented" aria-label="预览方式">
         <button type="button" data-preview-mode="plan" aria-pressed="true">平面</button>
         <button type="button" data-preview-mode="exploded" aria-pressed="false">层高展开</button>
@@ -260,10 +261,13 @@ export function mountStructureModulePanel() {
         <output class="structure-status" data-structure-status data-state="idle" aria-live="polite">就绪</output>
         <div class="structure-zoom" data-structure-zoom>100%</div>
       </main>
-      <aside class="structure-preview" aria-label="三维预览">
+      <aside class="structure-preview" id="structure-preview-drawer" aria-label="三维预览" hidden>
         <header class="structure-preview-header">
           <div><strong>三维预览</strong><small data-preview-state data-state="stale">待刷新</small></div>
-          <button type="button" class="structure-command" data-preview-refresh><span aria-hidden="true">↻</span> 刷新预览</button>
+          <div class="structure-preview-actions">
+            <button type="button" class="structure-command" data-preview-refresh><span aria-hidden="true">↻</span> 刷新预览</button>
+            <button type="button" class="structure-icon-button" data-preview-close aria-label="收起三维预览" title="收起三维预览">×</button>
+          </div>
         </header>
         <div class="structure-preview-viewport" data-preview-viewport></div>
         <footer class="structure-preview-meta" data-preview-meta>尚未生成预览</footer>
@@ -290,6 +294,9 @@ export function mountStructureModulePanel() {
   const status = panel.querySelector("[data-structure-status]");
   const zoomLabel = panel.querySelector("[data-structure-zoom]");
   const previewButtons = [...panel.querySelectorAll("[data-preview-mode]")];
+  const previewToggleButton = panel.querySelector("[data-preview-toggle]");
+  const previewCloseButton = panel.querySelector("[data-preview-close]");
+  const previewPanel = panel.querySelector(".structure-preview");
   const previewRefreshButton = panel.querySelector("[data-preview-refresh]");
   const previewViewport = panel.querySelector("[data-preview-viewport]");
   const previewState = panel.querySelector("[data-preview-state]");
@@ -307,6 +314,7 @@ export function mountStructureModulePanel() {
   let interactionMode = null;
   let drag = null;
   let previewMode = "plan";
+  let previewOpen = false;
   let hasFitted = false;
   let previewRenderer = null;
   let editSession = null;
@@ -354,13 +362,23 @@ export function mountStructureModulePanel() {
     previewMeta.dataset.objectCount = String(result.objectCount);
   }
 
+  function setPreviewOpen(open) {
+    previewOpen = Boolean(open);
+    previewPanel.hidden = !previewOpen;
+    panel.classList.toggle("is-preview-open", previewOpen);
+    previewToggleButton.classList.toggle("structure-command--active", previewOpen);
+    previewToggleButton.setAttribute("aria-expanded", String(previewOpen));
+    previewToggleButton.textContent = previewOpen ? "收起 3D" : "3D 预览";
+    renderCanvas();
+    if (previewOpen) requestAnimationFrame(() => previewRenderer?.resize());
+  }
+
   function setPanelOpen(open) {
     if (open && editSession) return;
     panel.hidden = !open;
     toggle.setAttribute("aria-expanded", String(open));
     if (open) {
       window.dispatchEvent(new CustomEvent("layouttools:host-panel-open", { detail: "structure" }));
-      ensurePreviewRenderer().resize();
       render();
       requestAnimationFrame(() => {
         if (!hasFitted && structureGraph(currentLevel()).instances.length > 0) fitAll();
@@ -938,6 +956,8 @@ export function mountStructureModulePanel() {
   reuseButton.addEventListener("click", () => withOperation(reuseSelectedModule));
   fitButton.addEventListener("click", fitAll);
   previewRefreshButton.addEventListener("click", () => withOperation(refreshPreview));
+  previewToggleButton.addEventListener("click", () => setPreviewOpen(!previewOpen));
+  previewCloseButton.addEventListener("click", () => setPreviewOpen(false));
   window.addEventListener("layouttools:host-panel-open", (event) => {
     if (event.detail !== "structure") setPanelOpen(false);
   });
@@ -1261,7 +1281,7 @@ export function mountStructureModulePanel() {
   window.addEventListener("resize", () => {
     if (!panel.hidden) {
       renderCanvas();
-      previewRenderer?.resize();
+      if (previewOpen) previewRenderer?.resize();
     }
   });
   document.addEventListener("keydown", (event) => {

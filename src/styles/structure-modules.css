@@ -37,7 +37,7 @@
 
 .structure-module-panel {
   position: fixed;
-  inset: 0 0 0 64px;
+  inset: 0;
   z-index: 70;
   display: grid;
   grid-template-rows: 52px 48px minmax(0, 1fr);
@@ -194,9 +194,13 @@
 
 .structure-workspace {
   display: grid;
-  grid-template-columns: 264px minmax(0, 1fr) 320px;
+  grid-template-columns: 264px minmax(0, 1fr);
   min-width: 0;
   min-height: 0;
+}
+
+.structure-module-panel.is-preview-open .structure-workspace {
+  grid-template-columns: 264px minmax(0, 1fr) 320px;
 }
 
 .structure-sidebar {
@@ -684,6 +688,10 @@
   background: #151917;
 }
 
+.structure-preview[hidden] {
+  display: none;
+}
+
 .structure-preview-header {
   display: flex;
   align-items: center;
@@ -694,7 +702,7 @@
   background: #222623;
 }
 
-.structure-preview-header > div {
+.structure-preview-header > div:first-child {
   display: grid;
   gap: 2px;
   min-width: 0;
@@ -711,6 +719,12 @@
 
 .structure-preview-header small[data-state="fresh"] {
   color: #6ed1b2;
+}
+
+.structure-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .structure-preview-header .structure-command {
@@ -824,6 +838,10 @@
   }
 
   .structure-workspace {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .structure-module-panel.is-preview-open .structure-workspace {
     grid-template-columns: 220px minmax(0, 1fr) 260px;
   }
 
