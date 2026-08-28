@@ -6,6 +6,7 @@ import {
   createModuleFromLayer,
   createModuleInstance,
   disconnectModulePorts,
+  duplicateModuleInstance,
   layerBounds,
   materializeModulePortShapes,
   removeModuleInstance,
@@ -27,6 +28,15 @@ import { createStructurePreview3d } from "./structure-preview-3d.js";
 const EXPLODED_Z_FACTOR = 0.45;
 const MIN_ZOOM = 0.08;
 const MAX_ZOOM = 2.5;
+
+export function structureCanvasShortcut(event) {
+  if (event.altKey) return null;
+  const key = String(event.key ?? "").toLowerCase();
+  if (event.ctrlKey || event.metaKey) {
+    return ({ c: "copy", v: "paste", d: "duplicate" })[key] ?? null;
+  }
+  return key === "delete" && !event.repeat ? "delete" : null;
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -233,6 +243,7 @@ export function mountStructureModulePanel() {
       <button type="button" class="structure-command structure-command--primary" data-structure-new>新增模块</button>
       <button type="button" class="structure-command" data-structure-import>从当前图层导入</button>
       <button type="button" class="structure-command" data-structure-reuse disabled>复用实例</button>
+      <button type="button" class="structure-command structure-command--danger" data-structure-delete disabled>删除选中</button>
       <button type="button" class="structure-command structure-preview-toggle" data-preview-toggle aria-expanded="false" aria-controls="structure-preview-drawer">3D 预览</button>
       <div class="structure-segmented" aria-label="预览方式">
         <button type="button" data-preview-mode="plan" aria-pressed="true">平面</button>
@@ -286,6 +297,7 @@ export function mountStructureModulePanel() {
   const newButton = panel.querySelector("[data-structure-new]");
   const importButton = panel.querySelector("[data-structure-import]");
   const reuseButton = panel.querySelector("[data-structure-reuse]");
+  const deleteButton = panel.querySelector("[data-structure-delete]");
   const fitButton = panel.querySelector("[data-structure-fit]");
   const summary = panel.querySelector("[data-structure-summary]");
   const sidebar = panel.querySelector("[data-structure-sidebar]");
@@ -319,6 +331,8 @@ export function mountStructureModulePanel() {
   let previewRenderer = null;
   let editSession = null;
   let lastInstancePointer = null;
+  let copiedInstance = null;
+  let pasteCount = 0;
   const camera = { zoom: 0.6, panX: 0, panY: 0 };
 
   function currentLevel() {
@@ -460,8 +474,8 @@ export function mountStructureModulePanel() {
         </div>
         <div class="structure-row-actions">
           <button type="button" class="structure-command structure-command--primary" data-edit-module>编辑内部</button>
-          <button type="button" class="structure-icon-button structure-icon-button--danger" data-delete-instance aria-label="删除实例" title="删除实例">×</button>
-          <button type="button" class="structure-icon-button structure-icon-button--danger" data-delete-module aria-label="删除模块定义" title="删除模块定义">⌫</button>
+          <button type="button" class="structure-command structure-command--danger" data-delete-instance>删除此实例</button>
+          <button type="button" class="structure-command structure-command--danger" data-delete-module>删除模块定义</button>
         </div>`;
     }
     if (selectedModule && !selectedInstance) {
@@ -666,6 +680,7 @@ export function mountStructureModulePanel() {
     const context = selectedGraphContext();
     summary.textContent = `${context.graph.modules.length} 个模块 · ${context.graph.instances.length} 个实例 · ${context.graph.connections.length} 条连接`;
     reuseButton.disabled = !context.selectedModule;
+    deleteButton.disabled = !context.selectedInstance;
     newButton.classList.toggle("structure-command--active", interactionMode === "create");
     canvas.classList.toggle("is-placing-module", interactionMode === "create");
     previewButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.previewMode === previewMode)));
@@ -789,6 +804,68 @@ export function mountStructureModulePanel() {
     commitLevel(result.level);
     render();
     showStatus("已创建可复用实例", "success");
+  }
+
+  function deleteSelectedInstance() {
+    const { selectedInstance } = selectedGraphContext();
+    if (!selectedInstance) return;
+    if (!window.confirm(`删除画布上的“${selectedInstance.name}”及其连接？模块定义和内部内容会保留。`)) return;
+    commitLevel(removeModuleInstance(currentLevel(), selectedInstance.id));
+    selectedInstanceId = null;
+    selectedPort = null;
+    selectedConnectionId = null;
+    render();
+    showStatus("选中模块已删除", "success");
+  }
+
+  function copySelectedInstance() {
+    const { selectedInstance } = selectedGraphContext();
+    if (!selectedInstance) return;
+    copiedInstance = {
+      moduleId: selectedInstance.moduleId,
+      name: selectedInstance.name,
+      transform: { ...selectedInstance.transform },
+    };
+    pasteCount = 0;
+    showStatus(`已复制 ${selectedInstance.name}`, "success");
+  }
+
+  function pasteCopiedInstance() {
+    if (!copiedInstance) throw new Error("还没有复制模块实例");
+    const graph = structureGraph(currentLevel());
+    if (!graph.modules.some((module) => module.id === copiedInstance.moduleId)) {
+      copiedInstance = null;
+      throw new Error("复制的模块定义已被删除");
+    }
+    pasteCount += 1;
+    const result = createModuleInstance(currentLevel(), copiedInstance.moduleId, {
+      name: `${copiedInstance.name} 副本 ${pasteCount}`,
+      transform: {
+        ...copiedInstance.transform,
+        x: copiedInstance.transform.x + 200 * pasteCount,
+        y: copiedInstance.transform.y + 200 * pasteCount,
+      },
+    });
+    selectedInstanceId = result.instanceId;
+    selectedModuleId = copiedInstance.moduleId;
+    selectedPort = null;
+    selectedConnectionId = null;
+    commitLevel(result.level);
+    render();
+    showStatus("模块实例已粘贴", "success");
+  }
+
+  function duplicateSelectedInstance() {
+    const { selectedInstance } = selectedGraphContext();
+    if (!selectedInstance) return;
+    const result = duplicateModuleInstance(currentLevel(), selectedInstance.id);
+    selectedInstanceId = result.instanceId;
+    selectedModuleId = selectedInstance.moduleId;
+    selectedPort = null;
+    selectedConnectionId = null;
+    commitLevel(result.level);
+    render();
+    showStatus("模块实例已复制", "success");
   }
 
   function handlePortClick(instanceId, portId) {
@@ -954,6 +1031,7 @@ export function mountStructureModulePanel() {
   newButton.addEventListener("click", armModulePlacement);
   importButton.addEventListener("click", () => withOperation(createFromActiveLayer));
   reuseButton.addEventListener("click", () => withOperation(reuseSelectedModule));
+  deleteButton.addEventListener("click", () => withOperation(deleteSelectedInstance));
   fitButton.addEventListener("click", fitAll);
   previewRefreshButton.addEventListener("click", () => withOperation(refreshPreview));
   previewToggleButton.addEventListener("click", () => setPreviewOpen(!previewOpen));
@@ -1027,12 +1105,7 @@ export function mountStructureModulePanel() {
       return;
     }
     if (event.target.closest("[data-delete-instance]")) {
-      if (!selectedInstanceId || !window.confirm("删除这个模块实例及其连接？模块定义和源图层会保留。")) return;
-      commitLevel(removeModuleInstance(currentLevel(), selectedInstanceId));
-      selectedInstanceId = null;
-      selectedPort = null;
-      render();
-      showStatus("实例已删除", "success");
+      deleteSelectedInstance();
       return;
     }
     if (event.target.closest("[data-delete-module]")) {
@@ -1290,7 +1363,35 @@ export function mountStructureModulePanel() {
       exitModuleEdit();
       return;
     }
-    if (panel.hidden || event.key !== "Escape") return;
+    if (panel.hidden) return;
+    const target = event.target;
+    const isEditingField = target instanceof HTMLElement && (
+      target.matches("input, textarea, select") || target.isContentEditable
+    );
+    if (!isEditingField && !previewOpen && !interactionMode) {
+      const shortcut = structureCanvasShortcut(event);
+      if (shortcut === "copy") {
+        event.preventDefault();
+        withOperation(copySelectedInstance);
+        return;
+      }
+      if (shortcut === "paste") {
+        event.preventDefault();
+        withOperation(pasteCopiedInstance);
+        return;
+      }
+      if (shortcut === "duplicate") {
+        event.preventDefault();
+        withOperation(duplicateSelectedInstance);
+        return;
+      }
+      if (shortcut === "delete" && selectedInstanceId) {
+        event.preventDefault();
+        withOperation(deleteSelectedInstance);
+        return;
+      }
+    }
+    if (event.key !== "Escape") return;
     if (interactionMode || pendingConnection) {
       interactionMode = null;
       pendingConnection = null;
