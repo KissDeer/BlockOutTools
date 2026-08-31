@@ -12,5 +12,7 @@ test("generated UE import script relies on property notifications and cleans fai
 
   assert.match(code, /actor\.set_editor_property\(property_name, value\)/);
   assert.doesNotMatch(code, /rerun_construction_scripts/);
-  assert.match(code, /if actor:\s+try:\s+unreal\.EditorLevelLibrary\.destroy_actor\(actor\)/s);
+  assert.match(code, /if actor and action != "update":\s+try:\s+unreal\.EditorLevelLibrary\.destroy_actor\(actor\)/s);
+  assert.match(code, /if action == "update":/);
+  assert.match(code, /configure_actor\(actor, item\)/);
 });

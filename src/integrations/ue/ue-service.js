@@ -148,6 +148,7 @@ for actor in unreal.EditorLevelLibrary.get_all_level_actors():
     rotation = actor.get_actor_rotation()
     scale = actor.get_actor_scale3d()
     source_id = next((tag.split(":", 1)[1] for tag in tags if tag.startswith("LayoutToolsId:")), None)
+    sync_key = next((tag.split(":", 1)[1] for tag in tags if tag.startswith("LayoutToolsSync:")), None)
     parameters = {}
     if class_path in parametric_properties:
         for property_name in parametric_properties[class_path]:
@@ -159,6 +160,7 @@ for actor in unreal.EditorLevelLibrary.get_all_level_actors():
         "path": actor.get_path_name(),
         "label": actor.get_actor_label(),
         "sourceId": source_id,
+        "syncKey": sync_key,
         "actorKind": "parametric" if class_path in parametric_properties else "static-mesh",
         "blueprintClassPath": class_path if class_path in parametric_properties else None,
         "parameters": parameters,
@@ -179,76 +181,116 @@ print("${SNAPSHOT_PREFIX}" + json.dumps(actors, separators=(",", ":")))`;
 
 export function buildApplyImportPython(plan, projectConfig, options = {}) {
   const encodedPlan = Buffer.from(JSON.stringify(plan), "utf8").toString("base64");
-  const replaceExisting = options.replaceExisting === true ? "True" : "False";
   return `import unreal, json, base64
 plan = json.loads(base64.b64decode("${encodedPlan}").decode("utf-8"))
-replace_existing = ${replaceExisting}
 bridge_tag = ${JSON.stringify(projectConfig.actorTag)}
 target_folder = plan["actorFolder"]
 created = []
+updated = []
+unchanged = []
 removed = []
+retained = []
 errors = []
 
+def find_actor(path):
+    for candidate in unreal.EditorLevelLibrary.get_all_level_actors():
+        if candidate.get_path_name() == path:
+            return candidate
+    return None
+
+def converted_property(actor, property_name, raw_value):
+    current = actor.get_editor_property(property_name)
+    value_type = type(current).__name__
+    if value_type == "Vector":
+        return unreal.Vector(*raw_value)
+    if value_type == "Vector2D":
+        return unreal.Vector2D(*raw_value)
+    if value_type == "LinearColor":
+        return unreal.LinearColor(*raw_value)
+    if value_type == "Name":
+        return unreal.Name(raw_value)
+    if isinstance(raw_value, str) and hasattr(type(current), raw_value):
+        return getattr(type(current), raw_value)
+    if hasattr(current, "get_path_name") or (current is None and isinstance(raw_value, str) and raw_value.startswith("/")):
+        return unreal.load_asset(raw_value)
+    return raw_value
+
+def configure_actor(actor, item):
+    location = unreal.Vector(*item["location"])
+    pitch, yaw, roll = item["rotation"]
+    rotation = unreal.Rotator(pitch=pitch, yaw=yaw, roll=roll)
+    actor.set_actor_location(location, False, False)
+    actor.set_actor_rotation(rotation, False)
+    actor.set_actor_scale3d(unreal.Vector(*item["scale3d"]))
+    if item.get("actorKind") == "parametric":
+        for property_name, raw_value in item.get("parameters", {}).items():
+            value = converted_property(actor, property_name, raw_value)
+            actor.set_editor_property(property_name, value)
+    else:
+        mesh = unreal.load_asset(item["assetPath"])
+        component = actor.get_component_by_class(unreal.StaticMeshComponent)
+        if not isinstance(mesh, unreal.StaticMesh) or not component:
+            raise RuntimeError("Static mesh update target is invalid: " + item["assetPath"])
+        component.set_static_mesh(mesh)
+    actor.set_actor_label(item["label"])
+    actor.set_folder_path(item["folder"])
+    actor.tags = [unreal.Name(tag) for tag in item["tags"]]
+
+operations = plan.get("sync", {}).get("operations")
+if operations is None:
+    operations = [{"action": "create", "actor": item} for item in plan["actors"]]
+
 with unreal.ScopedEditorTransaction("Import LayoutTools blockout"):
-    if replace_existing:
-        for actor in list(unreal.EditorLevelLibrary.get_all_level_actors()):
-            tags = [str(tag) for tag in actor.tags]
-            folder = str(actor.get_folder_path())
-            if bridge_tag in tags and folder == target_folder:
+    for operation in operations:
+        action = operation.get("action")
+        if action == "unchanged":
+            unchanged.append(operation.get("currentActorPath"))
+            continue
+        if action == "retain":
+            retained.append(operation.get("currentActorPath"))
+            continue
+        if action == "delete":
+            actor = find_actor(operation.get("currentActorPath"))
+            if actor:
                 removed.append(actor.get_path_name())
                 unreal.EditorLevelLibrary.destroy_actor(actor)
-
-    for item in plan["actors"]:
+            continue
+        item = operation.get("actor")
         actor = None
         try:
-            location = unreal.Vector(*item["location"])
-            pitch, yaw, roll = item["rotation"]
-            rotation = unreal.Rotator(pitch=pitch, yaw=yaw, roll=roll)
-            if item.get("actorKind") == "parametric":
-                actor_class = unreal.EditorAssetLibrary.load_blueprint_class(item["blueprintAssetPath"])
-                if not actor_class:
-                    raise RuntimeError("Blueprint class not found: " + item["blueprintAssetPath"])
-                actor = unreal.EditorLevelLibrary.spawn_actor_from_class(actor_class, location, rotation)
+            if action == "update":
+                actor = find_actor(operation.get("currentActorPath"))
+                if not actor:
+                    raise RuntimeError("Matched Actor no longer exists")
+                configure_actor(actor, item)
+                updated.append(actor.get_path_name())
             else:
-                mesh = unreal.load_asset(item["assetPath"])
-                if not isinstance(mesh, unreal.StaticMesh):
-                    raise RuntimeError("Static mesh not found: " + item["assetPath"])
-                actor = unreal.EditorLevelLibrary.spawn_actor_from_object(mesh, location, rotation)
-            if not actor:
-                raise RuntimeError("Actor spawn returned None")
-            actor.set_actor_scale3d(unreal.Vector(*item["scale3d"]))
-            if item.get("actorKind") == "parametric":
-                for property_name, raw_value in item.get("parameters", {}).items():
-                    current = actor.get_editor_property(property_name)
-                    value_type = type(current).__name__
-                    if value_type == "Vector":
-                        value = unreal.Vector(*raw_value)
-                    elif value_type == "Vector2D":
-                        value = unreal.Vector2D(*raw_value)
-                    elif value_type == "LinearColor":
-                        value = unreal.LinearColor(*raw_value)
-                    elif value_type == "Name":
-                        value = unreal.Name(raw_value)
-                    elif isinstance(raw_value, str) and hasattr(type(current), raw_value):
-                        value = getattr(type(current), raw_value)
-                    elif hasattr(current, "get_path_name") or (current is None and isinstance(raw_value, str) and raw_value.startswith("/")):
-                        value = unreal.load_asset(raw_value)
-                    else:
-                        value = raw_value
-                    actor.set_editor_property(property_name, value)
-            actor.set_actor_label(item["label"])
-            actor.set_folder_path(item["folder"])
-            actor.tags = [unreal.Name(tag) for tag in item["tags"]]
-            created.append(actor.get_path_name())
+                location = unreal.Vector(*item["location"])
+                pitch, yaw, roll = item["rotation"]
+                rotation = unreal.Rotator(pitch=pitch, yaw=yaw, roll=roll)
+                if item.get("actorKind") == "parametric":
+                    actor_class = unreal.EditorAssetLibrary.load_blueprint_class(item["blueprintAssetPath"])
+                    if not actor_class:
+                        raise RuntimeError("Blueprint class not found: " + item["blueprintAssetPath"])
+                    actor = unreal.EditorLevelLibrary.spawn_actor_from_class(actor_class, location, rotation)
+                else:
+                    mesh = unreal.load_asset(item["assetPath"])
+                    if not isinstance(mesh, unreal.StaticMesh):
+                        raise RuntimeError("Static mesh not found: " + item["assetPath"])
+                    actor = unreal.EditorLevelLibrary.spawn_actor_from_object(mesh, location, rotation)
+                if not actor:
+                    raise RuntimeError("Actor spawn returned None")
+                configure_actor(actor, item)
+                created.append(actor.get_path_name())
         except Exception as exc:
-            if actor:
+            if actor and action != "update":
                 try:
                     unreal.EditorLevelLibrary.destroy_actor(actor)
                 except Exception:
                     pass
             errors.append({"id": item.get("id"), "error": str(exc)})
 
-payload = {"created": created, "removed": removed, "errors": errors}
+payload = {"created": created, "updated": updated, "unchanged": unchanged, "removed": removed, "retained": retained, "errors": errors}
 print("${APPLY_PREFIX}" + json.dumps(payload, separators=(",", ":")))`;
 }
 

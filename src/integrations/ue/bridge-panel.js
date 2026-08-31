@@ -134,7 +134,7 @@ export function mountUeBridge() {
       </div>
       <label class="ue-bridge-check">
         <input type="checkbox" data-ue-replace>
-        <span>替换同名桥接文件夹</span>
+        <span>删除网页中已不存在的桥接 Actor</span>
       </label>
     </div>
     <output class="ue-bridge-result" data-ue-result aria-live="polite">等待操作</output>
@@ -316,6 +316,12 @@ export function mountUeBridge() {
     result.dataset.state = state;
   }
 
+  function planBlocked() {
+    return !lastPlan || lastPlan.actorCount === 0
+      || (lastPlan.validation?.profile?.enforceUeImport && lastPlan.validation?.errorCount > 0)
+      || lastPlan.sync?.conflictCount > 0;
+  }
+
   function renderBlocks() {
     const query = blockSearch.value.trim().toLocaleLowerCase();
     const visible = blocks.filter((block) => {
@@ -370,6 +376,14 @@ export function mountUeBridge() {
     if (event.detail !== "ue") setPanelOpen(false);
   });
   chooseButton.addEventListener("click", () => fileInput.click());
+  replaceInput.addEventListener("change", () => {
+    if (!lastPlan) return;
+    lastPlan = null;
+    plannedLevel = null;
+    plannedLevelFingerprint = null;
+    applyButton.disabled = true;
+    showResult("删除策略已变化，请重新检查导入", "warning");
+  });
   currentButton.addEventListener("click", () => {
     const level = getEditorState().level;
     selectedLevel = level;
@@ -528,30 +542,39 @@ export function mountUeBridge() {
       lastPlan = await requestJson("/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ level: importLevel, mode: "dry-run" }),
+        body: JSON.stringify({ level: importLevel, mode: "dry-run", deleteMissing: replaceInput.checked }),
       });
       plannedLevel = structuredClone(importLevel);
       plannedLevelFingerprint = JSON.stringify(importLevel);
-      applyButton.disabled = lastPlan.actorCount === 0;
+      const sync = lastPlan.sync;
+      const blocked = (lastPlan.validation?.profile?.enforceUeImport && lastPlan.validation?.errorCount > 0) || sync?.conflictCount > 0;
+      applyButton.disabled = lastPlan.actorCount === 0 || blocked;
       const warningText = lastPlan.warnings.length > 0 ? ` · ${lastPlan.warnings.length} 条警告` : "";
       const conversion = lastPlan.unitConversion;
       const conversionText = conversion
         ? ` · 1cm → ${conversion.sourceUnitsPerCentimeter} ${conversion.sourceUnit}`
         : "";
-      showResult(`${lastPlan.actorCount} 个 UE Actor${conversionText}${warningText}`, lastPlan.warnings.length ? "warning" : "success");
+      const syncText = sync
+        ? ` · 新增 ${sync.counts.create} / 更新 ${sync.counts.update} / 不变 ${sync.counts.unchanged} / 删除 ${sync.counts.delete}`
+        : "";
+      const blockText = blocked
+        ? ` · 已阻止：规范错误 ${lastPlan.validation?.errorCount ?? 0}，同步冲突 ${sync?.conflictCount ?? 0}`
+        : "";
+      showResult(`${lastPlan.actorCount} 个 UE Actor${syncText}${conversionText}${warningText}${blockText}`, blocked || lastPlan.warnings.length ? "warning" : "success");
     } catch (error) {
       showResult(error.message, "error");
     } finally {
       setBusy(actionButtons, false);
       dryRunButton.disabled = !selectedLevel;
-      applyButton.disabled = !lastPlan || lastPlan.actorCount === 0;
+      applyButton.disabled = planBlocked();
     }
   });
 
   applyButton.addEventListener("click", async () => {
     if (!selectedLevel || !lastPlan || !plannedLevel) return;
-    const replaceText = replaceInput.checked ? "，并替换同名桥接文件夹中的 Actor" : "";
-    if (!window.confirm(`将向 MYMY 当前关卡创建 ${lastPlan.actorCount} 个 Actor${replaceText}。继续吗？`)) {
+    const counts = lastPlan.sync?.counts ?? { create: lastPlan.actorCount, update: 0, delete: 0 };
+    const deleteText = replaceInput.checked ? `，删除 ${counts.delete} 个网页中已不存在的 Actor` : "";
+    if (!window.confirm(`将向 MYMY 当前关卡新增 ${counts.create} 个、原地更新 ${counts.update} 个 Actor${deleteText}。继续吗？`)) {
       return;
     }
     setBusy(actionButtons, true);
@@ -564,17 +587,17 @@ export function mountUeBridge() {
           level: plannedLevel,
           mode: "apply",
           confirmProjectName: "MYMY",
-          replaceExisting: replaceInput.checked,
+          deleteMissing: replaceInput.checked,
         }),
       });
-      const { created, removed, errors } = payload.applyResult;
-      showResult(`已创建 ${created.length} · 已替换 ${removed.length} · 失败 ${errors.length}`, errors.length ? "warning" : "success");
+      const { created, updated, unchanged, removed, retained, errors } = payload.applyResult;
+      showResult(`新增 ${created.length} · 更新 ${updated.length} · 不变 ${unchanged.length} · 删除 ${removed.length} · 保留 ${retained.length} · 失败 ${errors.length}`, errors.length ? "warning" : "success");
     } catch (error) {
       showResult(error.message, "error");
     } finally {
       setBusy(actionButtons, false);
       dryRunButton.disabled = !selectedLevel;
-      applyButton.disabled = !lastPlan || lastPlan.actorCount === 0;
+      applyButton.disabled = planBlocked();
     }
   });
 
@@ -590,7 +613,7 @@ export function mountUeBridge() {
     } finally {
       setBusy(actionButtons, false);
       dryRunButton.disabled = !selectedLevel;
-      applyButton.disabled = !lastPlan || lastPlan.actorCount === 0;
+      applyButton.disabled = planBlocked();
     }
   });
 
@@ -606,7 +629,7 @@ export function mountUeBridge() {
     } finally {
       setBusy(actionButtons, false);
       dryRunButton.disabled = !selectedLevel;
-      applyButton.disabled = !lastPlan || lastPlan.actorCount === 0;
+      applyButton.disabled = planBlocked();
     }
   });
 

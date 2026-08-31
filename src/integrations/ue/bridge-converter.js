@@ -190,6 +190,7 @@ function createActorPlan({
   rotationWeb,
   sourceId,
   sourceKind,
+  syncKey,
   zBase,
 }) {
   const scale = dimensions.map((dimension, index) => dimension / asset.nativeSize[index]);
@@ -210,10 +211,11 @@ function createActorPlan({
     id: sourceId,
     sourceId,
     sourceKind,
+    syncKey,
     label,
     assetPath: asset.path,
     folder: actorFolder,
-    tags: [actorTag, `LayoutToolsId:${sourceId}`],
+    tags: [actorTag, `LayoutToolsId:${sourceId}`, `LayoutToolsSync:${syncKey}`],
     location: [
       round(centerUnreal[0] - rotatedCenterX),
       round(centerUnreal[1] - rotatedCenterY),
@@ -267,6 +269,7 @@ function createParametricActorPlan(
   projectConfig,
   zBase,
   unitScaleCm,
+  syncKey,
 ) {
   const footprint = shapeFootprint(shape);
   const normalizedParameters = normalizeBlockParameters(block, parameters);
@@ -274,13 +277,14 @@ function createParametricActorPlan(
     id: String(shape.id),
     sourceId: String(shape.id),
     sourceKind: "parametric",
+    syncKey,
     actorKind: "parametric",
     blockType: block.blockType,
     label: shape.label ?? block.ueLabel,
     blueprintAssetPath: block.blueprintAssetPath,
     blueprintClassPath: block.blueprintClassPath,
     folder: levelFolder,
-    tags: [projectConfig.actorTag, `LayoutToolsId:${shape.id}`, `BlockoutType:${block.blockType}`],
+    tags: [projectConfig.actorTag, `LayoutToolsId:${shape.id}`, `LayoutToolsSync:${syncKey}`, `BlockoutType:${block.blockType}`],
     location: [
       round(footprint.center[0] * unitScaleCm),
       round(-footprint.center[1] * unitScaleCm),
@@ -322,6 +326,7 @@ function wallSegmentPlans(shape, context) {
       rotationWeb: Math.atan2(deltaY, deltaX) * 180 / Math.PI,
       sourceId: `${shape.id}:segment:${index}`,
       sourceKind: "wall-segment",
+      syncKey: stableSyncKey([context.syncKey, "segment", index]),
       zBase: context.zBase,
     }));
   }
@@ -355,6 +360,7 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
           projectConfig,
           layerHeight(level, shape.layerId),
           unitScaleCm,
+          shapeSyncKey(shape, level, `parametric:${block.blockType}`),
         ));
       } catch (error) {
         warnings.push(`${shape.id ?? "unknown"}: ${error.message}`);
@@ -382,6 +388,7 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
       warnings,
       zBase,
       unitScaleCm,
+      syncKey: shapeSyncKey(shape, level, shape.wallCenterline?.length >= 2 ? "wall" : shape.type),
     };
     if (shape.wallCenterline?.length >= 2 && !shape.ueBlockout?.assetId && !shape.ueBlockout?.assetPath) {
       actors.push(...wallSegmentPlans(shape, context));
@@ -401,6 +408,7 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
         rotationWeb: shape.rotation ?? 0,
         sourceId: String(shape.id ?? `shape-${actors.length + 1}`),
         sourceKind: shape.isStairs ? "stairs" : shape.type,
+        syncKey: context.syncKey,
         zBase,
       }));
     } catch (error) {
@@ -429,6 +437,30 @@ export function buildImportPlan(levelValue, mapping, catalog, projectConfig, par
 
 function sanitizeName(value) {
   return String(value).trim().replace(/[^A-Za-z0-9_-]+/g, "_").replace(/^_+|_+$/g, "") || "Untitled_Level";
+}
+
+function stableSyncKey(parts) {
+  const text = parts.map((part) => String(part ?? "").trim().toLocaleLowerCase()).join("|");
+  let hash = 2166136261;
+  for (let index = 0; index < text.length; index += 1) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `lt-${(hash >>> 0).toString(16).padStart(8, "0")}`;
+}
+
+function shapeSyncKey(shape, level, kind) {
+  if (shape.ueBlockout?.syncId) return String(shape.ueBlockout.syncId);
+  const layer = level.layers.find((candidate) => candidate.id === shape.layerId);
+  const semanticName = shape.name ?? shape.label;
+  if (!semanticName) return stableSyncKey(["id", shape.id, kind]);
+  return stableSyncKey([
+    level.name,
+    layer?.name ?? shape.layerId,
+    semanticName,
+    kind,
+    shape.ueBlockout?.blockType,
+  ]);
 }
 
 function assetDisplayName(assetPath) {

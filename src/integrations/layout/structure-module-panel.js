@@ -23,6 +23,7 @@ import {
   subscribeToEditor,
 } from "./editor-store-adapter.js";
 import { decorateModulePortShapes } from "./module-port-visual.js";
+import { createModulePackage, mergeModulePackage, validateModulePackage } from "./module-package.js";
 import { createStructurePreview3d } from "./structure-preview-3d.js";
 
 const EXPLODED_Z_FACTOR = 0.45;
@@ -45,6 +46,22 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function downloadJson(fileName, value) {
+  const blob = new Blob([JSON.stringify(value, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = fileName;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+function safeFileName(value) {
+  return String(value || "module").trim().replace(/[^A-Za-z0-9\u4e00-\u9fff_-]+/g, "_") || "module";
 }
 
 function finite(value, fallback = 0) {
@@ -244,6 +261,9 @@ export function mountStructureModulePanel() {
       <button type="button" class="structure-command" data-structure-import>从当前图层导入</button>
       <button type="button" class="structure-command" data-structure-reuse disabled>复用实例</button>
       <button type="button" class="structure-command structure-command--danger" data-structure-delete disabled>删除选中</button>
+      <button type="button" class="structure-command" data-module-package-export disabled>导出模块</button>
+      <button type="button" class="structure-command" data-module-package-import>导入模块</button>
+      <input type="file" accept="application/json,.json" data-module-package-file hidden>
       <button type="button" class="structure-command structure-preview-toggle" data-preview-toggle aria-expanded="false" aria-controls="structure-preview-drawer">3D 预览</button>
       <div class="structure-segmented" aria-label="预览方式">
         <button type="button" data-preview-mode="plan" aria-pressed="true">平面</button>
@@ -298,6 +318,9 @@ export function mountStructureModulePanel() {
   const importButton = panel.querySelector("[data-structure-import]");
   const reuseButton = panel.querySelector("[data-structure-reuse]");
   const deleteButton = panel.querySelector("[data-structure-delete]");
+  const moduleExportButton = panel.querySelector("[data-module-package-export]");
+  const moduleImportButton = panel.querySelector("[data-module-package-import]");
+  const modulePackageInput = panel.querySelector("[data-module-package-file]");
   const fitButton = panel.querySelector("[data-structure-fit]");
   const summary = panel.querySelector("[data-structure-summary]");
   const sidebar = panel.querySelector("[data-structure-sidebar]");
@@ -680,6 +703,7 @@ export function mountStructureModulePanel() {
     const context = selectedGraphContext();
     summary.textContent = `${context.graph.modules.length} 个模块 · ${context.graph.instances.length} 个实例 · ${context.graph.connections.length} 条连接`;
     reuseButton.disabled = !context.selectedModule;
+    moduleExportButton.disabled = !context.selectedModule;
     deleteButton.disabled = !context.selectedInstance;
     newButton.classList.toggle("structure-command--active", interactionMode === "create");
     canvas.classList.toggle("is-placing-module", interactionMode === "create");
@@ -731,9 +755,9 @@ export function mountStructureModulePanel() {
     renderCanvas({ level, graph });
   }
 
-  function withOperation(operation) {
+  async function withOperation(operation) {
     try {
-      operation();
+      await operation();
     } catch (error) {
       showStatus(error.message, "error");
     }
@@ -1032,6 +1056,33 @@ export function mountStructureModulePanel() {
   importButton.addEventListener("click", () => withOperation(createFromActiveLayer));
   reuseButton.addEventListener("click", () => withOperation(reuseSelectedModule));
   deleteButton.addEventListener("click", () => withOperation(deleteSelectedInstance));
+  moduleExportButton.addEventListener("click", () => withOperation(() => {
+    const { selectedModule } = selectedGraphContext();
+    if (!selectedModule) throw new Error("请先选择模块定义");
+    const modulePackage = createModulePackage(currentLevel(), selectedModule.id);
+    downloadJson(`${safeFileName(selectedModule.name)}.layout-module.json`, modulePackage);
+    showStatus(`已导出模块 ${selectedModule.name}`, "success");
+  }));
+  moduleImportButton.addEventListener("click", () => modulePackageInput.click());
+  modulePackageInput.addEventListener("change", async () => {
+    const file = modulePackageInput.files?.[0];
+    modulePackageInput.value = "";
+    if (!file) return;
+    await withOperation(async () => {
+      const modulePackage = validateModulePackage(JSON.parse(await file.text()));
+      let result = mergeModulePackage(currentLevel(), modulePackage);
+      if (result.conflicts.length > 0) {
+        const sample = result.conflicts.slice(0, 5).map((conflict) => conflict.path).join("\n");
+        const useIncoming = window.confirm(`模块 ${modulePackage.moduleName} 有 ${result.conflicts.length} 处冲突：\n${sample}\n\n确定：全部采用导入版本\n取消：全部保留当前版本`);
+        result = mergeModulePackage(currentLevel(), modulePackage, { resolution: useIncoming ? "incoming" : "current" });
+      }
+      commitLevel(result.level);
+      selectedModuleId = modulePackage.moduleId;
+      selectedInstanceId = structureGraph(result.level).instances.find((instance) => instance.moduleId === modulePackage.moduleId)?.id ?? null;
+      render();
+      showStatus(result.conflicts.length > 0 ? `已处理 ${result.conflicts.length} 处冲突` : `已导入模块 ${modulePackage.moduleName}`, result.conflicts.length > 0 ? "warning" : "success");
+    });
+  });
   fitButton.addEventListener("click", fitAll);
   previewRefreshButton.addEventListener("click", () => withOperation(refreshPreview));
   previewToggleButton.addEventListener("click", () => setPreviewOpen(!previewOpen));

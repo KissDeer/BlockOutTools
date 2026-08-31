@@ -9,6 +9,8 @@ import {
   buildImportPlan,
   createBlockPaletteLevel,
 } from "../src/integrations/ue/bridge-converter.js";
+import { validateBlockoutLevel } from "../src/integrations/layout/blockout-rules.js";
+import { buildIncrementalImportPlan } from "../src/integrations/ue/incremental-sync.js";
 import {
   applyImportPlan,
   catalogBlockoutAssets,
@@ -174,10 +176,26 @@ async function handleApiRequest(request, response, url) {
 
   if (request.method === "POST" && url.pathname === "/api/ue/import") {
     const body = await readJsonBody(request);
-    const catalog = await catalogBlockoutAssets(projectConfig);
-    const plan = buildImportPlan(body.level, blockoutMapping, catalog, projectConfig, parametricBlocks);
+    const [catalog, snapshot] = await Promise.all([
+      catalogBlockoutAssets(projectConfig),
+      snapshotBridgeActors(projectConfig, parametricBlocks),
+    ]);
+    const validation = validateBlockoutLevel(body.level);
+    const basePlan = buildImportPlan(body.level, blockoutMapping, catalog, projectConfig, parametricBlocks);
+    const plan = buildIncrementalImportPlan(basePlan, snapshot, {
+      deleteMissing: body.deleteMissing === true,
+    });
+    plan.validation = validation;
     if (body.mode !== "apply") {
       sendJson(response, 200, plan);
+      return true;
+    }
+
+    if ((validation.profile.enforceUeImport && validation.errorCount > 0) || plan.sync.conflictCount > 0) {
+      sendJson(response, 409, {
+        error: `Apply blocked by ${validation.errorCount} rule errors and ${plan.sync.conflictCount} sync conflicts.`,
+        plan,
+      });
       return true;
     }
 
@@ -196,7 +214,7 @@ async function handleApiRequest(request, response, url) {
     }
 
     const applyResult = await applyImportPlan(plan, projectConfig, {
-      replaceExisting: body.replaceExisting === true,
+      deleteMissing: body.deleteMissing === true,
     });
     sendJson(response, applyResult.errors.length === 0 ? 200 : 207, {
       plan,

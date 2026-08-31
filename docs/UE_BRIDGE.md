@@ -58,8 +58,11 @@
 ## UE 导入与导出
 
 - UE 面板可用 `使用当前网页` 直接读取画布的最新关卡和换算设置，也可以选择磁盘 JSON。
-- dry-run 只生成 Actor 类型、位置、旋转和属性计划。
+- dry-run 读取现有桥接 Actor，生成新增、原地更新、不变、删除、保留和冲突计划。
 - apply 需要项目名和完整 `.uproject` 路径同时匹配，并经过网页确认。
+- 匹配优先使用`LayoutToolsSync`稳定标记，其次是原始 ID、同类型唯一名称和完全一致几何；歧义会阻止 apply，避免 ID 变化时重复生成。
+- 未匹配的 UE Actor 默认保留；勾选删除选项并重新 dry-run 后才进入删除计划。
+- 白盒规范启用强制导入检查时，门洞、楼梯、坡道等错误会阻止 apply。
 - 参数化项通过 Blueprint Asset 加载类、生成 Actor，并用 `set_editor_property` 的编辑器变更通知设置属性和更新构造结果。
 - 原 LayoutTools 形状仍使用 `config/ue-blockout-mapping.json` 的静态网格 fallback。
 - 导出只读取 `BlockOutToolsBridge` 文件夹或标签拥有的 Actor；参数化 Actor 按类路径读取 Schema 中列出的属性。
@@ -86,4 +89,4 @@
 | `/api/ue/import` | POST | 默认 dry-run；显式模式和项目确认后才 apply |
 | `/api/ue/export` | GET | 读取桥接 Actor 并生成 LayoutTools JSON |
 
-网页必须先完成 dry-run 才会启用 apply 按钮；当前网页在检查后继续变化时，旧计划会失效。
+网页必须先完成 dry-run 才会启用 apply 按钮；当前网页或删除策略在检查后变化时，旧计划会失效。同步冲突和启用强制检查的规范错误都会保持 apply 禁用。

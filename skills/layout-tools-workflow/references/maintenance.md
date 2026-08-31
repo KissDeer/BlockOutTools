@@ -5,6 +5,9 @@
 - `src/runtime/`：加载兼容内核、启动和错误呈现。
 - `src/integrations/layout/`：编辑器 Store 适配、积木目录和 AI Schema 注入。
 - `src/integrations/layout/structure-module-model.js`、`structure-module-panel.js`：自有源图层、内部编辑会话、实例、端口、连接约束和无限组装画布。
+- `src/integrations/layout/blockout-rules*.js`：关卡内白盒规范、识别规则和规范面板。
+- `src/integrations/layout/module-package.js`：独立模块包、修订指纹、三方合并与冲突。
+- `src/integrations/layout/editor-workflow-*.js`：模块内部的简化 UE 编辑工作条和纯几何变换。
 - `src/integrations/layout/structure-preview-3d.js`：手动刷新的 Three.js 组装预览和轨道控制。
 - `src/integrations/local/`、`src/server/`：本地关卡面板与磁盘库。
 - `src/integrations/ue/`：参数化积木 UI、转换、MCP 和 UE 服务。
@@ -32,8 +35,12 @@
 - 未知 AI `blockType` 不得伪装成 UE 积木；移除无效 UE 元数据并保留普通形状。
 - 本地文件名必须防目录穿越；关卡至少校验 `shapes`、`entities`、`layers`。
 - 个人关卡 JSON 和最后打开状态保持 Git ignored；测试使用临时目录。
+- 白盒规范保存在关卡根级`blockoutProfile`。只有显式识别的 Doorway、Stairs、Ramp 和带 corridor/landing 语义的形状参与检查；规范关闭时不得产生错误，`enforceUeImport`关闭时错误只提示不阻止 Apply。
+- 模块包必须包含共同基线、当前内容和确定性修订值；相同稳定 ID 的对象进行三方合并，同字段冲突不得静默覆盖。模块包只管理模块定义及内部内容，不携带实例和外部连接。
+- 简化编辑工作条只在模块内部显示，必须复用原画布选择与历史。`W/E/R`可配置但不区分世界/局部轴；锁定、隔离和搜索属于`editorWorkflow`元数据，不得改变 UE 导出几何。Box、Stairs Linear 和 Ramp 的数值缩放必须保持二维尺寸与关键参数同步；其他参数化类型继续用原检查器或控制柄编辑。
 - UE apply 必须由 dry-run、项目身份核对和用户确认保护；桥接不保存关卡。
 - UE 导入脚本依赖 `set_editor_property` 的变更通知更新 Blueprint 构造结果；不要调用当前 UE Python 未暴露的 `actor.rerun_construction_scripts()`，失败 Actor 必须在异常处理内销毁。
+- UE 增量同步按`LayoutToolsSync`、`LayoutToolsId`、唯一类型名称、几何逐级匹配；歧义必须阻止 Apply。匹配 Actor 原地更新，未匹配旧 Actor默认保留，删除必须由用户勾选并重新 dry-run。同步标记不得只依赖容易被 AI 重建的临时 shape ID。
 - UE 转换器必须应用关卡 `exportScale`：空间坐标、层高、普通几何和 Schema 中 `unit: "cm"` 的参数使用同一线性比例；不得缩放角度、数量或其他无量纲参数。
 - 参数化积木的画布控制柄缩放必须反写 Schema 几何参数；边缘尺寸标注只改变显示单位，不得重复缩放关卡数据。
 - `src/integrations/layout/ai-block-bridge.js` 只为识别到的模型 POST 请求追加 Schema 目录，保留请求头中的认证信息而不把 API Key 复制到提示词或关卡数据。请求 JSON 无法解析时应直接透传，不能阻断原网页 AI。
