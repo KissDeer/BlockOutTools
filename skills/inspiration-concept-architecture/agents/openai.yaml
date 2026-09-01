@@ -1,0 +1,4 @@
+interface:
+  display_name: "灵感概念建筑"
+  short_description: "把意象转译为可解释、可深化的建筑概念"
+  default_prompt: "使用 $inspiration-concept-architecture 将我的灵感图片转译成三个概念建筑方向和可直接使用的生图提示词。"
