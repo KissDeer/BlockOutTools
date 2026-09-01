@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-const TEST_PORT = 4174;
+const TEST_PORT = Number(process.env.LAYOUT_TOOLS_TEST_PORT ?? 4274);
 const BASE_URL = `http://127.0.0.1:${TEST_PORT}`;
 
 async function waitUntilReady(process) {

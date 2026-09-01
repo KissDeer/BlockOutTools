@@ -5,13 +5,15 @@ description: Use, troubleshoot, extend, and verify the local LayoutTools/BlockOu
 
 # LayoutTools Workflow
 
-Work against `D:\GameDesgin\BlockOutTools`. The web app normally runs at `http://127.0.0.1:4173/`; the linked Unreal project is `E:\Project\MYMY\MYMY.uproject`.
+Work against `D:\GameDesgin\BlockOutTools`. The current rebuild lives in `app-v2/` and runs at `http://127.0.0.1:4174/`; the legacy compatibility host remains at `http://127.0.0.1:4173/` only for migration and historical comparison. The linked Unreal project is `E:\Project\MYMY\MYMY.uproject`.
+
+For new product work, treat `docs/rebuild/` and `app-v2/` as the source of truth. Do not reintroduce legacy LayoutTools behavior unless the user is explicitly asking about migration or the compatibility host.
 
 Treat the current repository as the source of truth. Before relying on a remembered button, path, schema, or behavior, inspect the relevant current file and preserve unrelated working-tree changes.
 
 ## Route The Task
 
-- For starting the service, explaining the UI, creating layouts, assembling reusable floor modules, local saves, AI use, or ordinary file import/export, read [references/tool-usage.md](references/tool-usage.md).
+- For starting either service, explaining the V2 UI, creating layouts, assembling reusable floor modules, local saves, AI use, or ordinary file import/export, read [references/tool-usage.md](references/tool-usage.md).
 - For placing parameterized Blockout Tools blocks or importing/exporting between the page and MYMY, also read [references/ue-bridge.md](references/ue-bridge.md).
 - For implementation, debugging, tests, configuration, Git work, or any behavior change, read [references/maintenance.md](references/maintenance.md).
 
@@ -20,7 +22,9 @@ Read only the references needed for the current request. Use `USER_MANUAL.md` wh
 ## Operating Boundaries
 
 - Do not edit `vendor/layout-tools-0.0.2.js` or the original downloaded files unless the user explicitly changes the compatibility strategy. Extend behavior through `src/` and `scripts/`.
+- Keep the V2 domain model independent from the legacy Store, DOM and vendor bundle. The legacy host may supply migration evidence, never V2 runtime state.
 - Browser-only layout work does not authorize UE writes. Always separate web JSON changes, UE dry-run plans, and confirmed UE apply operations.
+- The current V2 `UE 计划` is local dry-run only. It does not connect to MCP and cannot Apply.
 - UE apply requires an explicit user request or confirmation, the expected project name and full `.uproject` path, and a successful dry-run. The bridge does not save the UE level.
 - Local level JSON in `data/levels/` is user data and stays ignored by Git. Preserve it during tests, cleanup, and commits.
 - External AI requests require the user's configured provider, model, and API key. Never read, log, or move that key into the bridge.

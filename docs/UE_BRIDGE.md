@@ -1,5 +1,7 @@
 # MYMY / Unreal 参数化积木桥接
 
+> Current Host Reference：本文描述当前兼容宿主的 UE 桥接实现。重做版的目标契约以 [`rebuild/DATA_UE_AI_CONTRACT.md`](rebuild/DATA_UE_AI_CONTRACT.md) 为准。
+
 ## 范围
 
 桥接目标是 `E:/Project/MYMY/MYMY.uproject` 与 Blockout Tools `1.52`。网页中的“UE 积木”严格对应插件面板的 15 类 Blueprint Actor，不包含蓝图内部使用的 53 个 StaticMesh。原 LayoutTools 积木继续保留；其导入 UE 的静态网格 fallback 属于兼容层，不属于参数化积木目录。

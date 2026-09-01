@@ -1,6 +1,18 @@
 # MYMY / Unreal 桥接
 
-## 前置条件
+## V2 Phase 0 UE 计划
+
+V2 顶栏`UE 计划`当前只在浏览器内生成 dry-run，不访问 MCP，也没有 Apply 按钮。每个可部署积木生成一条计划记录：
+
+- 稳定同步键固定为 `projectId/moduleInstanceId/blockId`，名称、选择状态和数组顺序不参与身份。
+- 复用一个模块定义时，新的实例 ID 会让该实例拥有独立 Actor 身份；内部 block ID 保持共享定义身份。
+- Box、Doorway 和 Stairs Linear 各对应一个参数化 Blueprint Actor。模块出入口永远排除。
+- 网页厘米直接作为 UE 厘米；网页 `Y`与 Yaw 在计划中取反。旧版 `exportScale`只允许迁移器读取，不进入 V2 新项目。
+- 3D 展开的 Doorway 和 Stairs 会生成多个预览 primitive，但共享来源积木的同一个 UE 同步键；不要把 primitive 数量误当 Actor 数量。
+
+相关实现位于 `app-v2/src/domain/ue-plan.ts`、`deployment-geometry.ts`和`features/ue/UEDryRunPanel.tsx`。在 Phase 3 完成 MCP、增量比较、Apply、失败清理和回读之前，任何 V2 页面结果都不能写成“已导入 UE”。
+
+## 旧版兼容桥接前置条件
 
 - Unreal 项目：`E:\Project\MYMY\MYMY.uproject`
 - Blockout Tools 插件基线：`1.52`

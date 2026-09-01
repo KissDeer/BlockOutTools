@@ -1,5 +1,31 @@
 # 仓库维护与 Skill 同步
 
+## 重做版需求来源
+
+`docs/rebuild/`是新版本的需求单一来源。重做功能与旧宿主、`USER_MANUAL.md`、`docs/FEATURE_PARITY.md`或 vendor 行为冲突时，以经用户确认的重做文档为准；旧资料仅用于迁移和历史对照。开始重做代码前先检查产品、功能、交互、数据/UE/AI 契约、实施计划和历史需求追踪是否一致。
+
+## V2 工程边界
+
+- `app-v2/src/domain/`：版本化项目模型、纯命令、目录、验证、部署几何、UE dry-run 和本地 JSON 边界；不得依赖 React、Canvas、Three.js 或旧 Store。
+- `app-v2/src/store/project-store.ts`：Zustand 命令历史、选择、快捷键动作、预览脏状态和浏览器草稿调度。项目深层数据只能通过 domain 命令更新。
+- `app-v2/src/features/assembly/`：React Flow 无限关系画布；第三方节点与边对象不得进入项目 JSON。React Flow 署名必须保留并避免遮挡 MiniMap。
+- `app-v2/src/features/module-editor/`：Konva 内部编辑器和 Schema 参数检查器。控制柄缩放必须反写类型的关键尺寸参数。
+- `app-v2/src/features/preview/`：惰性加载的 Three.js 预览；只消费`buildDeploymentGeometry()`，用户点击刷新前不得重建。
+- `app-v2/src/features/ue/`：Phase 0 只展示`buildLocalUEDryRun()`结果，不连接 MCP、不提供 Apply。
+- `app-v2/src/domain/*.test.ts`与`src/store/*.test.ts`：纯领域和命令动作验证。浏览器证据继续覆盖真实画布、WebGL 和桌面快捷键。
+
+V2 Phase 0 不变量：
+
+- 当前四类对象为 Box、Doorway、Stairs Linear 和 Port；Port 使用统一积木操作，但不进入部署几何或 UE 计划。
+- 无限画布模块节点的俯视缩略图必须由内部积木旋转后的二维包围盒自适应生成；端口连接命中点使用同一投影中的真实相对 XY 与精确旋转，不得恢复为固定像素偏移或仅按节点边缘均分。
+- 关系图位置`graphPosition`与实际`assemblyTransform`严格分开，拖动节点不改变 3D/UE 坐标。
+- UE 同步键只由`projectId/moduleInstanceId/blockId`形成；显示名称变化不能改变身份。
+- `resolveAssembly()`是 3D 与 UE dry-run 的模块 Transform 单一来源。每个连通分支以第一条连接的源实例为锚，端口必须相向并应用`CONNECTION_RULES`偏移；闭环与并行边不得静默忽略残差。
+- 3D 和 UE 均从同一规范化积木参数解释派生。Doorway 和 Stairs 可展开多个预览 primitive，但一个来源积木仍只对应一个 UE Actor 计划。
+- 3D 默认收起；展开后从 236px 左侧模块库右缘覆盖到窗口右缘。预览必须通过截图像素和轨道交互验证为非空。
+- `W/E/R`、复制、粘贴、`Ctrl+D`、删除和撤销重做在组装与模块内部按各自选择语义工作；输入框焦点屏蔽画布快捷键。
+- 浏览器草稿和整项目 JSON 只是 Phase 0 恢复能力；不得声称模块分文件、原子磁盘库或结构化合并已经完成。
+
 ## 工程边界
 
 - `src/runtime/`：加载兼容内核、启动和错误呈现。
@@ -50,6 +76,7 @@
 - 无限画布的 `instance.transform` 只负责关系图排版，不得在建立连接或拖动节点时立即改写整个连接网络。`connection.waypoints`保存可增删和拖动的折线点；普通楼梯使用双向箭头，各连接类型维护自己的箭头和线型。不同端口之间允许分支、闭环以及同一对实例的并行路线；同一端口仍只能连接一次。`resolveStructureAssemblyGraph()`只在三维刷新、UE dry-run 或导出解析阶段以连通分支首个实例为锚，使端口面对面并应用 `CONNECTION_TYPES` 偏移；第一次到达实例的路线负责定位，后续闭合路线不得重复移动实例。图片生成脚本应验证闭合路线端点符合预期偏移。
 - 无限画布打开时必须覆盖原编辑器左侧工具栏；进入模块内部或关闭组装工作台后恢复原编辑器界面。三维预览默认折叠，不应在折叠状态初始化渲染器；展开后必须覆盖左侧模块列表以外的整个主工作区，才允许刷新或调整 Three.js 视口。选中实例后，顶部删除命令和 `Delete` 键必须复用 `removeModuleInstance()`，同时清理连接但保留模块定义与内部内容；删除模块定义是独立的更强操作。无限画布的 `Ctrl+C`/`Ctrl+V`使用进程内实例剪贴板，粘贴只创建共享模块定义的新实例，不复制连接；`Ctrl+D`直接调用 `duplicateModuleInstance()`。输入控件、交互模式和三维预览必须屏蔽这些快捷键。
 - 三维预览必须由用户点击刷新后才用 `resolveStructureGraphLevel()`重建；普通编辑只标记待刷新。重建时释放旧 Three.js 几何和材质，并保留轨道交互。参数化 Stairs Linear 必须从 `StairsSize`、`NumberOfSteps`和网页旋转逐级生成，不能退化为单个矩形 Box；`layoutRole:"floor"` 的图层高度代表行走表面，楼板厚度在预览中向下延伸。
+- V2 三维预览的相机远裁面、雾范围、轨道最大距离和地面网格必须随部署几何包围盒缩放；完整地图不得因固定雾范围在刷新后显示为空场景。
 - `structureGraph` 必须随关卡 JSON 保存并对旧文件保持可选；没有该字段时原编辑器、AI、保存和 UE 导入行为不变。UE 导入前用 `resolveStructureGraphLevel()` 展开实例，不能把源模板和实例重复导入。
 - AI 模块契约必须列出固定连接类型，并明确禁止擅自增加用户未指定的端口。当前连接默认距离由 `CONNECTION_TYPES` 单一来源维护，UI、AI 提示和测试必须同步。
 - 改动 AI 桥接时覆盖 Chat Completions、Responses、Anthropic Messages、Gemini 请求体，验证目录不会重复追加、认证信息不会进入请求体，且未知 `blockType` 会降级为原有形状。
@@ -64,7 +91,17 @@ npm run check
 npm test
 ```
 
-前端行为变化还要通过真实桌面页面验证：页面身份、非空首屏、无错误覆盖层、控制台健康、目标交互和截图。涉及模块工作台时至少验证无限画布放置、双击/按钮进入内部、统一目录放置端口、原画布选择与变换、检查器名称/Z、删除同步、端口公布、返回、复用、一种连接、手动三维刷新、非空像素和轨道交互。本工具按桌面关卡编辑器维护，不要求移动端布局或移动视口回归。涉及自动保存时验证编辑后保存、刷新恢复、服务重启恢复和文件切换。
+V2 修改在 `app-v2/`中至少运行：
+
+```powershell
+npm test
+npm run check
+npm run build
+```
+
+当前 Phase 0 自动基线为 8 个 Vitest 测试。构建应保留 AssemblyCanvas、ModuleEditor 和 PreviewPanel 的惰性分包；第三方依赖本身的 Rollup 注释警告可以记录，但应用控制台必须无 error/warn。
+
+前端行为变化还要通过真实桌面页面验证：页面身份、非空首屏、无错误覆盖层、控制台健康、目标交互和截图。涉及模块工作台时至少验证无限画布放置、两个模块的内部缩略形态可区分、端口在缩略图中的位置/朝向与内部数据对应、从缩略图箭头建立连接、双击/按钮进入内部、统一目录放置端口、原画布选择与变换、检查器名称/Z、删除同步、端口公布、返回、复用、一种连接、手动三维刷新、非空像素和轨道交互。本工具按桌面关卡编辑器维护，不要求移动端布局或移动视口回归。涉及自动保存时验证编辑后保存、刷新恢复、服务重启恢复和文件切换。
 
 UE 转换变化要覆盖 dry-run 计划和往返测试；实际 apply 后，若用户授权，还需通过 UE MCP/Editor 回读 Actor 类型、Transform、参数和数量。不要把“API 请求成功”写成“关卡结果已验证”。
 

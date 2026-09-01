@@ -1,5 +1,13 @@
 # LayoutTools Local
 
+> 重做版的产品范围与实现依据已经迁移到 [`docs/rebuild/`](docs/rebuild/README.md)。本文和原 LayoutTools 手册描述当前兼容宿主，不再作为新版本的需求来源。
+
+## 重做版 V2
+
+双击 `Start-BlockOutTools-V2.cmd`可启动当前重做版并打开 `http://127.0.0.1:4174/`。首次使用先在`app-v2`目录运行`npm install`。V2 当前完成 Phase 0 技术闭环，具体能力与后续阶段见`docs/rebuild/REBUILD_PLAN.md`。
+
+参考图“洛斯里克高墙”在 V2 中有独立的确定性样例。运行 `npm run generate:lothric-v2` 后，从网页顶栏打开 `layouts/lothric-high-wall-v2.blockout.json`。样例把五个编号区域细分为 10 个可编辑模块，以 A-H、J-N 共 13 组端口关系连接；红色路线只保留为关系语义，黑色轮廓和黄色内部门/楼梯分别使用 Box、Doorway 与 Stairs Linear 表达。
+
 这是 LayoutTools `v0.0.2` 下载版的本地兼容宿主。目标是先保持参考版本的界面与行为一致，再为后续逐模块调整建立清晰边界。
 
 ## 启动
