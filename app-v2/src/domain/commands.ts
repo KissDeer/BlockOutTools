@@ -1,6 +1,6 @@
 import { createBlock } from "./catalog";
 import { createId } from "./ids";
-import type { Block, BlockoutProject, BlockType, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
+import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
 
 function cloneProject(project: BlockoutProject): BlockoutProject {
   return structuredClone(project);
@@ -106,9 +106,34 @@ export function removeBlocks(project: BlockoutProject, moduleId: string, blockId
 }
 
 export function addConnection(project: BlockoutProject, type: ConnectionType, sourceInstanceId: string, sourcePortId: string, targetInstanceId: string, targetPortId: string): BlockoutProject {
-  const occupied = project.connections.some((item) => item.sourcePortId === sourcePortId || item.targetPortId === sourcePortId || item.sourcePortId === targetPortId || item.targetPortId === targetPortId);
-  if (occupied || sourceInstanceId === targetInstanceId) return project;
+  const sourceInstance = project.instances.find((item) => item.id === sourceInstanceId);
+  const targetInstance = project.instances.find((item) => item.id === targetInstanceId);
+  const sourceModule = project.modules.find((item) => item.id === sourceInstance?.definitionId);
+  const targetModule = project.modules.find((item) => item.id === targetInstance?.definitionId);
+  const sourcePortExists = sourceModule?.blocks.some((item) => item.type === "port" && item.id === sourcePortId);
+  const targetPortExists = targetModule?.blocks.some((item) => item.type === "port" && item.id === targetPortId);
+  const occupied = project.connections.some((item) =>
+    (item.sourceInstanceId === sourceInstanceId && item.sourcePortId === sourcePortId)
+    || (item.targetInstanceId === sourceInstanceId && item.targetPortId === sourcePortId)
+    || (item.sourceInstanceId === targetInstanceId && item.sourcePortId === targetPortId)
+    || (item.targetInstanceId === targetInstanceId && item.targetPortId === targetPortId));
+  if (!sourcePortExists || !targetPortExists || occupied || sourceInstanceId === targetInstanceId) return project;
   const next = cloneProject(project);
   next.connections.push({ id: createId("connection"), type, sourceInstanceId, sourcePortId, targetInstanceId, targetPortId, waypoints: [] });
+  return touch(next);
+}
+
+export function updateConnection(project: BlockoutProject, connectionId: string, patch: Pick<Connection, "type">): BlockoutProject {
+  const next = cloneProject(project);
+  const connection = next.connections.find((item) => item.id === connectionId);
+  if (!connection || connection.type === patch.type) return project;
+  connection.type = patch.type;
+  return touch(next);
+}
+
+export function removeConnection(project: BlockoutProject, connectionId: string): BlockoutProject {
+  if (!project.connections.some((item) => item.id === connectionId)) return project;
+  const next = cloneProject(project);
+  next.connections = next.connections.filter((item) => item.id !== connectionId);
   return touch(next);
 }

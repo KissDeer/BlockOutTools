@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import lothricProject from "../../../layouts/lothric-high-wall-v2.blockout.json";
 import { resolveAssembly } from "./assembly-resolver";
-import { addConnection, duplicateInstance, renameProject } from "./commands";
+import { addConnection, duplicateInstance, removeConnection, renameProject, updateConnection } from "./commands";
 import { createDemoProject } from "./demo-project";
 import { buildDeploymentGeometry } from "./deployment-geometry";
 import { projectSchema } from "./project-schema";
@@ -65,6 +65,44 @@ describe("BlockOutTools V2 domain", () => {
     const project = createDemoProject();
     const next = addConnection(project, "door", "instance_courtyard", "port_demo_east", "instance_tower", "port_tower_east");
     expect(next).toBe(project);
+  });
+
+  it("tracks port occupancy per module instance and validates endpoint ownership", () => {
+    const project = createDemoProject();
+    const source = project.instances[0];
+    const duplicate = structuredClone(source);
+    duplicate.id = "instance_courtyard_copy";
+    duplicate.name = "庭院副本";
+    project.instances.push(duplicate);
+    project.connections = [];
+
+    const connected = addConnection(project, "door", source.id, "port_demo_east", "instance_tower", "port_tower_west");
+    const reusedPort = addConnection(connected, "road", duplicate.id, "port_demo_east", "instance_tower", "port_tower_east");
+    expect(reusedPort.connections).toHaveLength(2);
+
+    const invalid = addConnection(project, "door", source.id, "port_tower_west", "instance_tower", "port_demo_east");
+    expect(invalid).toBe(project);
+  });
+
+  it("updates and removes a connection without changing its endpoints", () => {
+    const project = createDemoProject();
+    const connection = project.connections[0];
+    const updated = updateConnection(project, connection.id, { type: "elevator" });
+    expect(updated.connections[0]).toEqual({ ...connection, type: "elevator" });
+    expect(removeConnection(updated, connection.id).connections).toEqual([]);
+  });
+
+  it("does not create connector geometry when a connection type changes", () => {
+    const project = createDemoProject();
+    const connection = project.connections[0];
+    const before = buildDeploymentGeometry(project);
+    const after = buildDeploymentGeometry(updateConnection(project, connection.id, { type: "elevator" }));
+    expect(after).toHaveLength(before.length);
+    for (const blockId of ["block_demo_stairs", "block_tower_stairs"]) {
+      expect(after.filter((primitive) => primitive.sourceBlockId === blockId)).toHaveLength(
+        before.filter((primitive) => primitive.sourceBlockId === blockId).length,
+      );
+    }
   });
 
   it("loads the deterministic Lothric reference as complete V2 topology", () => {

@@ -21,6 +21,7 @@ V2 Phase 0 不变量：
 - 关系图位置`graphPosition`与实际`assemblyTransform`严格分开，拖动节点不改变 3D/UE 坐标。
 - UE 同步键只由`projectId/moduleInstanceId/blockId`形成；显示名称变化不能改变身份。
 - `resolveAssembly()`是 3D 与 UE dry-run 的模块 Transform 单一来源。每个连通分支以第一条连接的源实例为锚，端口必须相向并应用`CONNECTION_RULES`偏移；闭环与并行边不得静默忽略残差。
+- 端口占用键必须由`moduleInstanceId/portBlockId`共同形成；模块定义复用时，不能因共享 Port block ID 而锁住其他实例的对应端口。连接建立必须验证 Port 确实属于端点实例引用的模块定义；选中连接后允许修改类型和删除，但类型变化只影响组装求解，不自动生成连接器几何。
 - 3D 和 UE 均从同一规范化积木参数解释派生。Doorway 和 Stairs 可展开多个预览 primitive，但一个来源积木仍只对应一个 UE Actor 计划。
 - 3D 默认收起；展开后从 236px 左侧模块库右缘覆盖到窗口右缘。预览必须通过截图像素和轨道交互验证为非空。
 - `W/E/R`、复制、粘贴、`Ctrl+D`、删除和撤销重做在组装与模块内部按各自选择语义工作；输入框焦点屏蔽画布快捷键。
@@ -60,7 +61,7 @@ V2 Phase 0 不变量：
 - `config/ue-parametric-blocks.json` 是放置器、检查器、AI、导入和导出的参数化 Schema 单一来源。
 - 未知 AI `blockType` 不得伪装成 UE 积木；移除无效 UE 元数据并保留普通形状。
 - 本地文件名必须防目录穿越；关卡至少校验 `shapes`、`entities`、`layers`。
-- 个人关卡 JSON 和最后打开状态保持 Git ignored；测试使用临时目录。
+- 仓库内`data/levels/`的共享关卡 JSON 和最后打开状态进入 Git；个人关卡通过`LAYOUT_TOOLS_DATA_DIR`放在仓库外。测试必须继续使用临时目录，不得改写已跟踪关卡。
 - 白盒规范保存在关卡根级`blockoutProfile`。只有显式识别的 Doorway、Stairs、Ramp 和带 corridor/landing 语义的形状参与检查；规范关闭时不得产生错误，`enforceUeImport`关闭时错误只提示不阻止 Apply。
 - 模块包必须包含共同基线、当前内容和确定性修订值；相同稳定 ID 的对象进行三方合并，同字段冲突不得静默覆盖。模块包只管理模块定义及内部内容，不携带实例和外部连接。
 - 简化编辑工作条只在模块内部显示，必须复用原画布选择与历史。`W/E/R`可配置但不区分世界/局部轴；锁定、隔离和搜索属于`editorWorkflow`元数据，不得改变 UE 导出几何。Box、Stairs Linear 和 Ramp 的数值缩放必须保持二维尺寸与关键参数同步；其他参数化类型继续用原检查器或控制柄编辑。
@@ -127,4 +128,4 @@ python C:\Users\zhaowenbo\.codex\skills\.system\skill-creator\scripts\quick_vali
 
 ## Git 整理
 
-提交前检查暂存范围和 `git diff --cached --check`。不要纳入 `data/levels/*.json`、`.library-state.json`、API Key、UE 临时导出或无关工作区改动。提交信息应描述实际功能变化；推送只在用户明确要求时执行。
+提交前检查暂存范围和 `git diff --cached --check`。完整仓库提交应纳入`data/levels/*.json`和`.library-state.json`的当前变更，但仍不得纳入 API Key、UE 临时导出或无关工作区改动。提交信息应描述实际功能变化；推送只在用户明确要求时执行。

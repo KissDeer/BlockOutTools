@@ -26,7 +26,7 @@ Read only the references needed for the current request. Use `USER_MANUAL.md` wh
 - Browser-only layout work does not authorize UE writes. Always separate web JSON changes, UE dry-run plans, and confirmed UE apply operations.
 - The current V2 `UE 计划` is local dry-run only. It does not connect to MCP and cannot Apply.
 - UE apply requires an explicit user request or confirmation, the expected project name and full `.uproject` path, and a successful dry-run. The bridge does not save the UE level.
-- Local level JSON in `data/levels/` is user data and stays ignored by Git. Preserve it during tests, cleanup, and commits.
+- Local level JSON and `.library-state.json` in `data/levels/` are repository-tracked shared examples and restore state. Preserve them during tests and cleanup; include their current changes when the user requests a full repository commit. Store personal levels outside the repository with `LAYOUT_TOOLS_DATA_DIR`.
 - External AI requests require the user's configured provider, model, and API key. Never read, log, or move that key into the bridge.
 
 ## Keep This Skill Current
