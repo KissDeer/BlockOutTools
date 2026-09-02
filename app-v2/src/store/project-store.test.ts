@@ -21,6 +21,7 @@ describe("project store clipboard actions", () => {
       view: "assembly",
       activeInstanceId: null,
       selectedInstanceId: project.instances[0].id,
+      selectedConnectionId: null,
       selectedBlockIds: [],
       instanceClipboardId: null,
       blockClipboard: [],
@@ -53,6 +54,7 @@ describe("project store clipboard actions", () => {
       view: "module",
       activeInstanceId: project.instances[0].id,
       selectedInstanceId: project.instances[0].id,
+      selectedConnectionId: null,
       selectedBlockIds: [source.id],
       instanceClipboardId: null,
       blockClipboard: [],
@@ -68,5 +70,26 @@ describe("project store clipboard actions", () => {
     expect(duplicated?.id).not.toBe(source.id);
     expect(duplicated?.name).toBe(`${source.name} 副本`);
     expect(next.selectedBlockIds).toEqual([duplicated?.id]);
+  });
+
+  it("edits and deletes the selected connection", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("localStorage", { getItem: vi.fn(() => null), setItem: vi.fn() });
+    const { useProjectStore } = await import("./project-store");
+    const project = createDemoProject();
+    useProjectStore.setState({
+      project,
+      view: "assembly",
+      selectedInstanceId: null,
+      selectedConnectionId: project.connections[0].id,
+      past: [],
+      future: [],
+    });
+
+    useProjectStore.getState().updateSelectedConnectionType("elevator");
+    expect(useProjectStore.getState().project.connections[0].type).toBe("elevator");
+    useProjectStore.getState().deleteSelectedConnection();
+    expect(useProjectStore.getState().project.connections).toEqual([]);
+    expect(useProjectStore.getState().selectedConnectionId).toBeNull();
   });
 });

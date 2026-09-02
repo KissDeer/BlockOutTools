@@ -4,5 +4,3 @@ app-v2/dist/
 .DS_Store
 Thumbs.db
 *.log
-data/levels/*.json
-data/levels/.library-state.json

@@ -49,7 +49,7 @@ npm test
 
 页面右下角的 `本地` 面板用于管理本机 JSON 关卡文件。编辑内容会在 800 ms 后自动保存；刷新页面或重启服务时，会恢复上次打开的文件。也可以输入文件名另存当前关卡，或从列表选择并打开已有文件。
 
-默认保存目录是 `data/levels/`，默认文件是 `autosave.json`。该目录中的个人关卡和最后打开记录不会提交到 Git。需要把关卡库存到其他位置时，可在启动前指定绝对目录：
+默认保存目录是 `data/levels/`，默认文件是 `autosave.json`。该目录中的关卡和最后打开记录随仓库提交，用于共享当前示例与恢复状态；不希望进入版本控制的个人关卡应通过 `LAYOUT_TOOLS_DATA_DIR` 保存到仓库外的绝对目录：
 
 ```powershell
 $env:LAYOUT_TOOLS_DATA_DIR = "D:\LayoutToolsLevels"

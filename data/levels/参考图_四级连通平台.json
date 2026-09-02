@@ -1,0 +1,4731 @@
+{
+  "name": "参考图_四级连通平台",
+  "gridSize": 50,
+  "showDimensions": true,
+  "rotationStep": 15,
+  "shapes": [
+    {
+      "id": "cylinder-001",
+      "type": "circle",
+      "x": -346,
+      "y": 454,
+      "rotation": 0,
+      "color": "#B8C3CC",
+      "opacity": 0.82,
+      "area": 145220.12041218817,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "cylinder",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder_C",
+        "parameters": {
+          "CylinderRadius": 215,
+          "CylinderHeight": 10,
+          "CylinderQuality": 3,
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "radius": 215,
+      "name": "西侧最低圆形平台",
+      "pathData": "M-576.97189,453.78877c0,-127.43033 103.44192,-230.73303 231.04399,-230.73303c127.60207,0 231.04399,103.30269 231.04399,230.73303c0,127.43033 -103.44192,230.73303 -231.04399,230.73303c-127.60207,0 -231.04399,-103.30269 -231.04399,-230.73303z",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "box-002",
+      "type": "rect",
+      "x": 150,
+      "y": 350,
+      "width": 380,
+      "height": 180,
+      "rotation": 0,
+      "color": "#B8C3CC",
+      "opacity": 0.82,
+      "area": 68400,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "box",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+        "parameters": {
+          "BoxSize": [
+            380,
+            180,
+            10
+          ],
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "西侧连接走廊",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "box-003",
+      "type": "rect",
+      "x": 1321,
+      "y": 349,
+      "width": 760,
+      "height": 180,
+      "rotation": 0,
+      "color": "#B8C3CC",
+      "opacity": 0.82,
+      "area": 136800,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "box",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+        "parameters": {
+          "BoxSize": [
+            760,
+            180,
+            10
+          ],
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "东侧主走廊",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "cylinder-004",
+      "type": "circle",
+      "x": 2469,
+      "y": 454,
+      "rotation": 0,
+      "color": "#B8C3CC",
+      "opacity": 0.82,
+      "area": 152053.084433746,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "cylinder",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder_C",
+        "parameters": {
+          "CylinderRadius": 220,
+          "CylinderHeight": 10,
+          "CylinderQuality": 3,
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "radius": 220,
+      "name": "东侧最低圆形平台",
+      "pathData": "M2232.09317,453.78877c0,-130.39383 105.84754,-236.09891 236.41711,-236.09891c130.56956,0 236.41711,105.70508 236.41711,236.09891c0,130.39383 -105.84754,236.09891 -236.41711,236.09891c-130.56956,0 -236.41711,-105.70508 -236.41711,-236.09891z",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "box-005",
+      "type": "rect",
+      "x": 995,
+      "y": 3,
+      "width": 180,
+      "height": 260,
+      "rotation": 0,
+      "color": "#B8C3CC",
+      "opacity": 0.82,
+      "area": 46800,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "box",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+        "parameters": {
+          "BoxSize": [
+            180,
+            260,
+            10
+          ],
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "北侧连接走廊",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "box-006",
+      "type": "rect",
+      "x": 1160,
+      "y": 4,
+      "width": 360,
+      "height": 160,
+      "rotation": 0,
+      "color": "#B8C3CC",
+      "opacity": 0.82,
+      "area": 57600,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "box",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+        "parameters": {
+          "BoxSize": [
+            360,
+            160,
+            10
+          ],
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "北侧横向平台",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "cylinder-007",
+      "type": "circle",
+      "x": 1085,
+      "y": -220,
+      "rotation": 0,
+      "color": "#B8C3CC",
+      "opacity": 0.82,
+      "area": 70685.83470577035,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "cylinder",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder_C",
+        "parameters": {
+          "CylinderRadius": 150,
+          "CylinderHeight": 10,
+          "CylinderQuality": 3,
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7647058823529411,
+            0.8,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "radius": 150,
+      "name": "北侧最低圆形平台",
+      "pathData": "M924.27673,-220.1663c0,-88.90488 72.16878,-160.97653 161.19348,-160.97653c89.0247,0 161.19348,72.07165 161.19348,160.97653c0,88.90488 -72.16878,160.97653 -161.19348,160.97653c-89.0247,0 -161.19348,-72.07165 -161.19348,-160.97653z",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "cylinder-008",
+      "type": "circle",
+      "x": 656,
+      "y": 454,
+      "rotation": 0,
+      "color": "#B8BFB2",
+      "opacity": 0.82,
+      "area": 188574.09903172732,
+      "layerId": "height-100",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "cylinder",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder_C",
+        "parameters": {
+          "CylinderRadius": 245,
+          "CylinderHeight": 10,
+          "CylinderQuality": 3,
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7490196078431373,
+            0.6980392156862745,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7490196078431373,
+            0.6980392156862745,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "radius": 245,
+      "name": "中央低圆形平台",
+      "pathData": "M392.33824,453.78877c0,-145.21131 117.87567,-262.92833 263.28269,-262.92833c145.40701,0 263.28269,117.71702 263.28269,262.92833c0,145.21131 -117.87567,262.92833 -263.28269,262.92833c-145.40701,0 -263.28269,-117.71702 -263.28269,-262.92833z",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "box-009",
+      "type": "rect",
+      "x": 473,
+      "y": 753,
+      "width": 300,
+      "height": 300,
+      "rotation": 0,
+      "color": "#C8C0A9",
+      "opacity": 0.82,
+      "area": 90000,
+      "layerId": "height-200",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "box",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+        "parameters": {
+          "BoxSize": [
+            300,
+            300,
+            10
+          ],
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7843137254901961,
+            0.7529411764705882,
+            0.6627450980392157,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7843137254901961,
+            0.7529411764705882,
+            0.6627450980392157,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "中央中层平台",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "cylinder-010",
+      "type": "circle",
+      "x": 575,
+      "y": 1385,
+      "rotation": 0,
+      "color": "#B8AEA3",
+      "opacity": 0.82,
+      "area": 119459.06065275188,
+      "layerId": "height-300",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "cylinder",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder_C",
+        "parameters": {
+          "CylinderRadius": 195,
+          "CylinderHeight": 10,
+          "CylinderQuality": 3,
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.6823529411764706,
+            0.6392156862745098,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.6823529411764706,
+            0.6392156862745098,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "radius": 195,
+      "name": "中央高圆形平台",
+      "pathData": "M365.47266,1385.30629c0,-115.57635 93.81941,-209.26949 209.55153,-209.26949c115.73211,0 209.55153,93.69314 209.55153,209.26949c0,115.57635 -93.81941,209.26949 -209.55153,209.26949c-115.73211,0 -209.55153,-93.69314 -209.55153,-209.26949z",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "box-011",
+      "type": "rect",
+      "x": 2374,
+      "y": 728,
+      "width": 250,
+      "height": 300,
+      "rotation": 0,
+      "color": "#B8BFB2",
+      "opacity": 0.82,
+      "area": 75000,
+      "layerId": "height-100",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "box",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+        "parameters": {
+          "BoxSize": [
+            250,
+            300,
+            10
+          ],
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.7490196078431373,
+            0.6980392156862745,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.7490196078431373,
+            0.6980392156862745,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "东侧低层连接台",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "cylinder-012",
+      "type": "circle",
+      "x": 2564,
+      "y": 1385,
+      "rotation": 0,
+      "color": "#B8AEA3",
+      "opacity": 0.82,
+      "area": 119459.06065275188,
+      "layerId": "height-300",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "cylinder",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Cylinder.Blockout_Cylinder_C",
+        "parameters": {
+          "CylinderRadius": 195,
+          "CylinderHeight": 10,
+          "CylinderQuality": 3,
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.7215686274509804,
+            0.6823529411764706,
+            0.6392156862745098,
+            1
+          ],
+          "blockout_material_use_grid": true,
+          "blockout_world_aligned": true,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.7215686274509804,
+            0.6823529411764706,
+            0.6392156862745098,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "radius": 195,
+      "name": "东侧高圆形平台",
+      "pathData": "M2354.60022,1385.30629c0,-115.57635 93.81941,-209.26949 209.55153,-209.26949c115.73211,0 209.55153,93.69314 209.55153,209.26949c0,115.57635 -93.81941,209.26949 -209.55153,209.26949c-115.73211,0 -209.55153,-93.69314 -209.55153,-209.26949z",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "stairs-linear-013",
+      "type": "rect",
+      "x": 260,
+      "y": 350,
+      "width": 140,
+      "height": 240,
+      "rotation": 90,
+      "color": "#777777",
+      "opacity": 1,
+      "area": 33600,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "stairs-linear",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+        "parameters": {
+          "StairsSize": [
+            140,
+            240,
+            100
+          ],
+          "NumberOfSteps": 10,
+          "StairsType": "CLOSED",
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_material_use_grid": false,
+          "blockout_world_aligned": false,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "西侧至中央低平台",
+      "isStairs": true,
+      "stairsType": "straight",
+      "stairsMode": "steps",
+      "stairsDirection": "vertical",
+      "stairsTargetLayerId": "height-100",
+      "stairsCount": 10,
+      "floorCutMode": "none",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "stairs-linear-014",
+      "type": "rect",
+      "x": 951,
+      "y": 334,
+      "width": 140,
+      "height": 240,
+      "rotation": 270,
+      "color": "#777777",
+      "opacity": 1,
+      "area": 33600,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "stairs-linear",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+        "parameters": {
+          "StairsSize": [
+            140,
+            240,
+            100
+          ],
+          "NumberOfSteps": 10,
+          "StairsType": "CLOSED",
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_material_use_grid": false,
+          "blockout_world_aligned": false,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "中央低平台至东侧走廊",
+      "isStairs": true,
+      "stairsType": "straight",
+      "stairsMode": "steps",
+      "stairsDirection": "vertical",
+      "stairsTargetLayerId": "height-100",
+      "stairsCount": 10,
+      "floorCutMode": "none",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "stairs-linear-015",
+      "type": "rect",
+      "x": 581,
+      "y": 649,
+      "width": 150,
+      "height": 220,
+      "rotation": 0,
+      "color": "#777777",
+      "opacity": 1,
+      "area": 33000,
+      "layerId": "height-100",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "stairs-linear",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+        "parameters": {
+          "StairsSize": [
+            150,
+            220,
+            100
+          ],
+          "NumberOfSteps": 10,
+          "StairsType": "CLOSED",
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_material_use_grid": false,
+          "blockout_world_aligned": false,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "中央低平台至中层",
+      "isStairs": true,
+      "stairsType": "straight",
+      "stairsMode": "steps",
+      "stairsDirection": "vertical",
+      "stairsTargetLayerId": "height-200",
+      "stairsCount": 10,
+      "floorCutMode": "none",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "stairs-linear-016",
+      "type": "rect",
+      "x": 525,
+      "y": 1035,
+      "width": 150,
+      "height": 220,
+      "rotation": 178.98928171060126,
+      "color": "#777777",
+      "opacity": 1,
+      "area": 33000,
+      "layerId": "height-200",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "stairs-linear",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+        "parameters": {
+          "StairsSize": [
+            150,
+            220,
+            100
+          ],
+          "NumberOfSteps": 10,
+          "StairsType": "CLOSED",
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_material_use_grid": false,
+          "blockout_world_aligned": false,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "中央中层至高平台",
+      "isStairs": true,
+      "stairsType": "straight",
+      "stairsMode": "steps",
+      "stairsDirection": "vertical",
+      "stairsTargetLayerId": "height-300",
+      "stairsCount": 10,
+      "floorCutMode": "none",
+      "stepDepth": 8,
+      "strokeExclusions": [],
+      "strokeWindows": [],
+      "pathData": "M946.03378,1146.16796l-159.00928,2.86899l-4.07076,-241.06798l159.00928,-2.86899z"
+    },
+    {
+      "id": "stairs-linear-017",
+      "type": "rect",
+      "x": 2394,
+      "y": 640,
+      "width": 150,
+      "height": 190,
+      "rotation": 0,
+      "color": "#777777",
+      "opacity": 1,
+      "area": 28500,
+      "layerId": "height-000",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "stairs-linear",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+        "parameters": {
+          "StairsSize": [
+            150,
+            190,
+            100
+          ],
+          "NumberOfSteps": 10,
+          "StairsType": "CLOSED",
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_material_use_grid": false,
+          "blockout_world_aligned": false,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "东侧最低平台至低层连接台",
+      "isStairs": true,
+      "stairsType": "straight",
+      "stairsMode": "steps",
+      "stairsDirection": "vertical",
+      "stairsTargetLayerId": "height-100",
+      "stairsCount": 10,
+      "floorCutMode": "none",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "stairs-linear-018",
+      "type": "rect",
+      "x": 2442,
+      "y": 966,
+      "width": 150,
+      "height": 260,
+      "rotation": 0,
+      "color": "#777777",
+      "opacity": 1,
+      "area": 39000,
+      "layerId": "height-100",
+      "ueBlockout": {
+        "kind": "parametric",
+        "blockType": "stairs-linear",
+        "blueprintAssetPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear",
+        "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+        "parameters": {
+          "StairsSize": [
+            150,
+            260,
+            200
+          ],
+          "NumberOfSteps": 20,
+          "StairsType": "CLOSED",
+          "bRoundSize": true,
+          "blockout_material_type": "BLOCKOUT_MATERIAL_TYPE_GRID",
+          "blockout_material_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_material_use_grid": false,
+          "blockout_world_aligned": false,
+          "blockout_material_grid_size": 200,
+          "blockout_material_checker_luminance": 0.3,
+          "blockout_material_roughness": 1,
+          "blockout_material_use_top_color": true,
+          "blockout_material_top_color": [
+            0.4666666666666667,
+            0.4666666666666667,
+            0.4666666666666667,
+            1
+          ],
+          "blockout_custom_material": "/BlockoutToolsPlugin/Materials/MI_BlockoutTools_Custom.MI_BlockoutTools_Custom",
+          "blockout_enable_collisions": true,
+          "blockout_enable_custom_collision": false,
+          "blockout_custom_collision_profile_name": "None",
+          "blockout_cast_shadows": true
+        }
+      },
+      "name": "东侧低层连接台至高平台",
+      "isStairs": true,
+      "stairsType": "straight",
+      "stairsMode": "steps",
+      "stairsDirection": "vertical",
+      "stairsTargetLayerId": "height-300",
+      "stairsCount": 20,
+      "floorCutMode": "none",
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-019",
+      "name": "西走廊北墙",
+      "type": "path",
+      "x": -76,
+      "y": 289,
+      "width": 366,
+      "height": 39,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-75.71009836082308,328.00814694427316 L290.0655402342825,328.00814694427316 L290.0655402342825,289.4381469442731 L-75.71009836082308,289.4381469442731 L-75.71009836082308,328.00814694427316 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -75.71009836082308,
+          "y": 308.72314694427314
+        },
+        {
+          "x": 290.0655402342825,
+          "y": 308.72314694427314
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-020",
+      "name": "西走廊南墙",
+      "type": "path",
+      "x": -76,
+      "y": 579,
+      "width": 366,
+      "height": 39,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-75.71009836082308,617.3361844978065 L290.0655402342825,617.3361844978065 L290.0655402342825,578.7661844978065 L-75.71009836082308,578.7661844978065 L-75.71009836082308,617.3361844978065 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -75.71009836082308,
+          "y": 598.0511844978065
+        },
+        {
+          "x": 290.0655402342825,
+          "y": 598.0511844978065
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-021",
+      "name": "东走廊北墙",
+      "type": "path",
+      "x": 1022,
+      "y": 289,
+      "width": 1113,
+      "height": 39,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1021.616817424494,328.00814694427316 L2134.8470218443804,328.00814694427316 L2134.8470218443804,289.4381469442731 L1021.616817424494,289.4381469442731 L1021.616817424494,328.00814694427316 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1021.616817424494,
+          "y": 308.72314694427314
+        },
+        {
+          "x": 2134.8470218443804,
+          "y": 308.72314694427314
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-022",
+      "name": "东走廊南墙",
+      "type": "path",
+      "x": 1022,
+      "y": 579,
+      "width": 1113,
+      "height": 39,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1021.616817424494,617.3361844978065 L2134.8470218443804,617.3361844978065 L2134.8470218443804,578.7661844978065 L1021.616817424494,578.7661844978065 L1021.616817424494,617.3361844978065 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1021.616817424494,
+          "y": 598.0511844978065
+        },
+        {
+          "x": 2134.8470218443804,
+          "y": 598.0511844978065
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-023",
+      "name": "北支路西墙",
+      "type": "path",
+      "x": 923,
+      "y": 19,
+      "width": 38,
+      "height": 273,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 9.094947017729282e-12,
+      "layerId": "height-000",
+      "pathData": "M923.0153742516447,19.395109390739947 L923.0153742516447,292.649367080188 L961.1853742516448,292.649367080188 L961.1853742516448,19.395109390739947 L923.0153742516447,19.395109390739947 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 942.1003742516448,
+          "y": 19.395109390739947
+        },
+        {
+          "x": 942.1003742516448,
+          "y": 292.649367080188
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-024",
+      "name": "北支路东墙",
+      "type": "path",
+      "x": 1209,
+      "y": -45,
+      "width": 38,
+      "height": 338,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 1.4551915228366852e-11,
+      "layerId": "height-000",
+      "pathData": "M1209.2745696739007,-44.90001006560081 L1209.2745696739007,292.649367080188 L1247.4445696739008,292.649367080188 L1247.4445696739008,-44.90001006560081 L1209.2745696739007,-44.90001006560081 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1228.3595696739008,
+          "y": -44.90001006560081
+        },
+        {
+          "x": 1228.3595696739008,
+          "y": 292.649367080188
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-025",
+      "name": "北横台北墙",
+      "type": "path",
+      "x": 1228,
+      "y": -64,
+      "width": 398,
+      "height": 39,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1228.3595696739008,-25.61501006560081 L1625.941785538146,-25.61501006560081 L1625.941785538146,-64.1850100656008 L1228.3595696739008,-64.1850100656008 L1228.3595696739008,-25.61501006560081 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1228.3595696739008,
+          "y": -44.90001006560081
+        },
+        {
+          "x": 1625.941785538146,
+          "y": -44.90001006560081
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-026",
+      "name": "北横台南墙",
+      "type": "path",
+      "x": 1228,
+      "y": 193,
+      "width": 398,
+      "height": 39,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1228.3595696739008,231.56546775976219 L1625.941785538146,231.56546775976219 L1625.941785538146,192.9954677597622 L1228.3595696739008,192.9954677597622 L1228.3595696739008,231.56546775976219 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1228.3595696739008,
+          "y": 212.2804677597622
+        },
+        {
+          "x": 1625.941785538146,
+          "y": 212.2804677597622
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-027",
+      "name": "北横台东墙",
+      "type": "path",
+      "x": 1607,
+      "y": -45,
+      "width": 38,
+      "height": 257,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 1.4551915228366852e-11,
+      "layerId": "height-000",
+      "pathData": "M1606.856785538146,-44.90001006560081 L1606.856785538146,212.2804677597622 L1645.026785538146,212.2804677597622 L1645.026785538146,-44.90001006560081 L1606.856785538146,-44.90001006560081 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1625.941785538146,
+          "y": -44.90001006560081
+        },
+        {
+          "x": 1625.941785538146,
+          "y": 212.2804677597622
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-028",
+      "name": "中央中层西墙",
+      "type": "path",
+      "x": 366,
+      "y": 727,
+      "width": 38,
+      "height": 321,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-200",
+      "pathData": "M366.40027204170116,726.6414234104877 L366.40027204170116,1048.1170206921913 L404.5702720417011,1048.1170206921913 L404.5702720417011,726.6414234104877 L366.40027204170116,726.6414234104877 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 385.48527204170114,
+          "y": 726.6414234104877
+        },
+        {
+          "x": 385.48527204170114,
+          "y": 1048.1170206921913
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-029",
+      "name": "中央中层东墙",
+      "type": "path",
+      "x": 843,
+      "y": 727,
+      "width": 38,
+      "height": 321,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-200",
+      "pathData": "M843.4989310787955,726.6414234104877 L843.4989310787955,1048.1170206921913 L881.6689310787956,1048.1170206921913 L881.6689310787956,726.6414234104877 L843.4989310787955,726.6414234104877 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 862.5839310787956,
+          "y": 726.6414234104877
+        },
+        {
+          "x": 862.5839310787956,
+          "y": 1048.1170206921913
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-030",
+      "name": "东侧连接台西墙",
+      "type": "path",
+      "x": 2251,
+      "y": 694,
+      "width": 38,
+      "height": 321,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M2250.9399752382233,694.4938636823174 L2250.9399752382233,1015.9694609640212 L2289.1099752382233,1015.9694609640212 L2289.1099752382233,694.4938636823174 L2250.9399752382233,694.4938636823174 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2270.0249752382233,
+          "y": 694.4938636823174
+        },
+        {
+          "x": 2270.0249752382233,
+          "y": 1015.9694609640212
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-031",
+      "name": "东侧连接台东墙",
+      "type": "path",
+      "x": 2649,
+      "y": 694,
+      "width": 38,
+      "height": 321,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M2648.5221911024682,694.4938636823174 L2648.5221911024682,1015.9694609640212 L2686.6921911024683,1015.9694609640212 L2686.6921911024683,694.4938636823174 L2648.5221911024682,694.4938636823174 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2667.6071911024683,
+          "y": 694.4938636823174
+        },
+        {
+          "x": 2667.6071911024683,
+          "y": 1015.9694609640212
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-032",
+      "name": "西圆墙 2",
+      "type": "path",
+      "x": -85,
+      "y": 540,
+      "width": 101,
+      "height": 127,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 1.8189894035458565e-12,
+      "layerId": "height-000",
+      "pathData": "M-15.966968080957706,539.5456633256013 L-85.31575098795287,645.4624553341142 L-53.38181482603745,666.3711286829117 L15.966968080957706,560.4543366743987 L-15.966968080957706,539.5456633256013 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 0,
+          "y": 550
+        },
+        {
+          "x": -69.34878290699515,
+          "y": 655.916792008513
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-033",
+      "name": "西圆墙 3",
+      "type": "path",
+      "x": -159,
+      "y": 643,
+      "width": 103,
+      "height": 104,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-82.72018626063038,642.6872163405487 L-159.05597170656551,719.8413596881578 L-132.31316499929505,746.3005110240863 L-55.977379553359924,669.1463676764772 L-82.72018626063038,642.6872163405487 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -69.34878290699515,
+          "y": 655.916792008513
+        },
+        {
+          "x": -145.68456835293028,
+          "y": 733.070935356122
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-034",
+      "name": "西圆墙 4",
+      "type": "path",
+      "x": -250,
+      "y": 716,
+      "width": 113,
+      "height": 83,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-154.3828119496116,715.8589690729575 L-249.8025437570304,764.080308665213 L-232.40605656366776,798.5042412315421 L-136.98632475624896,750.2829016392866 L-154.3828119496116,715.8589690729575 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -145.68456835293028,
+          "y": 733.070935356122
+        },
+        {
+          "x": -241.10430016034908,
+          "y": 781.2922749483776
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-035",
+      "name": "西圆墙 5",
+      "type": "path",
+      "x": -349,
+      "y": 762,
+      "width": 111,
+      "height": 56,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-244.30779024880442,762.2752069237538 L-349.26949523696527,779.9563647742473 L-342.8625150600546,817.9905008234948 L-237.90081007189374,800.3093429730013 L-244.30779024880442,762.2752069237538 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -241.10430016034908,
+          "y": 781.2922749483776
+        },
+        {
+          "x": -346.06600514850993,
+          "y": 798.973432798871
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-036",
+      "name": "西圆墙 6",
+      "type": "path",
+      "x": -454,
+      "y": 762,
+      "width": 111,
+      "height": 56,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-342.8625150600546,779.9563647742473 L-447.8242200482153,762.2752069237538 L-454.231200225126,800.3093429730013 L-349.26949523696527,817.9905008234948 L-342.8625150600546,779.9563647742473 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -346.06600514850993,
+          "y": 798.973432798871
+        },
+        {
+          "x": -451.02771013667063,
+          "y": 781.2922749483776
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-037",
+      "name": "西圆墙 7",
+      "type": "path",
+      "x": -555,
+      "y": 716,
+      "width": 113,
+      "height": 83,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-442.3294665399893,764.080308665213 L-537.7491983474081,715.8589690729575 L-555.1456855407707,750.2829016392866 L-459.72595373335196,798.5042412315421 L-442.3294665399893,764.080308665213 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -451.02771013667063,
+          "y": 781.2922749483776
+        },
+        {
+          "x": -546.4474419440894,
+          "y": 733.070935356122
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-038",
+      "name": "西圆墙 8",
+      "type": "path",
+      "x": -636,
+      "y": 643,
+      "width": 103,
+      "height": 104,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-533.0760385904541,719.8413596881578 L-609.4118240363892,642.6872163405487 L-636.1546307436598,669.1463676764772 L-559.8188452977247,746.3005110240863 L-533.0760385904541,719.8413596881578 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -546.4474419440894,
+          "y": 733.070935356122
+        },
+        {
+          "x": -622.7832273900245,
+          "y": 655.916792008513
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-039",
+      "name": "西圆墙 9",
+      "type": "path",
+      "x": -688,
+      "y": 551,
+      "width": 82,
+      "height": 113,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-605.6769501957401,647.4543747680133 L-653.3868160994496,551.0116955835024 L-687.5993704880182,567.9365300645018 L-639.889504584309,664.3792092490127 L-605.6769501957401,647.4543747680133 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -622.7832273900245,
+          "y": 655.916792008513
+        },
+        {
+          "x": -670.4930932937339,
+          "y": 559.4741128240021
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-040",
+      "name": "西圆墙 10",
+      "type": "path",
+      "x": -707,
+      "y": 450,
+      "width": 55,
+      "height": 112,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-651.6623949233901,556.3689519770998 L-669.156012421417,450.2820048741374 L-706.8174091621045,456.4923265679419 L-689.3237916640776,562.5792736709044 L-651.6623949233901,556.3689519770998 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -670.4930932937339,
+          "y": 559.4741128240021
+        },
+        {
+          "x": -687.9867107917607,
+          "y": 453.38716572103965
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-041",
+      "name": "西圆墙 11",
+      "type": "path",
+      "x": -707,
+      "y": 344,
+      "width": 55,
+      "height": 112,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-669.156012421417,456.4923265679419 L-651.6623949233901,350.4053794649798 L-689.3237916640776,344.19505777117524 L-706.8174091621045,450.2820048741374 L-669.156012421417,456.4923265679419 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -687.9867107917607,
+          "y": 453.38716572103965
+        },
+        {
+          "x": -670.4930932937339,
+          "y": 347.3002186180775
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-042",
+      "name": "西圆墙 12",
+      "type": "path",
+      "x": -688,
+      "y": 242,
+      "width": 82,
+      "height": 113,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-653.3868160994494,355.7626358585772 L-605.6769501957401,259.31995667406625 L-639.889504584309,242.39512219306684 L-687.5993704880183,338.8378013775778 L-653.3868160994494,355.7626358585772 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -670.4930932937339,
+          "y": 347.3002186180775
+        },
+        {
+          "x": -622.7832273900245,
+          "y": 250.85753943356656
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-043",
+      "name": "西圆墙 13",
+      "type": "path",
+      "x": -636,
+      "y": 160,
+      "width": 103,
+      "height": 104,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-609.4118240363894,264.08711510153086 L-533.0760385904542,186.93297175392186 L-559.8188452977246,160.47382041799332 L-636.1546307436597,237.6279637656023 L-609.4118240363894,264.08711510153086 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -622.7832273900245,
+          "y": 250.85753943356656
+        },
+        {
+          "x": -546.4474419440894,
+          "y": 173.7033960859576
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-044",
+      "name": "西圆墙 14",
+      "type": "path",
+      "x": -555,
+      "y": 108,
+      "width": 113,
+      "height": 83,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-537.7491983474081,190.91536236912214 L-442.3294665399893,142.6940227768667 L-459.72595373335196,108.27009021053762 L-555.1456855407707,156.49142980279305 L-537.7491983474081,190.91536236912214 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -546.4474419440894,
+          "y": 173.7033960859576
+        },
+        {
+          "x": -451.02771013667063,
+          "y": 125.48205649370215
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-045",
+      "name": "西圆墙 15",
+      "type": "path",
+      "x": -454,
+      "y": 89,
+      "width": 111,
+      "height": 56,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-447.8242200482153,144.4991245183259 L-342.8625150600546,126.81796666783227 L-349.26949523696527,88.7838306185847 L-454.231200225126,106.46498846907836 L-447.8242200482153,144.4991245183259 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -451.02771013667063,
+          "y": 125.48205649370215
+        },
+        {
+          "x": -346.06600514850993,
+          "y": 107.80089864320848
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-046",
+      "name": "西圆墙 16",
+      "type": "path",
+      "x": -349,
+      "y": 89,
+      "width": 111,
+      "height": 56,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-349.26949523696527,126.81796666783227 L-244.30779024880445,144.4991245183259 L-237.90081007189372,106.46498846907836 L-342.8625150600546,88.7838306185847 L-349.26949523696527,126.81796666783227 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -346.06600514850993,
+          "y": 107.80089864320848
+        },
+        {
+          "x": -241.10430016034908,
+          "y": 125.48205649370215
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-047",
+      "name": "西圆墙 17",
+      "type": "path",
+      "x": -250,
+      "y": 108,
+      "width": 113,
+      "height": 83,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M-249.80254375703038,142.6940227768667 L-154.38281194961158,190.91536236912214 L-136.986324756249,156.49142980279305 L-232.4060565636678,108.27009021053762 L-249.80254375703038,142.6940227768667 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -241.10430016034908,
+          "y": 125.48205649370215
+        },
+        {
+          "x": -145.68456835293028,
+          "y": 173.7033960859576
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-048",
+      "name": "西圆墙 18",
+      "type": "path",
+      "x": -159,
+      "y": 160,
+      "width": 103,
+      "height": 104,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 9.094947017729282e-13,
+      "layerId": "height-000",
+      "pathData": "M-159.05597170656551,186.93297175392186 L-82.72018626063038,264.08711510153086 L-55.97737955335993,237.6279637656023 L-132.31316499929505,160.47382041799332 L-159.05597170656551,186.93297175392186 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -145.68456835293028,
+          "y": 173.7033960859576
+        },
+        {
+          "x": -69.34878290699515,
+          "y": 250.85753943356656
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-049",
+      "name": "西圆墙 19",
+      "type": "path",
+      "x": -86,
+      "y": 242,
+      "width": 82,
+      "height": 113,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 3.410605131648481e-13,
+      "layerId": "height-000",
+      "pathData": "M-86.45506010127951,259.31995667406625 L-38.74519419757013,355.76263585857726 L-4.5326398090014095,338.83780137757776 L-52.242505712710795,242.39512219306684 L-86.45506010127951,259.31995667406625 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": -69.34878290699515,
+          "y": 250.85753943356656
+        },
+        {
+          "x": -21.63891700328577,
+          "y": 347.3002186180775
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-050",
+      "name": "中央圆墙 2",
+      "type": "path",
+      "x": 954,
+      "y": 567,
+      "width": 90,
+      "height": 127,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M1009.3810259470441,566.8872504052136 L953.71951572605,676.1889534809927 L987.7330718616912,693.5102380467397 L1043.3945820826852,584.2085349709606 L1009.3810259470441,566.8872504052136 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1026.3878040148647,
+          "y": 575.5478926880871
+        },
+        {
+          "x": 970.7262937938706,
+          "y": 684.8495957638662
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-051",
+      "name": "中央圆墙 3",
+      "type": "path",
+      "x": 871,
+      "y": 672,
+      "width": 113,
+      "height": 113,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M957.3548904402353,671.620020095902 L871.4771318135583,758.4184313619621 L898.2199385208289,784.8775826978906 L984.0976971475059,698.0791714318304 L957.3548904402353,671.620020095902 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 970.7262937938706,
+          "y": 684.8495957638662
+        },
+        {
+          "x": 884.8485351671936,
+          "y": 771.6480070299264
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-052",
+      "name": "中央圆墙 4",
+      "type": "path",
+      "x": 768,
+      "y": 755,
+      "width": 126,
+      "height": 90,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M875.9483340443895,754.5395984255694 L767.8059713293144,810.7978279498675 L785.6063735749226,845.0146451585815 L893.7487362899977,788.7564156342834 L875.9483340443895,754.5395984255694 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 884.8485351671936,
+          "y": 771.6480070299264
+        },
+        {
+          "x": 776.7061724521185,
+          "y": 827.9062365542245
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-053",
+      "name": "中央圆墙 7",
+      "type": "path",
+      "x": 418,
+      "y": 755,
+      "width": 126,
+      "height": 90,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M543.8763863294614,810.7978279498675 L435.73402361438696,754.5395984255694 L417.93362136877874,788.7564156342834 L526.0759840838532,845.0146451585815 L543.8763863294614,810.7978279498675 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 534.9761852066573,
+          "y": 827.9062365542245
+        },
+        {
+          "x": 426.83382249158285,
+          "y": 771.6480070299264
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-054",
+      "name": "中央圆墙 8",
+      "type": "path",
+      "x": 328,
+      "y": 672,
+      "width": 113,
+      "height": 113,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M440.2052258452181,758.4184313619621 L354.32746721854113,671.620020095902 L327.58466051127067,698.0791714318304 L413.4624191379476,784.8775826978906 L440.2052258452181,758.4184313619621 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 426.83382249158285,
+          "y": 771.6480070299264
+        },
+        {
+          "x": 340.9560638649059,
+          "y": 684.8495957638662
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-055",
+      "name": "中央圆墙 9",
+      "type": "path",
+      "x": 268,
+      "y": 567,
+      "width": 90,
+      "height": 127,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M357.96284193272646,676.1889534809927 L302.30133171173196,566.8872504052136 L268.28777557609084,584.2085349709606 L323.94928579708534,693.5102380467397 L357.96284193272646,676.1889534809927 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 340.9560638649059,
+          "y": 684.8495957638662
+        },
+        {
+          "x": 285.2945536439114,
+          "y": 575.5478926880871
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-056",
+      "name": "中央圆墙 12",
+      "type": "path",
+      "x": 268,
+      "y": 213,
+      "width": 90,
+      "height": 127,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M302.30133171173196,339.8870810368659 L357.96284193272646,230.5853779610867 L323.94928579708534,213.26409339533961 L268.28777557609084,322.5657964711188 L302.30133171173196,339.8870810368659 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 285.2945536439114,
+          "y": 331.22643875399234
+        },
+        {
+          "x": 340.9560638649059,
+          "y": 221.92473567821315
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-057",
+      "name": "中央圆墙 13",
+      "type": "path",
+      "x": 328,
+      "y": 122,
+      "width": 113,
+      "height": 113,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M354.32746721854113,235.15431134617745 L440.2052258452181,148.35590008011758 L413.4624191379476,121.89674874418898 L327.58466051127067,208.69516001024886 L354.32746721854113,235.15431134617745 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 340.9560638649059,
+          "y": 221.92473567821315
+        },
+        {
+          "x": 426.83382249158285,
+          "y": 135.12632441215328
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-058",
+      "name": "中央圆墙 14",
+      "type": "path",
+      "x": 418,
+      "y": 62,
+      "width": 126,
+      "height": 90,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 3.637978807091713e-12,
+      "layerId": "height-100",
+      "pathData": "M435.73402361438696,152.2347330165103 L543.8763863294614,95.97650349221207 L526.0759840838532,61.759686283498084 L417.93362136877874,118.01791580779629 L435.73402361438696,152.2347330165103 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 426.83382249158285,
+          "y": 135.12632441215328
+        },
+        {
+          "x": 534.9761852066573,
+          "y": 78.86809488785508
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-059",
+      "name": "中央圆墙 15",
+      "type": "path",
+      "x": 532,
+      "y": 41,
+      "width": 127,
+      "height": 57,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M538.0153712291748,97.912111620691 L658.8803648519055,78.62357578378872 L652.8019928068705,40.535542318116896 L531.9369991841398,59.824078155019166 L538.0153712291748,97.912111620691 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 534.9761852066573,
+          "y": 78.86809488785508
+        },
+        {
+          "x": 655.841178829388,
+          "y": 59.57955905095281
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-060",
+      "name": "中央圆墙 16",
+      "type": "path",
+      "x": 653,
+      "y": 41,
+      "width": 127,
+      "height": 57,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M652.8019928068705,78.62357578378872 L773.666986429601,97.912111620691 L779.745358474636,59.824078155019166 L658.8803648519055,40.535542318116896 L652.8019928068705,78.62357578378872 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 655.841178829388,
+          "y": 59.57955905095281
+        },
+        {
+          "x": 776.7061724521185,
+          "y": 78.86809488785508
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-061",
+      "name": "中央圆墙 17",
+      "type": "path",
+      "x": 768,
+      "y": 62,
+      "width": 126,
+      "height": 90,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M767.8059713293144,95.9765034922121 L875.9483340443895,152.2347330165103 L893.7487362899977,118.01791580779626 L785.6063735749226,61.759686283498056 L767.8059713293144,95.9765034922121 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 776.7061724521185,
+          "y": 78.86809488785508
+        },
+        {
+          "x": 884.8485351671936,
+          "y": 135.12632441215328
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-062",
+      "name": "中央圆墙 18",
+      "type": "path",
+      "x": 871,
+      "y": 122,
+      "width": 113,
+      "height": 113,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M871.4771318135585,148.35590008011758 L957.3548904402354,235.15431134617745 L984.0976971475058,208.69516001024886 L898.2199385208288,121.89674874418898 L871.4771318135585,148.35590008011758 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 884.8485351671936,
+          "y": 135.12632441215328
+        },
+        {
+          "x": 970.7262937938706,
+          "y": 221.92473567821315
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-063",
+      "name": "中央圆墙 19",
+      "type": "path",
+      "x": 954,
+      "y": 213,
+      "width": 90,
+      "height": 127,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-100",
+      "pathData": "M953.71951572605,230.58537796108664 L1009.3810259470441,339.8870810368658 L1043.3945820826852,322.56579647111886 L987.7330718616912,213.26409339533967 L953.71951572605,230.58537796108664 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 970.7262937938706,
+          "y": 221.92473567821315
+        },
+        {
+          "x": 1026.3878040148647,
+          "y": 331.22643875399234
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-064",
+      "name": "东圆墙 1",
+      "type": "path",
+      "x": 2782,
+      "y": 450,
+      "width": 55,
+      "height": 115,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2799.843272460452,450.37101845910007 L2782.3496549624256,559.6727215348793 L2820.039976303284,565.7050160587586 L2837.533593801311,456.40331298297923 L2799.843272460452,450.37101845910007 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2818.6884331308815,
+          "y": 453.38716572103965
+        },
+        {
+          "x": 2801.194815632855,
+          "y": 562.688868796819
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-065",
+      "name": "东圆墙 2",
+      "type": "path",
+      "x": 2735,
+      "y": 554,
+      "width": 83,
+      "height": 115,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2784.1438562378644,554.1155375475091 L2734.8436614706984,652.1655947184287 L2768.9455802606794,669.3122572170483 L2818.2457750278454,571.2622000461288 L2784.1438562378644,554.1155375475091 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2801.194815632855,
+          "y": 562.688868796819
+        },
+        {
+          "x": 2751.894620865689,
+          "y": 660.7389259677385
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-066",
+      "name": "东圆墙 3",
+      "type": "path",
+      "x": 2661,
+      "y": 648,
+      "width": 105,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2738.5232175120536,647.5093502997742 L2660.5971032026614,726.2708716337916 L2687.339909909932,752.7300229697203 L2765.266024219324,673.9685016357029 L2738.5232175120536,647.5093502997742 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2751.894620865689,
+          "y": 660.7389259677385
+        },
+        {
+          "x": 2673.9685065562967,
+          "y": 739.5004473017559
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-067",
+      "name": "东圆墙 4",
+      "type": "path",
+      "x": 2568,
+      "y": 722,
+      "width": 115,
+      "height": 84,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2665.157245458783,722.346062938817 L2568.147184787907,772.1747805174809 L2585.769706982934,806.4835492433588 L2682.7797676538103,756.6548316646948 L2665.157245458783,722.346062938817 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2673.9685065562967,
+          "y": 739.5004473017559
+        },
+        {
+          "x": 2576.9584458854206,
+          "y": 789.3291648804199
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-068",
+      "name": "东圆墙 7",
+      "type": "path",
+      "x": 2255,
+      "y": 722,
+      "width": 115,
+      "height": 84,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2369.484981552785,772.1747805174809 L2272.4749208819094,722.346062938817 L2254.852398686882,756.6548316646948 L2351.862459357758,806.4835492433588 L2369.484981552785,772.1747805174809 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2360.6737204552715,
+          "y": 789.3291648804199
+        },
+        {
+          "x": 2263.663659784396,
+          "y": 739.5004473017559
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-069",
+      "name": "东圆墙 8",
+      "type": "path",
+      "x": 2172,
+      "y": 648,
+      "width": 105,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2277.035063138031,726.2708716337916 L2199.1089488286384,647.5093502997742 L2172.366142121368,673.9685016357029 L2250.2922564307605,752.7300229697203 L2277.035063138031,726.2708716337916 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2263.663659784396,
+          "y": 739.5004473017559
+        },
+        {
+          "x": 2185.737545475003,
+          "y": 660.7389259677385
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-070",
+      "name": "东圆墙 9",
+      "type": "path",
+      "x": 2119,
+      "y": 554,
+      "width": 83,
+      "height": 115,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2202.7885048699936,652.1655947184288 L2153.488310102828,554.1155375475092 L2119.386391312847,571.2622000461287 L2168.6865860800126,669.3122572170482 L2202.7885048699936,652.1655947184288 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2185.737545475003,
+          "y": 660.7389259677385
+        },
+        {
+          "x": 2136.4373507078376,
+          "y": 562.688868796819
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-071",
+      "name": "东圆墙 12",
+      "type": "path",
+      "x": 2119,
+      "y": 237,
+      "width": 83,
+      "height": 115,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2153.488310102828,352.6587938945704 L2202.7885048699936,254.6087367236507 L2168.6865860800126,237.46207422503122 L2119.386391312847,335.51213139595086 L2153.488310102828,352.6587938945704 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2136.4373507078376,
+          "y": 344.08546264526063
+        },
+        {
+          "x": 2185.737545475003,
+          "y": 246.03540547434096
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-072",
+      "name": "东圆墙 13",
+      "type": "path",
+      "x": 2172,
+      "y": 154,
+      "width": 105,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2199.1089488286384,259.2649811423053 L2277.035063138031,180.50345980828803 L2250.2922564307605,154.04430847235932 L2172.366142121368,232.8058298063766 L2199.1089488286384,259.2649811423053 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2185.737545475003,
+          "y": 246.03540547434096
+        },
+        {
+          "x": 2263.663659784396,
+          "y": 167.27388414032367
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-073",
+      "name": "东圆墙 14",
+      "type": "path",
+      "x": 2255,
+      "y": 100,
+      "width": 115,
+      "height": 84,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2272.4749208819094,184.42826850326253 L2369.484981552785,134.59955092459833 L2351.862459357758,100.29078219872062 L2254.852398686882,150.11949977738482 L2272.4749208819094,184.42826850326253 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2263.663659784396,
+          "y": 167.27388414032367
+        },
+        {
+          "x": 2360.6737204552715,
+          "y": 117.44516656165948
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-074",
+      "name": "东圆墙 15",
+      "type": "path",
+      "x": 2358,
+      "y": 81,
+      "width": 114,
+      "height": 56,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2363.7854795293833,136.47745965694054 L2471.927842244457,118.79630180644683 L2465.7043240962334,80.73171561588474 L2357.5619613811596,98.41287346637843 L2363.7854795293833,136.47745965694054 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2360.6737204552715,
+          "y": 117.44516656165948
+        },
+        {
+          "x": 2468.8160831703453,
+          "y": 99.76400871116579
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-075",
+      "name": "东圆墙 16",
+      "type": "path",
+      "x": 2466,
+      "y": 81,
+      "width": 114,
+      "height": 56,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2465.7043240962334,118.79630180644683 L2573.8466868113087,136.47745965694054 L2580.0702049595325,98.41287346637843 L2471.927842244457,80.73171561588474 L2465.7043240962334,118.79630180644683 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2468.8160831703453,
+          "y": 99.76400871116579
+        },
+        {
+          "x": 2576.9584458854206,
+          "y": 117.44516656165948
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-076",
+      "name": "东圆墙 17",
+      "type": "path",
+      "x": 2568,
+      "y": 100,
+      "width": 115,
+      "height": 84,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2568.147184787907,134.59955092459836 L2665.157245458783,184.42826850326253 L2682.7797676538103,150.11949977738482 L2585.769706982934,100.2907821987206 L2568.147184787907,134.59955092459836 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2576.9584458854206,
+          "y": 117.44516656165948
+        },
+        {
+          "x": 2673.9685065562967,
+          "y": 167.27388414032367
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-077",
+      "name": "东圆墙 18",
+      "type": "path",
+      "x": 2661,
+      "y": 154,
+      "width": 105,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2660.5971032026614,180.50345980828797 L2738.5232175120536,259.26498114230526 L2765.266024219324,232.80582980637666 L2687.339909909932,154.04430847235938 L2660.5971032026614,180.50345980828797 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2673.9685065562967,
+          "y": 167.27388414032367
+        },
+        {
+          "x": 2751.894620865689,
+          "y": 246.03540547434096
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-078",
+      "name": "东圆墙 19",
+      "type": "path",
+      "x": 2735,
+      "y": 237,
+      "width": 83,
+      "height": 115,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2734.8436614706984,254.6087367236508 L2784.1438562378644,352.65879389457046 L2818.2457750278454,335.5121313959508 L2768.9455802606794,237.46207422503113 L2734.8436614706984,254.6087367236508 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2751.894620865689,
+          "y": 246.03540547434096
+        },
+        {
+          "x": 2801.194815632855,
+          "y": 344.08546264526063
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-079",
+      "name": "东圆墙 20",
+      "type": "path",
+      "x": 2782,
+      "y": 341,
+      "width": 55,
+      "height": 115,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M2782.3496549624256,347.1016099072002 L2799.843272460452,456.40331298297923 L2837.533593801311,450.37101845910007 L2820.039976303284,341.06931538332105 L2782.3496549624256,347.1016099072002 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2801.194815632855,
+          "y": 344.08546264526063
+        },
+        {
+          "x": 2818.6884331308815,
+          "y": 453.38716572103965
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-080",
+      "name": "北圆墙 1",
+      "type": "path",
+      "x": 1294,
+      "y": -225,
+      "width": 49,
+      "height": 80,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1304.9070039507744,-224.5529985934946 L1293.7747019065755,-150.61361121870277 L1331.5192969676668,-144.93079117278904 L1342.6515990118658,-218.87017854758088 L1304.9070039507744,-224.5529985934946 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1323.77930148132,
+          "y": -221.71158857053774
+        },
+        {
+          "x": 1312.6469994371212,
+          "y": -147.7722011957459
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-081",
+      "name": "北圆墙 2",
+      "type": "path",
+      "x": 1261,
+      "y": -157,
+      "width": 69,
+      "height": 85,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1295.702370071469,-156.5538161190205 L1260.7151350754154,-89.04394068986278 L1294.6043938067198,-71.48071084331357 L1329.5916288027734,-138.99058627247132 L1295.702370071469,-156.5538161190205 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1312.6469994371212,
+          "y": -147.7722011957459
+        },
+        {
+          "x": 1277.6597644410676,
+          "y": -80.26232576658818
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-082",
+      "name": "北圆墙 3",
+      "type": "path",
+      "x": 1212,
+      "y": -93,
+      "width": 79,
+      "height": 80,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1264.2883610874323,-93.49190143455242 L1211.8075085933524,-40.44842788307131 L1238.550315300623,-13.989276547142842 L1291.031167794703,-67.03275009862394 L1264.2883610874323,-93.49190143455242 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1277.6597644410676,
+          "y": -80.26232576658818
+        },
+        {
+          "x": 1225.1789119469877,
+          "y": -27.218852215107077
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-083",
+      "name": "北圆墙 4",
+      "type": "path",
+      "x": 1149,
+      "y": -44,
+      "width": 85,
+      "height": 69,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1216.1555207362385,-44.26260872761842 L1149.3617084710447,-8.900293026631026 L1167.408490892543,25.18721999839166 L1234.2023031577369,-10.175095702595733 L1216.1555207362385,-44.26260872761842 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1225.1789119469877,
+          "y": -27.218852215107077
+        },
+        {
+          "x": 1158.385099681794,
+          "y": 8.143463485880318
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-084",
+      "name": "北圆墙 7",
+      "type": "path",
+      "x": 936,
+      "y": -44,
+      "width": 85,
+      "height": 69,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 1.8189894035458565e-12,
+      "layerId": "height-000",
+      "pathData": "M1021.0982354545016,-8.900293026631015 L954.3044231893081,-44.262608727618414 L936.2576407678094,-10.175095702595744 L1003.051453033003,25.18721999839165 L1021.0982354545016,-8.900293026631015 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1012.0748442437523,
+          "y": 8.143463485880318
+        },
+        {
+          "x": 945.2810319785588,
+          "y": -27.218852215107077
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-085",
+      "name": "北圆墙 8",
+      "type": "path",
+      "x": 879,
+      "y": -93,
+      "width": 79,
+      "height": 80,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M958.652435332194,-40.44842788307134 L906.1715828381139,-93.49190143455243 L879.4287761308433,-67.03275009862392 L931.9096286249235,-13.989276547142815 L958.652435332194,-40.44842788307134 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 945.2810319785588,
+          "y": -27.218852215107077
+        },
+        {
+          "x": 892.8001794844786,
+          "y": -80.26232576658818
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-086",
+      "name": "北圆墙 9",
+      "type": "path",
+      "x": 841,
+      "y": -157,
+      "width": 69,
+      "height": 85,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M909.7448088501307,-89.04394068986286 L874.7575738540767,-156.5538161190206 L840.8683151227725,-138.9905862724712 L875.8555501188265,-71.48071084331349 L909.7448088501307,-89.04394068986286 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 892.8001794844786,
+          "y": -80.26232576658818
+        },
+        {
+          "x": 857.8129444884246,
+          "y": -147.7722011957459
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-087",
+      "name": "北圆墙 10",
+      "type": "path",
+      "x": 828,
+      "y": -225,
+      "width": 49,
+      "height": 80,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M876.6852420189703,-150.61361121870272 L865.5529399747716,-224.55299859349455 L827.8083449136802,-218.87017854758093 L838.9406469578789,-144.9307911727891 L876.6852420189703,-150.61361121870272 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 857.8129444884246,
+          "y": -147.7722011957459
+        },
+        {
+          "x": 846.6806424442259,
+          "y": -221.71158857053774
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-088",
+      "name": "北圆墙 11",
+      "type": "path",
+      "x": 828,
+      "y": -298,
+      "width": 49,
+      "height": 80,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M865.5529399747716,-218.87017854758093 L876.6852420189703,-292.80956592237277 L838.9406469578789,-298.49238596828644 L827.8083449136802,-224.55299859349455 L865.5529399747716,-218.87017854758093 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 846.6806424442259,
+          "y": -221.71158857053774
+        },
+        {
+          "x": 857.8129444884246,
+          "y": -295.6509759453296
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-089",
+      "name": "北圆墙 12",
+      "type": "path",
+      "x": 841,
+      "y": -372,
+      "width": 69,
+      "height": 85,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M874.7575738540767,-286.86936102205493 L909.7448088501307,-354.3792364512127 L875.8555501188265,-371.94246629776205 L840.8683151227725,-304.4325908686043 L874.7575738540767,-286.86936102205493 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 857.8129444884246,
+          "y": -295.6509759453296
+        },
+        {
+          "x": 892.8001794844786,
+          "y": -363.1608513744874
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-090",
+      "name": "北圆墙 13",
+      "type": "path",
+      "x": 879,
+      "y": -429,
+      "width": 79,
+      "height": 80,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M906.1715828381139,-349.9312757065231 L958.652435332194,-402.9747492580041 L931.9096286249235,-429.4339005939327 L879.4287761308433,-376.3904270424517 L906.1715828381139,-349.9312757065231 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 892.8001794844786,
+          "y": -363.1608513744874
+        },
+        {
+          "x": 945.2810319785588,
+          "y": -416.2043249259684
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-091",
+      "name": "北圆墙 14",
+      "type": "path",
+      "x": 936,
+      "y": -469,
+      "width": 85,
+      "height": 69,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M954.3044231893081,-399.1605684134571 L1021.0982354545016,-434.52288411444454 L1003.051453033003,-468.6103971394672 L936.2576407678094,-433.24808143847974 L954.3044231893081,-399.1605684134571 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 945.2810319785588,
+          "y": -416.2043249259684
+        },
+        {
+          "x": 1012.0748442437523,
+          "y": -451.56664062695586
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-092",
+      "name": "北圆墙 15",
+      "type": "path",
+      "x": 1009,
+      "y": -482,
+      "width": 79,
+      "height": 49,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1015.006506217734,-432.5057754034066 L1088.161633936755,-443.75742130826615 L1082.2983099887913,-481.8791517553647 L1009.1431822697706,-470.62750585050514 L1015.006506217734,-432.5057754034066 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1012.0748442437523,
+          "y": -451.56664062695586
+        },
+        {
+          "x": 1085.229971962773,
+          "y": -462.81828653181543
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-093",
+      "name": "北圆墙 16",
+      "type": "path",
+      "x": 1082,
+      "y": -482,
+      "width": 79,
+      "height": 49,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1082.2983099887913,-443.75742130826615 L1155.453437707812,-432.5057754034066 L1161.3167616557757,-470.62750585050514 L1088.161633936755,-481.8791517553647 L1082.2983099887913,-443.75742130826615 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1085.229971962773,
+          "y": -462.81828653181543
+        },
+        {
+          "x": 1158.385099681794,
+          "y": -451.56664062695586
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-094",
+      "name": "北圆墙 17",
+      "type": "path",
+      "x": 1149,
+      "y": -469,
+      "width": 85,
+      "height": 69,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1149.3617084710447,-434.52288411444454 L1216.1555207362385,-399.1605684134571 L1234.2023031577369,-433.24808143847974 L1167.408490892543,-468.6103971394672 L1149.3617084710447,-434.52288411444454 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1158.385099681794,
+          "y": -451.56664062695586
+        },
+        {
+          "x": 1225.1789119469877,
+          "y": -416.2043249259684
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-095",
+      "name": "北圆墙 18",
+      "type": "path",
+      "x": 1212,
+      "y": -429,
+      "width": 79,
+      "height": 80,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1211.8075085933524,-402.9747492580042 L1264.2883610874323,-349.93127570652314 L1291.031167794703,-376.3904270424516 L1238.550315300623,-429.43390059393266 L1211.8075085933524,-402.9747492580042 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1225.1789119469877,
+          "y": -416.2043249259684
+        },
+        {
+          "x": 1277.6597644410676,
+          "y": -363.1608513744874
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-096",
+      "name": "北圆墙 19",
+      "type": "path",
+      "x": 1261,
+      "y": -372,
+      "width": 69,
+      "height": 85,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1260.7151350754154,-354.37923645121276 L1295.702370071469,-286.869361022055 L1329.5916288027734,-304.4325908686042 L1294.6043938067198,-371.942466297762 L1260.7151350754154,-354.37923645121276 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1277.6597644410676,
+          "y": -363.1608513744874
+        },
+        {
+          "x": 1312.6469994371212,
+          "y": -295.6509759453296
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-097",
+      "name": "北圆墙 20",
+      "type": "path",
+      "x": 1294,
+      "y": -298,
+      "width": 49,
+      "height": 80,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-000",
+      "pathData": "M1293.7747019065755,-292.8095659223727 L1304.9070039507744,-218.87017854758088 L1342.6515990118658,-224.5529985934946 L1331.5192969676668,-298.4923859682865 L1293.7747019065755,-292.8095659223727 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 1312.6469994371212,
+          "y": -295.6509759453296
+        },
+        {
+          "x": 1323.77930148132,
+          "y": -221.71158857053774
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-098",
+      "name": "中央高台圆墙 1",
+      "type": "path",
+      "x": 852,
+      "y": 1383,
+      "width": 54,
+      "height": 103,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M867.6081656603064,1382.561236991078 L851.7048770257366,1479.003916175589 L889.366273766424,1485.2142378693934 L905.2695624009939,1388.7715586848824 L867.6081656603064,1382.561236991078 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 886.4388640306502,
+          "y": 1385.6663978379802
+        },
+        {
+          "x": 870.5355753960803,
+          "y": 1482.1090770224912
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-099",
+      "name": "中央高台圆墙 2",
+      "type": "path",
+      "x": 810,
+      "y": 1474,
+      "width": 77,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M853.3683801163015,1473.7709338703294 L810.4295008029633,1562.176723122798 L844.7638913625208,1578.8530094271216 L887.702770675859,1490.447220174653 L853.3683801163015,1473.7709338703294 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 870.5355753960803,
+          "y": 1482.1090770224912
+        },
+        {
+          "x": 827.596696082742,
+          "y": 1570.5148662749598
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-100",
+      "name": "中央高台圆墙 3",
+      "type": "path",
+      "x": 746,
+      "y": 1557,
+      "width": 95,
+      "height": 96,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M814.2252927291069,1557.2852906069954 L745.8411516004566,1626.4025440225616 L772.5839583077269,1652.8616953584904 L840.9680994363772,1583.7444419429241 L814.2252927291069,1557.2852906069954 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 827.596696082742,
+          "y": 1570.5148662749598
+        },
+        {
+          "x": 759.2125549540917,
+          "y": 1639.632119690526
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-101",
+      "name": "中央高台圆墙 4",
+      "type": "path",
+      "x": 663,
+      "y": 1622,
+      "width": 105,
+      "height": 78,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M750.6409871414351,1622.3567195436979 L663.1728996513012,1665.755925176728 L680.3160352766146,1700.3067254703842 L767.7841227667484,1656.9075198373541 L750.6409871414351,1622.3567195436979 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 759.2125549540917,
+          "y": 1639.632119690526
+        },
+        {
+          "x": 671.7444674639579,
+          "y": 1683.031325323556
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-102",
+      "name": "中央高台圆墙 5",
+      "type": "path",
+      "x": 573,
+      "y": 1664,
+      "width": 102,
+      "height": 54,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M668.5409773755026,1664.0142572989323 L573.1212455680834,1680.0880371630171 L579.528225744994,1718.1221732122647 L674.9479575524132,1702.0483933481798 L668.5409773755026,1664.0142572989323 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 671.7444674639579,
+          "y": 1683.031325323556
+        },
+        {
+          "x": 576.3247356565387,
+          "y": 1699.105105187641
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-103",
+      "name": "中央高台圆墙 6",
+      "type": "path",
+      "x": 478,
+      "y": 1664,
+      "width": 102,
+      "height": 54,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M579.528225744994,1680.0880371630171 L484.1084939375752,1664.0142572989323 L477.7015137606646,1702.0483933481798 L573.1212455680834,1718.1221732122647 L579.528225744994,1680.0880371630171 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 576.3247356565387,
+          "y": 1699.105105187641
+        },
+        {
+          "x": 480.9050038491199,
+          "y": 1683.031325323556
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-104",
+      "name": "中央高台圆墙 7",
+      "type": "path",
+      "x": 385,
+      "y": 1622,
+      "width": 105,
+      "height": 78,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M489.47657166177663,1665.755925176728 L402.0084841716429,1622.3567195436979 L384.86534854632947,1656.9075198373541 L472.3334360364632,1700.3067254703842 L489.47657166177663,1665.755925176728 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 480.9050038491199,
+          "y": 1683.031325323556
+        },
+        {
+          "x": 393.4369163589862,
+          "y": 1639.632119690526
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-105",
+      "name": "中央高台圆墙 8",
+      "type": "path",
+      "x": 312,
+      "y": 1557,
+      "width": 95,
+      "height": 96,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M406.8083197126214,1626.4025440225616 L338.42417858397124,1557.2852906069954 L311.6813718767008,1583.7444419429241 L380.06551300535097,1652.8616953584904 L406.8083197126214,1626.4025440225616 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 393.4369163589862,
+          "y": 1639.632119690526
+        },
+        {
+          "x": 325.052775230336,
+          "y": 1570.5148662749598
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-106",
+      "name": "中央高台圆墙 9",
+      "type": "path",
+      "x": 265,
+      "y": 1474,
+      "width": 77,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M342.21997051011476,1562.176723122798 L299.2810911967763,1473.7709338703294 L264.9467006372188,1490.447220174653 L307.88557995055726,1578.8530094271216 L342.21997051011476,1562.176723122798 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 325.052775230336,
+          "y": 1570.5148662749598
+        },
+        {
+          "x": 282.11389591699754,
+          "y": 1482.1090770224912
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-107",
+      "name": "中央高台圆墙 10",
+      "type": "path",
+      "x": 247,
+      "y": 1383,
+      "width": 54,
+      "height": 103,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M300.94459428734126,1479.003916175589 L285.04130565277126,1382.561236991078 L247.37990891208383,1388.7715586848824 L263.2831975466538,1485.2142378693934 L300.94459428734126,1479.003916175589 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 282.11389591699754,
+          "y": 1482.1090770224912
+        },
+        {
+          "x": 266.21060728242753,
+          "y": 1385.6663978379802
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-108",
+      "name": "中央高台圆墙 11",
+      "type": "path",
+      "x": 247,
+      "y": 1286,
+      "width": 54,
+      "height": 103,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M285.04130565277126,1388.7715586848824 L300.94459428734126,1292.3288795003712 L263.2831975466538,1286.1185578065667 L247.37990891208383,1382.561236991078 L285.04130565277126,1388.7715586848824 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 266.21060728242753,
+          "y": 1385.6663978379802
+        },
+        {
+          "x": 282.11389591699754,
+          "y": 1289.223718653469
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-109",
+      "name": "中央高台圆墙 12",
+      "type": "path",
+      "x": 265,
+      "y": 1192,
+      "width": 77,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M299.28109119677623,1297.5618618056308 L342.2199705101147,1209.1560725531624 L307.8855799505573,1192.4797862488388 L264.94670063721884,1280.8855755013071 L299.28109119677623,1297.5618618056308 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 282.11389591699754,
+          "y": 1289.223718653469
+        },
+        {
+          "x": 325.052775230336,
+          "y": 1200.8179294010006
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-110",
+      "name": "中央高台圆墙 13",
+      "type": "path",
+      "x": 312,
+      "y": 1118,
+      "width": 95,
+      "height": 96,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M338.42417858397124,1214.047505068965 L406.8083197126214,1144.9302516533987 L380.06551300535097,1118.47110031747 L311.6813718767008,1187.5883537330362 L338.42417858397124,1214.047505068965 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 325.052775230336,
+          "y": 1200.8179294010006
+        },
+        {
+          "x": 393.4369163589862,
+          "y": 1131.7006759854344
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-111",
+      "name": "中央高台圆墙 14",
+      "type": "path",
+      "x": 385,
+      "y": 1071,
+      "width": 105,
+      "height": 78,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M402.0084841716429,1148.9760761322625 L489.47657166177663,1105.5768704992324 L472.3334360364632,1071.0260702055762 L384.86534854632947,1114.4252758386062 L402.0084841716429,1148.9760761322625 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 393.4369163589862,
+          "y": 1131.7006759854344
+        },
+        {
+          "x": 480.9050038491199,
+          "y": 1088.3014703524043
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-112",
+      "name": "中央高台圆墙 17",
+      "type": "path",
+      "x": 663,
+      "y": 1071,
+      "width": 105,
+      "height": 78,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M663.1728996513012,1105.5768704992324 L750.6409871414351,1148.9760761322625 L767.7841227667484,1114.4252758386062 L680.3160352766146,1071.0260702055762 L663.1728996513012,1105.5768704992324 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 671.7444674639579,
+          "y": 1088.3014703524043
+        },
+        {
+          "x": 759.2125549540917,
+          "y": 1131.7006759854344
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-113",
+      "name": "中央高台圆墙 18",
+      "type": "path",
+      "x": 746,
+      "y": 1118,
+      "width": 95,
+      "height": 96,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M745.8411516004566,1144.9302516533987 L814.2252927291069,1214.047505068965 L840.9680994363772,1187.5883537330362 L772.5839583077269,1118.47110031747 L745.8411516004566,1144.9302516533987 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 759.2125549540917,
+          "y": 1131.7006759854344
+        },
+        {
+          "x": 827.596696082742,
+          "y": 1200.8179294010006
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-114",
+      "name": "中央高台圆墙 19",
+      "type": "path",
+      "x": 810,
+      "y": 1192,
+      "width": 77,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M810.4295008029633,1209.1560725531624 L853.3683801163015,1297.5618618056308 L887.702770675859,1280.8855755013071 L844.7638913625208,1192.4797862488388 L810.4295008029633,1209.1560725531624 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 827.596696082742,
+          "y": 1200.8179294010006
+        },
+        {
+          "x": 870.5355753960803,
+          "y": 1289.223718653469
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-115",
+      "name": "中央高台圆墙 20",
+      "type": "path",
+      "x": 852,
+      "y": 1286,
+      "width": 54,
+      "height": 103,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M851.7048770257366,1292.3288795003712 L867.6081656603064,1388.7715586848824 L905.2695624009939,1382.561236991078 L889.366273766424,1286.1185578065667 L851.7048770257366,1292.3288795003712 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 870.5355753960803,
+          "y": 1289.223718653469
+        },
+        {
+          "x": 886.4388640306502,
+          "y": 1385.6663978379802
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-116",
+      "name": "东侧高台圆墙 1",
+      "type": "path",
+      "x": 2840,
+      "y": 1383,
+      "width": 54,
+      "height": 103,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2855.519244981532,1382.561236991078 L2839.615956346963,1479.003916175589 L2877.27735308765,1485.2142378693934 L2893.1806417222197,1388.7715586848824 L2855.519244981532,1382.561236991078 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2874.349943351876,
+          "y": 1385.6663978379802
+        },
+        {
+          "x": 2858.4466547173065,
+          "y": 1482.1090770224912
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-117",
+      "name": "东侧高台圆墙 2",
+      "type": "path",
+      "x": 2798,
+      "y": 1474,
+      "width": 77,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2841.2794594375277,1473.7709338703294 L2798.340580124189,1562.176723122798 L2832.6749706837463,1578.8530094271216 L2875.6138499970853,1490.447220174653 L2841.2794594375277,1473.7709338703294 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2858.4466547173065,
+          "y": 1482.1090770224912
+        },
+        {
+          "x": 2815.5077754039676,
+          "y": 1570.5148662749598
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-118",
+      "name": "东侧高台圆墙 3",
+      "type": "path",
+      "x": 2734,
+      "y": 1557,
+      "width": 95,
+      "height": 96,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2802.1363720503323,1557.2852906069957 L2733.752230921683,1626.4025440225619 L2760.4950376289535,1652.8616953584901 L2828.879178757603,1583.744441942924 L2802.1363720503323,1557.2852906069957 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2815.5077754039676,
+          "y": 1570.5148662749598
+        },
+        {
+          "x": 2747.123634275318,
+          "y": 1639.632119690526
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-119",
+      "name": "东侧高台圆墙 4",
+      "type": "path",
+      "x": 2651,
+      "y": 1622,
+      "width": 105,
+      "height": 78,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2738.5520664626615,1622.3567195436979 L2651.0839789725273,1665.755925176728 L2668.2271145978407,1700.3067254703842 L2755.695202087975,1656.9075198373541 L2738.5520664626615,1622.3567195436979 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2747.123634275318,
+          "y": 1639.632119690526
+        },
+        {
+          "x": 2659.655546785184,
+          "y": 1683.031325323556
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-120",
+      "name": "东侧高台圆墙 5",
+      "type": "path",
+      "x": 2561,
+      "y": 1664,
+      "width": 102,
+      "height": 54,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2656.4520566967285,1664.0142572989323 L2561.0323248893096,1680.0880371630171 L2567.4393050662206,1718.1221732122647 L2662.8590368736395,1702.0483933481798 L2656.4520566967285,1664.0142572989323 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2659.655546785184,
+          "y": 1683.031325323556
+        },
+        {
+          "x": 2564.235814977765,
+          "y": 1699.105105187641
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-121",
+      "name": "东侧高台圆墙 6",
+      "type": "path",
+      "x": 2466,
+      "y": 1664,
+      "width": 102,
+      "height": 54,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2567.43930506622,1680.0880371630171 L2472.0195732588004,1664.0142572989323 L2465.6125930818903,1702.0483933481798 L2561.03232488931,1718.1221732122647 L2567.43930506622,1680.0880371630171 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2564.235814977765,
+          "y": 1699.105105187641
+        },
+        {
+          "x": 2468.8160831703453,
+          "y": 1683.031325323556
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-122",
+      "name": "东侧高台圆墙 7",
+      "type": "path",
+      "x": 2373,
+      "y": 1622,
+      "width": 105,
+      "height": 78,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2477.387650983002,1665.755925176728 L2389.919563492869,1622.3567195436979 L2372.776427867556,1656.9075198373541 L2460.2445153576887,1700.3067254703842 L2477.387650983002,1665.755925176728 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2468.8160831703453,
+          "y": 1683.031325323556
+        },
+        {
+          "x": 2381.3479956802125,
+          "y": 1639.632119690526
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-123",
+      "name": "东侧高台圆墙 8",
+      "type": "path",
+      "x": 2300,
+      "y": 1557,
+      "width": 95,
+      "height": 96,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2394.719399033848,1626.4025440225616 L2326.335257905197,1557.2852906069954 L2299.5924511979265,1583.7444419429241 L2367.9765923265772,1652.8616953584904 L2394.719399033848,1626.4025440225616 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2381.3479956802125,
+          "y": 1639.632119690526
+        },
+        {
+          "x": 2312.963854551562,
+          "y": 1570.5148662749598
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-124",
+      "name": "东侧高台圆墙 9",
+      "type": "path",
+      "x": 2253,
+      "y": 1474,
+      "width": 77,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2330.1310498313405,1562.176723122798 L2287.192170518002,1473.7709338703294 L2252.8577799584446,1490.447220174653 L2295.796659271783,1578.8530094271216 L2330.1310498313405,1562.176723122798 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2312.963854551562,
+          "y": 1570.5148662749598
+        },
+        {
+          "x": 2270.0249752382233,
+          "y": 1482.1090770224912
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-125",
+      "name": "东侧高台圆墙 10",
+      "type": "path",
+      "x": 2235,
+      "y": 1383,
+      "width": 54,
+      "height": 103,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2288.855673608567,1479.003916175589 L2272.952384973997,1382.561236991078 L2235.2909882333097,1388.7715586848824 L2251.1942768678796,1485.2142378693934 L2288.855673608567,1479.003916175589 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2270.0249752382233,
+          "y": 1482.1090770224912
+        },
+        {
+          "x": 2254.1216866036534,
+          "y": 1385.6663978379802
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-126",
+      "name": "东侧高台圆墙 11",
+      "type": "path",
+      "x": 2235,
+      "y": 1286,
+      "width": 54,
+      "height": 103,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2272.952384973997,1388.7715586848824 L2288.855673608567,1292.3288795003712 L2251.1942768678796,1286.1185578065667 L2235.2909882333097,1382.561236991078 L2272.952384973997,1388.7715586848824 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2254.1216866036534,
+          "y": 1385.6663978379802
+        },
+        {
+          "x": 2270.0249752382233,
+          "y": 1289.223718653469
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-127",
+      "name": "东侧高台圆墙 12",
+      "type": "path",
+      "x": 2253,
+      "y": 1192,
+      "width": 77,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2287.192170518002,1297.5618618056308 L2330.1310498313405,1209.1560725531624 L2295.796659271783,1192.4797862488388 L2252.8577799584446,1280.8855755013071 L2287.192170518002,1297.5618618056308 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2270.0249752382233,
+          "y": 1289.223718653469
+        },
+        {
+          "x": 2312.963854551562,
+          "y": 1200.8179294010006
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-128",
+      "name": "东侧高台圆墙 13",
+      "type": "path",
+      "x": 2300,
+      "y": 1118,
+      "width": 95,
+      "height": 96,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2326.335257905197,1214.047505068965 L2394.719399033848,1144.9302516533987 L2367.9765923265772,1118.47110031747 L2299.5924511979265,1187.5883537330362 L2326.335257905197,1214.047505068965 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2312.963854551562,
+          "y": 1200.8179294010006
+        },
+        {
+          "x": 2381.3479956802125,
+          "y": 1131.7006759854344
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-129",
+      "name": "东侧高台圆墙 14",
+      "type": "path",
+      "x": 2373,
+      "y": 1071,
+      "width": 105,
+      "height": 78,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2389.919563492869,1148.9760761322625 L2477.387650983002,1105.5768704992324 L2460.2445153576887,1071.0260702055762 L2372.776427867556,1114.4252758386062 L2389.919563492869,1148.9760761322625 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2381.3479956802125,
+          "y": 1131.7006759854344
+        },
+        {
+          "x": 2468.8160831703453,
+          "y": 1088.3014703524043
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-130",
+      "name": "东侧高台圆墙 17",
+      "type": "path",
+      "x": 2651,
+      "y": 1071,
+      "width": 105,
+      "height": 78,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2651.0839789725273,1105.5768704992324 L2738.5520664626615,1148.9760761322625 L2755.695202087975,1114.4252758386062 L2668.2271145978407,1071.0260702055762 L2651.0839789725273,1105.5768704992324 Z",
+      "wallThickness": 38.57,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2659.655546785184,
+          "y": 1088.3014703524043
+        },
+        {
+          "x": 2747.123634275318,
+          "y": 1131.7006759854344
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.57,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-131",
+      "name": "东侧高台圆墙 18",
+      "type": "path",
+      "x": 2734,
+      "y": 1118,
+      "width": 95,
+      "height": 96,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2733.752230921683,1144.9302516533985 L2802.1363720503323,1214.0475050689647 L2828.879178757603,1187.5883537330365 L2760.4950376289535,1118.4711003174702 L2733.752230921683,1144.9302516533985 Z",
+      "wallThickness": 37.62,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2747.123634275318,
+          "y": 1131.7006759854344
+        },
+        {
+          "x": 2815.5077754039676,
+          "y": 1200.8179294010006
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 37.62,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-132",
+      "name": "东侧高台圆墙 19",
+      "type": "path",
+      "x": 2798,
+      "y": 1192,
+      "width": 77,
+      "height": 105,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2798.340580124189,1209.1560725531624 L2841.2794594375277,1297.5618618056308 L2875.6138499970853,1280.8855755013071 L2832.6749706837463,1192.4797862488388 L2798.340580124189,1209.1560725531624 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2815.5077754039676,
+          "y": 1200.8179294010006
+        },
+        {
+          "x": 2858.4466547173065,
+          "y": 1289.223718653469
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    },
+    {
+      "id": "wall-133",
+      "name": "东侧高台圆墙 20",
+      "type": "path",
+      "x": 2840,
+      "y": 1286,
+      "width": 54,
+      "height": 103,
+      "rotation": 0,
+      "color": "#171717",
+      "opacity": 1,
+      "area": 0,
+      "layerId": "height-300",
+      "pathData": "M2839.615956346963,1292.3288795003712 L2855.519244981532,1388.7715586848824 L2893.1806417222197,1382.561236991078 L2877.27735308765,1286.1185578065667 L2839.615956346963,1292.3288795003712 Z",
+      "wallThickness": 38.17,
+      "wallHeight": 220,
+      "wallCenterline": [
+        {
+          "x": 2858.4466547173065,
+          "y": 1289.223718653469
+        },
+        {
+          "x": 2874.349943351876,
+          "y": 1385.6663978379802
+        }
+      ],
+      "strokeColor": "rgba(23,23,23,1)",
+      "strokeWidth": 38.17,
+      "strokeExclusions": [],
+      "strokeWindows": []
+    }
+  ],
+  "entities": [],
+  "layers": [
+    {
+      "id": "height-000",
+      "name": "最低平台 0cm",
+      "height": 0,
+      "color": "#B8C3CC",
+      "visible": true,
+      "locked": false,
+      "showWalls": true
+    },
+    {
+      "id": "height-100",
+      "name": "低平台 100cm",
+      "height": 100,
+      "color": "#B8BFB2",
+      "visible": false,
+      "locked": false,
+      "showWalls": true
+    },
+    {
+      "id": "height-200",
+      "name": "中平台 200cm",
+      "height": 200,
+      "color": "#C8C0A9",
+      "visible": false,
+      "locked": false,
+      "showWalls": true
+    },
+    {
+      "id": "height-300",
+      "name": "高平台 300cm",
+      "height": 300,
+      "color": "#B8AEA3",
+      "visible": false,
+      "locked": false,
+      "showWalls": true
+    },
+    {
+      "id": "module-layer-d699d4b3-d567-40a5-9b55-1e2a43695c41",
+      "name": "模块 2 · 内部",
+      "visible": false,
+      "locked": false,
+      "height": 0,
+      "color": "#8E8E86",
+      "showWalls": true
+    }
+  ],
+  "layerGroups": [],
+  "groups": [],
+  "doorColorConfigs": [],
+  "windowColorConfigs": [],
+  "polygonData": [],
+  "exportScale": {
+    "unitsPerPixel": 10,
+    "unit": "uu"
+  },
+  "structureGraph": {
+    "schemaVersion": 1,
+    "modules": [
+      {
+        "id": "module-2a2a1314-bf56-4b6b-9930-5e7758066fa1",
+        "name": "最低平台 0cm",
+        "sourceLayerId": "height-000",
+        "origin": {
+          "x": 1065.351,
+          "y": 173.949,
+          "z": 0
+        },
+        "ports": [
+          {
+            "id": "port-e6774163-911d-4da9-830d-f82db9225178",
+            "name": "出入口 1",
+            "position": {
+              "x": -765.351,
+              "y": 526.051,
+              "z": 0
+            },
+            "facing": 180
+          }
+        ]
+      },
+      {
+        "id": "module-ab320d5c-b5b4-4de7-8710-9da1bca3087e",
+        "name": "模块 2",
+        "sourceLayerId": "module-layer-d699d4b3-d567-40a5-9b55-1e2a43695c41",
+        "ownsSourceLayer": true,
+        "origin": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "ports": [
+          {
+            "id": "port-55de43f2-0f9c-4f56-a73c-523701e98439",
+            "name": "出入口 1",
+            "position": {
+              "x": 150,
+              "y": -100,
+              "z": 0
+            },
+            "facing": 0
+          },
+          {
+            "id": "port-abd4bb51-b1c5-424e-839f-e07324d09b47",
+            "name": "出入口 2",
+            "position": {
+              "x": 600,
+              "y": 440,
+              "z": 0
+            },
+            "facing": 90
+          }
+        ]
+      }
+    ],
+    "instances": [
+      {
+        "id": "instance-1d1d11db-dd0a-47d0-bae1-97e92523d6dd",
+        "moduleId": "module-2a2a1314-bf56-4b6b-9930-5e7758066fa1",
+        "name": "最低平台 0cm",
+        "transform": {
+          "x": -1037.503,
+          "y": -1782.076,
+          "z": 0,
+          "rotation": 0
+        }
+      },
+      {
+        "id": "instance-82d08785-81f5-4c80-9cec-027cfe3eed7a",
+        "moduleId": "module-ab320d5c-b5b4-4de7-8710-9da1bca3087e",
+        "name": "模块 2 1",
+        "transform": {
+          "x": -2408.422,
+          "y": -336.067,
+          "z": 0,
+          "rotation": 0
+        }
+      }
+    ],
+    "connections": []
+  }
+}

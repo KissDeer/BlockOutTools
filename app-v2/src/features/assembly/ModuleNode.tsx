@@ -7,8 +7,10 @@ import { createModulePreviewModel, type PreviewBlock } from "./module-preview-mo
 export interface ModuleNodeData extends Record<string, unknown> {
   instance: ModuleInstance;
   module: ModuleDefinition;
-  occupiedPortIds: string[];
+  occupiedPortKeys: string[];
+  pendingPortKey: string | null;
   onOpen: (instanceId: string) => void;
+  onPortClick: (instanceId: string, portId: string) => void;
 }
 
 function handlePosition(port: PortBlock): Position {
@@ -51,7 +53,7 @@ function PlanBlock({ item }: { item: PreviewBlock }) {
 
 export function ModuleNode({ data, selected }: NodeProps) {
   const nodeData = data as ModuleNodeData;
-  const { instance, module, occupiedPortIds, onOpen } = nodeData;
+  const { instance, module, occupiedPortKeys, pendingPortKey, onOpen, onPortClick } = nodeData;
   const { ports, boxCount, stairCount, doorCount, preview, previewBlocks } = useMemo(() => {
     const nextPreview = createModulePreviewModel(module);
     return {
@@ -79,7 +81,9 @@ export function ModuleNode({ data, selected }: NodeProps) {
             {previewBlocks.map((item) => <PlanBlock key={item.block.id} item={item} />)}
           </svg>
           {preview.blocks.filter((item): item is PreviewBlock & { block: PortBlock } => item.block.type === "port").map((item) => {
-            const occupied = occupiedPortIds.includes(item.block.id);
+            const portKey = `${instance.id}::${item.block.id}`;
+            const occupied = occupiedPortKeys.includes(portKey);
+            const pending = pendingPortKey === portKey;
             return (
               <Handle
                 key={item.block.id}
@@ -87,7 +91,11 @@ export function ModuleNode({ data, selected }: NodeProps) {
                 type="source"
                 position={handlePosition(item.block)}
                 isConnectable={!occupied}
-                className={`module-port ${occupied ? "is-occupied" : ""}`}
+                className={`module-port ${occupied ? "is-occupied" : ""} ${pending ? "is-pending" : ""}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (!occupied) onPortClick(instance.id, item.block.id);
+                }}
                 style={{
                   left: `${item.x / preview.width * 100}%`,
                   top: `${item.y / preview.height * 100}%`,

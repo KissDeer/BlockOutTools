@@ -3,6 +3,7 @@ import { Box, ChevronLeft, Cuboid, Redo2, RefreshCw, Save, Undo2 } from "lucide-
 import { IconButton } from "./components/IconButton";
 import { ProjectFileActions } from "./features/files/ProjectFileActions";
 import { AssemblySidebar } from "./features/assembly/AssemblySidebar";
+import { ConnectionInspector } from "./features/assembly/ConnectionInspector";
 import { InstanceInspector } from "./features/assembly/InstanceInspector";
 import { ModulePalette } from "./features/module-editor/ModulePalette";
 import { BlockInspector } from "./features/module-editor/BlockInspector";
@@ -22,6 +23,7 @@ export function App() {
   const project = useProjectStore((state) => state.project);
   const view = useProjectStore((state) => state.view);
   const activeInstanceId = useProjectStore((state) => state.activeInstanceId);
+  const selectedConnectionId = useProjectStore((state) => state.selectedConnectionId);
   const previewOpen = useProjectStore((state) => state.previewOpen);
   const previewDirty = useProjectStore((state) => state.previewDirty);
   const saveStatus = useProjectStore((state) => state.saveStatus);
@@ -35,6 +37,7 @@ export function App() {
   const undo = useProjectStore((state) => state.undo);
   const redo = useProjectStore((state) => state.redo);
   const deleteInstance = useProjectStore((state) => state.deleteSelectedInstance);
+  const deleteConnection = useProjectStore((state) => state.deleteSelectedConnection);
   const duplicateInstance = useProjectStore((state) => state.duplicateSelectedInstance);
   const copyInstance = useProjectStore((state) => state.copySelectedInstance);
   const pasteInstance = useProjectStore((state) => state.pasteInstance);
@@ -72,7 +75,7 @@ export function App() {
       }
       if (event.key === "Delete" || event.key === "Backspace") {
         event.preventDefault();
-        view === "assembly" ? deleteInstance() : deleteBlocks();
+        view === "assembly" ? (selectedConnectionId ? deleteConnection() : deleteInstance()) : deleteBlocks();
         return;
       }
       if (!modifier && ["w", "e", "r"].includes(event.key.toLowerCase())) {
@@ -81,7 +84,7 @@ export function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [copyBlocks, copyInstance, deleteBlocks, deleteInstance, duplicateBlocks, duplicateInstance, pasteBlocks, pasteInstance, redo, setTransformMode, undo, view]);
+  }, [copyBlocks, copyInstance, deleteBlocks, deleteConnection, deleteInstance, duplicateBlocks, duplicateInstance, pasteBlocks, pasteInstance, redo, selectedConnectionId, setTransformMode, undo, view]);
 
   const activeInstance = project.instances.find((item) => item.id === activeInstanceId);
   const activeModule = project.modules.find((item) => item.id === activeInstance?.definitionId);
@@ -123,7 +126,7 @@ export function App() {
           {view === "assembly" ? <AssemblyCanvas /> : <ModuleEditor />}
         </Suspense>
       </section>
-      <aside className="inspector">{view === "assembly" ? <InstanceInspector /> : <BlockInspector />}</aside>
+      <aside className="inspector">{view === "assembly" ? (selectedConnectionId ? <ConnectionInspector /> : <InstanceInspector />) : <BlockInspector />}</aside>
 
       {previewOpen ? (
         <Suspense fallback={<aside className="preview-panel loading-panel">正在载入 3D 预览…</aside>}>

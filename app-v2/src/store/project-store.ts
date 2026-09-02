@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { addBlock, addConnection, addModule, duplicateInstance, removeBlocks, removeInstance, renameProject, updateBlock, updateInstanceGraph, updateInstanceTransform } from "../domain/commands";
+import { addBlock, addConnection, addModule, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform } from "../domain/commands";
 import { createDemoProject } from "../domain/demo-project";
 import { createId } from "../domain/ids";
 import { loadDraft, saveDraft } from "../domain/persistence";
@@ -14,6 +14,7 @@ interface ProjectStore {
   view: AppView;
   activeInstanceId: string | null;
   selectedInstanceId: string | null;
+  selectedConnectionId: string | null;
   selectedBlockIds: string[];
   transformMode: TransformMode;
   connectionType: ConnectionType;
@@ -28,6 +29,7 @@ interface ProjectStore {
   setView: (view: AppView) => void;
   openModule: (instanceId: string) => void;
   setSelectedInstance: (instanceId: string | null) => void;
+  setSelectedConnection: (connectionId: string | null) => void;
   setSelectedBlocks: (blockIds: string[]) => void;
   setTransformMode: (mode: TransformMode) => void;
   setConnectionType: (type: ConnectionType) => void;
@@ -48,6 +50,8 @@ interface ProjectStore {
   pasteBlocks: () => void;
   duplicateSelectedBlocks: () => void;
   connectPorts: (sourceInstanceId: string, sourcePortId: string, targetInstanceId: string, targetPortId: string) => void;
+  updateSelectedConnectionType: (type: ConnectionType) => void;
+  deleteSelectedConnection: () => void;
   undo: () => void;
   redo: () => void;
   replaceProject: (project: BlockoutProject) => void;
@@ -93,6 +97,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     view: "assembly",
     activeInstanceId: null,
     selectedInstanceId: initialProject.instances[0]?.id ?? null,
+    selectedConnectionId: null,
     selectedBlockIds: [],
     transformMode: "move",
     connectionType: "stairs",
@@ -106,7 +111,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     blockClipboard: [],
     setView: (view) => set({ view }),
     openModule: (instanceId) => set({ view: "module", activeInstanceId: instanceId, selectedInstanceId: instanceId, selectedBlockIds: [] }),
-    setSelectedInstance: (selectedInstanceId) => set({ selectedInstanceId }),
+    setSelectedInstance: (selectedInstanceId) => set({ selectedInstanceId, selectedConnectionId: null }),
+    setSelectedConnection: (selectedConnectionId) => set({ selectedConnectionId, selectedInstanceId: null }),
     setSelectedBlocks: (selectedBlockIds) => set({ selectedBlockIds }),
     setTransformMode: (transformMode) => set({ transformMode }),
     setConnectionType: (connectionType) => set({ connectionType }),
@@ -142,7 +148,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const selected = get().selectedInstanceId;
       if (!selected) return;
       commit(removeInstance(get().project, selected));
-      set({ selectedInstanceId: null });
+      set({ selectedInstanceId: null, selectedConnectionId: null });
     },
     updateInstanceGraph: (instanceId, position) => commit(updateInstanceGraph(get().project, instanceId, position)),
     updateInstanceTransform: (instanceId, transform) => commit(updateInstanceTransform(get().project, instanceId, transform)),
@@ -202,7 +208,24 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       set({ blockClipboard: selected });
       get().pasteBlocks();
     },
-    connectPorts: (sourceInstanceId, sourcePortId, targetInstanceId, targetPortId) => commit(addConnection(get().project, get().connectionType, sourceInstanceId, sourcePortId, targetInstanceId, targetPortId)),
+    connectPorts: (sourceInstanceId, sourcePortId, targetInstanceId, targetPortId) => {
+      const currentProject = get().project;
+      const nextProject = addConnection(currentProject, get().connectionType, sourceInstanceId, sourcePortId, targetInstanceId, targetPortId);
+      if (nextProject === currentProject) return;
+      commit(nextProject);
+      set({ selectedConnectionId: nextProject.connections.at(-1)?.id ?? null, selectedInstanceId: null });
+    },
+    updateSelectedConnectionType: (type) => {
+      const selected = get().selectedConnectionId;
+      if (!selected) return;
+      commit(updateConnection(get().project, selected, { type }));
+    },
+    deleteSelectedConnection: () => {
+      const selected = get().selectedConnectionId;
+      if (!selected) return;
+      commit(removeConnection(get().project, selected));
+      set({ selectedConnectionId: null });
+    },
     undo: () => {
       const state = get();
       const previous = state.past.at(-1);
@@ -218,7 +241,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       scheduleSave(next, set);
     },
     replaceProject: (project) => {
-      set({ project, view: "assembly", activeInstanceId: null, selectedInstanceId: project.instances[0]?.id ?? null, selectedBlockIds: [], past: [], future: [], previewDirty: true });
+      set({ project, view: "assembly", activeInstanceId: null, selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [], past: [], future: [], previewDirty: true });
       scheduleSave(project, set);
     },
   };
