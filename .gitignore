@@ -1,6 +1,9 @@
 node_modules/
 app-v2/dist/
+app-v2/.domain-verify/
 *.tsbuildinfo
 .DS_Store
 Thumbs.db
 *.log
+__pycache__/
+*.pyc

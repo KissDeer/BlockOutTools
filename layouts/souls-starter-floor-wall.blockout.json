@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 2,
+  "projectId": "project_souls_starter_floor_wall",
+  "name": "魂系起始参考 · 平地 + 围墙 + 门洞 + 楼梯",
+  "modules": [
+    {
+      "id": "module_starter_room",
+      "name": "起始小院",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "block_floor_main",
+          "name": "主地板",
+          "type": "box",
+          "transform": { "position": [0, 0, 0], "rotation": 0 },
+          "parameters": {
+            "BoxSize": [1000, 800, 40],
+            "blockout_material_color": [0.46, 0.49, 0.51, 1],
+            "blockout_material_top_color": [0.66, 0.69, 0.7, 1]
+          }
+        },
+        {
+          "id": "block_wall_north_1",
+          "name": "北墙段 1",
+          "type": "box",
+          "transform": { "position": [-250, -420, 40], "rotation": 0 },
+          "parameters": {
+            "BoxSize": [520, 44, 320],
+            "blockout_material_color": [0.055, 0.06, 0.058, 1],
+            "blockout_material_top_color": [0.16, 0.17, 0.165, 1]
+          }
+        },
+        {
+          "id": "block_wall_north_2",
+          "name": "北墙段 2",
+          "type": "box",
+          "transform": { "position": [250, -420, 40], "rotation": 0 },
+          "parameters": {
+            "BoxSize": [520, 44, 320],
+            "blockout_material_color": [0.055, 0.06, 0.058, 1],
+            "blockout_material_top_color": [0.16, 0.17, 0.165, 1]
+          }
+        },
+        {
+          "id": "block_wall_south_1",
+          "name": "南墙段 1",
+          "type": "box",
+          "transform": { "position": [-250, 420, 40], "rotation": 0 },
+          "parameters": {
+            "BoxSize": [520, 44, 320],
+            "blockout_material_color": [0.055, 0.06, 0.058, 1],
+            "blockout_material_top_color": [0.16, 0.17, 0.165, 1]
+          }
+        },
+        {
+          "id": "block_wall_south_2",
+          "name": "南墙段 2",
+          "type": "box",
+          "transform": { "position": [250, 420, 40], "rotation": 0 },
+          "parameters": {
+            "BoxSize": [520, 44, 320],
+            "blockout_material_color": [0.055, 0.06, 0.058, 1],
+            "blockout_material_top_color": [0.16, 0.17, 0.165, 1]
+          }
+        },
+        {
+          "id": "block_wall_west_1",
+          "name": "西墙段 1",
+          "type": "box",
+          "transform": { "position": [-520, -210, 40], "rotation": 90 },
+          "parameters": {
+            "BoxSize": [420, 44, 320],
+            "blockout_material_color": [0.055, 0.06, 0.058, 1],
+            "blockout_material_top_color": [0.16, 0.17, 0.165, 1]
+          }
+        },
+        {
+          "id": "block_wall_west_2",
+          "name": "西墙段 2",
+          "type": "box",
+          "transform": { "position": [-520, 210, 40], "rotation": 90 },
+          "parameters": {
+            "BoxSize": [420, 44, 320],
+            "blockout_material_color": [0.055, 0.06, 0.058, 1],
+            "blockout_material_top_color": [0.16, 0.17, 0.165, 1]
+          }
+        },
+        {
+          "id": "block_wall_east_1",
+          "name": "东墙段 1（门南侧）",
+          "type": "box",
+          "transform": { "position": [520, -268, 40], "rotation": 90 },
+          "parameters": {
+            "BoxSize": [306, 44, 320],
+            "blockout_material_color": [0.055, 0.06, 0.058, 1],
+            "blockout_material_top_color": [0.16, 0.17, 0.165, 1]
+          }
+        },
+        {
+          "id": "block_wall_east_2",
+          "name": "东墙段 2（门北侧）",
+          "type": "box",
+          "transform": { "position": [520, 268, 40], "rotation": 90 },
+          "parameters": {
+            "BoxSize": [306, 44, 320],
+            "blockout_material_color": [0.055, 0.06, 0.058, 1],
+            "blockout_material_top_color": [0.16, 0.17, 0.165, 1]
+          }
+        },
+        {
+          "id": "block_doorway_east",
+          "name": "东侧门洞",
+          "type": "doorway",
+          "transform": { "position": [520, 0, 40], "rotation": 90 },
+          "parameters": {
+            "DoorwaySize": [40, 150, 260],
+            "TopThickness": 40,
+            "SideThickness": 40,
+            "blockout_material_color": [0.77, 0.59, 0.13, 1],
+            "blockout_material_top_color": [0.94, 0.78, 0.28, 1]
+          }
+        },
+        {
+          "id": "block_stairs_west",
+          "name": "西侧平台直梯",
+          "type": "stairs-linear",
+          "transform": { "position": [-430, 0, 40], "rotation": 0 },
+          "parameters": {
+            "StairsSize": [180, 360, 180],
+            "NumberOfSteps": 10,
+            "StairsType": "BOX",
+            "blockout_material_color": [0.77, 0.59, 0.13, 1],
+            "blockout_material_top_color": [0.94, 0.78, 0.28, 1]
+          }
+        },
+        {
+          "id": "port_starter_east",
+          "name": "东侧出入口",
+          "type": "port",
+          "transform": { "position": [560, 0, 40], "rotation": 90 },
+          "parameters": { "width": 150, "depth": 90 }
+        },
+        {
+          "id": "port_starter_west",
+          "name": "西侧楼梯口",
+          "type": "port",
+          "transform": { "position": [-560, 0, 40], "rotation": 180 },
+          "parameters": { "width": 180, "depth": 90 }
+        }
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "id": "instance_starter_room",
+      "definitionId": "module_starter_room",
+      "name": "起始小院 A",
+      "graphPosition": [320, 220],
+      "assemblyTransform": { "position": [0, 0, 0], "rotation": 0 }
+    }
+  ],
+  "connections": [],
+  "blockoutProfile": {
+    "enabled": true,
+    "enforceUeImport": true,
+    "capsuleRadius": 42,
+    "capsuleHalfHeight": 96,
+    "maxStepHeight": 45,
+    "minDoorWidth": 100,
+    "minDoorHeight": 210,
+    "maxStairRise": 20,
+    "minStairTread": 28
+  },
+  "updatedAt": "2026-01-01T00:00:00.000Z"
+}

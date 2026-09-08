@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
-    "check": "tsc -b --pretty false"
+    "check": "tsc -b --pretty false",
+    "verify:level": "tsc -p tsconfig.domain-cjs.json && node verify-domain.cjs"
   },
   "dependencies": {
     "@xyflow/react": "^12.8.6",
