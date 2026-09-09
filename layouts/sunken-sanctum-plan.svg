@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1177" height="1158" viewBox="-1542 -1250 5884 4210" font-family="Arial, 'Microsoft YaHei', sans-serif">
+<rect x="-1542" y="-1250" width="5884" height="4210" fill="#14171a"/>
+<text x="-1502" y="-1160" fill="#eef2ee" font-size="150">沉没圣所 · 自创魂系小关卡 · 顶视平面 + 垂直剖面</text>
+<line x1="-2000" y1="-950" x2="-2000" y2="2240" stroke="#20262b" stroke-width="6"/>
+<line x1="-1000" y1="-950" x2="-1000" y2="2240" stroke="#20262b" stroke-width="6"/>
+<line x1="0" y1="-950" x2="0" y2="2240" stroke="#20262b" stroke-width="6"/>
+<line x1="1000" y1="-950" x2="1000" y2="2240" stroke="#20262b" stroke-width="6"/>
+<line x1="2000" y1="-950" x2="2000" y2="2240" stroke="#20262b" stroke-width="6"/>
+<line x1="3000" y1="-950" x2="3000" y2="2240" stroke="#20262b" stroke-width="6"/>
+<line x1="4000" y1="-950" x2="4000" y2="2240" stroke="#20262b" stroke-width="6"/>
+<line x1="-1542" y1="-1000" x2="4342" y2="-1000" stroke="#20262b" stroke-width="6"/>
+<line x1="-1542" y1="0" x2="4342" y2="0" stroke="#20262b" stroke-width="6"/>
+<line x1="-1542" y1="1000" x2="4342" y2="1000" stroke="#20262b" stroke-width="6"/>
+<line x1="-1542" y1="2000" x2="4342" y2="2000" stroke="#20262b" stroke-width="6"/>
+<line x1="600" y1="0" x2="600" y2="400" stroke="#5FA8D3" stroke-width="34" stroke-dasharray="70 55"/>
+<text x="600" y="130" fill="#5FA8D3" font-size="95" text-anchor="middle">stairs</text>
+<line x1="1500" y1="400" x2="1500" y2="800" stroke="#5FA8D3" stroke-width="34" stroke-dasharray="70 55"/>
+<text x="1500" y="530" fill="#5FA8D3" font-size="95" text-anchor="middle">stairs</text>
+<line x1="2500" y1="800" x2="2500" y2="1200" stroke="#5FA8D3" stroke-width="34" stroke-dasharray="70 55"/>
+<text x="2500" y="930" fill="#5FA8D3" font-size="95" text-anchor="middle">stairs</text>
+<line x1="1500" y1="950" x2="1500" y2="700" stroke="#C77DD9" stroke-width="34" stroke-dasharray="none"/>
+<text x="1500" y="755" fill="#C77DD9" font-size="95" text-anchor="middle">drop</text>
+<line x1="0" y1="450" x2="250" y2="450" stroke="#C77DD9" stroke-width="34" stroke-dasharray="none"/>
+<text x="125" y="380" fill="#C77DD9" font-size="95" text-anchor="middle">drop</text>
+<line x1="3400" y1="1200" x2="3400" y2="1200" stroke="#E8A33D" stroke-width="34" stroke-dasharray="none"/>
+<text x="3400" y="1130" fill="#E8A33D" font-size="95" text-anchor="middle">door</text>
+<line x1="-600" y1="450" x2="-600" y2="450" stroke="#E8A33D" stroke-width="34" stroke-dasharray="none"/>
+<text x="-600" y="380" fill="#E8A33D" font-size="95" text-anchor="middle">door</text>
+<line x1="2950" y1="1650" x2="3350" y2="1650" stroke="#5FA8D3" stroke-width="34" stroke-dasharray="70 55"/>
+<text x="3150" y="1580" fill="#5FA8D3" font-size="95" text-anchor="middle">stairs</text>
+<rect x="-675" y="-450" width="1365" height="990" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="-675" y="-520" fill="#eef2ee" font-size="120">① 沉没庭院 · 篝火</text>
+<text x="-675" y="690" fill="#9da69f" font-size="95">Z 0 cm · 1365×990</text>
+<circle cx="600" cy="0" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="600" y="-80" fill="#E8C48A" font-size="88" text-anchor="middle">1 · 楼梯</text>
+<circle cx="0" cy="450" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="0" y="370" fill="#E8C48A" font-size="88" text-anchor="middle">7 · 下坠</text>
+<circle cx="-600" cy="450" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="-600" y="370" fill="#E8C48A" font-size="88" text-anchor="middle">9 · 门</text>
+<rect x="490" y="28" width="1100" height="744" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="490" y="-42" fill="#eef2ee" font-size="120">② 圣梯露台</text>
+<text x="490" y="922" fill="#9da69f" font-size="95">Z 300 cm · 1100×744</text>
+<circle cx="600" cy="400" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="600" y="320" fill="#E8C48A" font-size="88" text-anchor="middle">1 · 楼梯</text>
+<circle cx="1500" cy="400" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="1500" y="320" fill="#E8C48A" font-size="88" text-anchor="middle">2 · 楼梯</text>
+<rect x="1410" y="528" width="1180" height="544" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="1410" y="458" fill="#eef2ee" font-size="120">③ 圣像回廊</text>
+<text x="1410" y="1222" fill="#9da69f" font-size="95">Z 600 cm · 1180×544</text>
+<circle cx="1500" cy="800" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="1500" y="720" fill="#E8C48A" font-size="88" text-anchor="middle">2 · 楼梯</text>
+<circle cx="2500" cy="800" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="2500" y="720" fill="#E8C48A" font-size="88" text-anchor="middle">3 · 楼梯</text>
+<circle cx="1500" cy="950" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="1500" y="870" fill="#E8C48A" font-size="88" text-anchor="middle">6 · 下坠</text>
+<rect x="2410" y="744" width="1065" height="996" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="2410" y="674" fill="#eef2ee" font-size="120">④ 深渊圣所 · 首领</text>
+<text x="2410" y="1890" fill="#9da69f" font-size="95">Z 900 cm · 1065×996</text>
+<circle cx="2500" cy="1200" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="2500" y="1120" fill="#E8C48A" font-size="88" text-anchor="middle">3 · 楼梯</text>
+<circle cx="3400" cy="1200" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="3400" y="1120" fill="#E8C48A" font-size="88" text-anchor="middle">8 · 门</text>
+<circle cx="2950" cy="1650" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="2950" y="1570" fill="#E8C48A" font-size="88" text-anchor="middle">10 · 楼梯</text>
+<rect x="1118.7496318216406" y="514" width="471.2503681783594" height="387.2503681783595" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="1118.7496318216406" y="444" fill="#eef2ee" font-size="120">⑤ 隐修壁龛 · 遗物</text>
+<text x="1118.7496318216406" y="1051.2503681783596" fill="#9da69f" font-size="95">Z 300 cm · 471×387</text>
+<circle cx="1500" cy="700" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="1500" y="620" fill="#E8C48A" font-size="88" text-anchor="middle">6 · 下坠</text>
+<rect x="-2.000000000000025" y="348" width="504.00000000000006" height="546" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="-2.000000000000025" y="278" fill="#eef2ee" font-size="120">⑥ 潮湿地窟 · 暗区</text>
+<text x="-2.000000000000025" y="1044" fill="#9da69f" font-size="95">Z -300 cm · 504×546</text>
+<circle cx="250" cy="450" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="250" y="370" fill="#E8C48A" font-size="88" text-anchor="middle">7 · 下坠</text>
+<rect x="3325" y="998" width="517" height="404" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="3325" y="928" fill="#eef2ee" font-size="120">⑦ 圣器室 · 储室</text>
+<text x="3325" y="1552" fill="#9da69f" font-size="95">Z 900 cm · 517×404</text>
+<circle cx="3400" cy="1200" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="3400" y="1120" fill="#E8C48A" font-size="88" text-anchor="middle">8 · 门</text>
+<rect x="-1042" y="238" width="517" height="424" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="-1042" y="168" fill="#eef2ee" font-size="120">⑧ 庭院库房 · 两向门</text>
+<text x="-1042" y="812" fill="#9da69f" font-size="95">Z 0 cm · 517×424</text>
+<circle cx="-600" cy="450" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="-600" y="370" fill="#E8C48A" font-size="88" text-anchor="middle">9 · 门</text>
+<rect x="3088.7496318216404" y="1148.7496318216404" width="507.2503681783596" height="591.2503681783596" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="3088.7496318216404" y="1078.7496318216404" fill="#eef2ee" font-size="120">⑨ 瞭望台 · 崖顶</text>
+<text x="3088.7496318216404" y="1890" fill="#9da69f" font-size="95">Z 1200 cm · 507×591</text>
+<circle cx="3350" cy="1650" r="40" fill="#E59A42" stroke="#14171a" stroke-width="8"/>
+<text x="3350" y="1570" fill="#E8C48A" font-size="88" text-anchor="middle">10 · 楼梯</text>
+<text x="-1502" y="2480" fill="#eef2ee" font-size="120">垂直剖面（Z 高度, cm）</text>
+<line x1="-1542" y1="3330.4347826086955" x2="4342" y2="3330.4347826086955" stroke="#232a2e" stroke-width="4"/>
+<text x="-1532" y="3312.4347826086955" fill="#5c6760" font-size="80">-300</text>
+<line x1="-1542" y1="3226.086956521739" x2="4342" y2="3226.086956521739" stroke="#232a2e" stroke-width="4"/>
+<text x="-1532" y="3208.086956521739" fill="#5c6760" font-size="80">0</text>
+<line x1="-1542" y1="3121.7391304347825" x2="4342" y2="3121.7391304347825" stroke="#232a2e" stroke-width="4"/>
+<text x="-1532" y="3103.7391304347825" fill="#5c6760" font-size="80">300</text>
+<line x1="-1542" y1="3017.391304347826" x2="4342" y2="3017.391304347826" stroke="#232a2e" stroke-width="4"/>
+<text x="-1532" y="2999.391304347826" fill="#5c6760" font-size="80">600</text>
+<line x1="-1542" y1="2913.0434782608695" x2="4342" y2="2913.0434782608695" stroke="#232a2e" stroke-width="4"/>
+<text x="-1532" y="2895.0434782608695" fill="#5c6760" font-size="80">900</text>
+<line x1="-1542" y1="2808.695652173913" x2="4342" y2="2808.695652173913" stroke="#232a2e" stroke-width="4"/>
+<text x="-1532" y="2790.695652173913" fill="#5c6760" font-size="80">1200</text>
+<line x1="-1542" y1="2704.3478260869565" x2="4342" y2="2704.3478260869565" stroke="#232a2e" stroke-width="4"/>
+<text x="-1532" y="2686.3478260869565" fill="#5c6760" font-size="80">1500</text>
+<line x1="-1542" y1="2600" x2="4342" y2="2600" stroke="#232a2e" stroke-width="4"/>
+<text x="-1532" y="2582" fill="#5c6760" font-size="80">1800</text>
+<rect x="-675" y="3086.9565217391305" width="1365" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="7.5" y="3156.521739130435" fill="#eef2ee" font-size="95" text-anchor="middle">① 沉没庭院 · 篝火</text>
+<rect x="490" y="2982.608695652174" width="1100" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="1040" y="3052.173913043478" fill="#eef2ee" font-size="95" text-anchor="middle">② 圣梯露台</text>
+<rect x="1410" y="2878.2608695652175" width="1180" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="2000" y="2947.826086956522" fill="#eef2ee" font-size="95" text-anchor="middle">③ 圣像回廊</text>
+<rect x="2410" y="2773.913043478261" width="1065" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="2942.5" y="2843.478260869565" fill="#eef2ee" font-size="95" text-anchor="middle">④ 深渊圣所 · 首领</text>
+<rect x="1118.7496318216406" y="2982.608695652174" width="471.2503681783594" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="1354.3748159108204" y="3052.173913043478" fill="#eef2ee" font-size="95" text-anchor="middle">⑤ 隐修壁龛 · 遗物</text>
+<rect x="-2.000000000000025" y="3191.304347826087" width="504.00000000000006" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="250.00000000000003" y="3260.869565217391" fill="#eef2ee" font-size="95" text-anchor="middle">⑥ 潮湿地窟 · 暗区</text>
+<rect x="3325" y="2773.913043478261" width="517" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="3583.5" y="2843.478260869565" fill="#eef2ee" font-size="95" text-anchor="middle">⑦ 圣器室 · 储室</text>
+<rect x="-1042" y="3086.9565217391305" width="517" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="-783.5" y="3156.521739130435" fill="#eef2ee" font-size="95" text-anchor="middle">⑧ 庭院库房 · 两向门</text>
+<rect x="3088.7496318216404" y="2669.5652173913045" width="507.2503681783596" height="139.13043478260852" fill="#274b40" stroke="#4b8f7a" stroke-width="16"/>
+<text x="3342.37481591082" y="2739.130434782609" fill="#eef2ee" font-size="95" text-anchor="middle">⑨ 瞭望台 · 崖顶</text>
+<line x1="600" y1="3226.086956521739" x2="600" y2="3121.7391304347825" stroke="#5FA8D3" stroke-width="20" stroke-dasharray="30 22"/>
+<circle cx="600" cy="3226.086956521739" r="20" fill="#5FA8D3"/>
+<circle cx="600" cy="3121.7391304347825" r="20" fill="#5FA8D3"/>
+<line x1="1500" y1="3121.7391304347825" x2="1500" y2="3017.391304347826" stroke="#5FA8D3" stroke-width="20" stroke-dasharray="30 22"/>
+<circle cx="1500" cy="3121.7391304347825" r="20" fill="#5FA8D3"/>
+<circle cx="1500" cy="3017.391304347826" r="20" fill="#5FA8D3"/>
+<line x1="2500" y1="3017.391304347826" x2="2500" y2="2913.0434782608695" stroke="#5FA8D3" stroke-width="20" stroke-dasharray="30 22"/>
+<circle cx="2500" cy="3017.391304347826" r="20" fill="#5FA8D3"/>
+<circle cx="2500" cy="2913.0434782608695" r="20" fill="#5FA8D3"/>
+<line x1="1500" y1="3017.391304347826" x2="1500" y2="3121.7391304347825" stroke="#C77DD9" stroke-width="20" stroke-dasharray="30 22"/>
+<circle cx="1500" cy="3017.391304347826" r="20" fill="#C77DD9"/>
+<circle cx="1500" cy="3121.7391304347825" r="20" fill="#C77DD9"/>
+<line x1="125" y1="3226.086956521739" x2="125" y2="3330.4347826086955" stroke="#C77DD9" stroke-width="20" stroke-dasharray="30 22"/>
+<circle cx="125" cy="3226.086956521739" r="20" fill="#C77DD9"/>
+<circle cx="125" cy="3330.4347826086955" r="20" fill="#C77DD9"/>
+<line x1="3400" y1="2913.0434782608695" x2="3400" y2="2913.0434782608695" stroke="#E8A33D" stroke-width="20" stroke-dasharray="30 22"/>
+<circle cx="3400" cy="2913.0434782608695" r="20" fill="#E8A33D"/>
+<circle cx="3400" cy="2913.0434782608695" r="20" fill="#E8A33D"/>
+<line x1="-600" y1="3226.086956521739" x2="-600" y2="3226.086956521739" stroke="#E8A33D" stroke-width="20" stroke-dasharray="30 22"/>
+<circle cx="-600" cy="3226.086956521739" r="20" fill="#E8A33D"/>
+<circle cx="-600" cy="3226.086956521739" r="20" fill="#E8A33D"/>
+<line x1="3150" y1="2913.0434782608695" x2="3150" y2="2808.695652173913" stroke="#5FA8D3" stroke-width="20" stroke-dasharray="30 22"/>
+<circle cx="3150" cy="2913.0434782608695" r="20" fill="#5FA8D3"/>
+<circle cx="3150" cy="2808.695652173913" r="20" fill="#5FA8D3"/>
+</svg>

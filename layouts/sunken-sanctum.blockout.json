@@ -1,0 +1,4093 @@
+{
+  "schemaVersion": 2,
+  "projectId": "project_sunken_sanctum",
+  "name": "沉没圣所 · 自创魂系小关卡",
+  "modules": [
+    {
+      "id": "module_plaza",
+      "name": "① 沉没庭院 · 篝火",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_plaza_001",
+          "name": "沉没庭院楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              1200,
+              900,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_002",
+          "name": "沉没庭院 南墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -450,
+              450,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_003",
+          "name": "沉没庭院 南墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              -150,
+              450,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_004",
+          "name": "沉没庭院 南墙 3",
+          "type": "box",
+          "transform": {
+            "position": [
+              150,
+              450,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_005",
+          "name": "沉没庭院 南墙 4",
+          "type": "box",
+          "transform": {
+            "position": [
+              450,
+              450,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_006",
+          "name": "篝火祭坛",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              200,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              130,
+              130,
+              70
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_007",
+          "name": "庭院立柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              -430,
+              -300,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              64,
+              64,
+              300
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_008",
+          "name": "庭院立柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              430,
+              -300,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              64,
+              64,
+              300
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_009",
+          "name": "庭院立柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              -430,
+              300,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              64,
+              64,
+              300
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_plaza_010",
+          "name": "庭院立柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              430,
+              300,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              64,
+              64,
+              300
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_plaza_1",
+          "name": "1 · 楼梯",
+          "type": "port",
+          "transform": {
+            "position": [
+              600,
+              0,
+              0
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_plaza_4",
+          "name": "4 · 单向门",
+          "type": "port",
+          "transform": {
+            "position": [
+              -600,
+              0,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 150,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_plaza_5",
+          "name": "5 · 下坠",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              -450,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_plaza_7",
+          "name": "7 · 下坠",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              450,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_plaza_9",
+          "name": "9 · 门",
+          "type": "port",
+          "transform": {
+            "position": [
+              -600,
+              450,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 150,
+            "depth": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_terrace",
+      "name": "② 圣梯露台",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_terrace_001",
+          "name": "圣梯露台楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              900,
+              700,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_terrace_002",
+          "name": "圣梯露台 北墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -300,
+              -350,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_terrace_003",
+          "name": "圣梯露台 北墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -350,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_terrace_004",
+          "name": "圣梯露台 北墙 3",
+          "type": "box",
+          "transform": {
+            "position": [
+              300,
+              -350,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_terrace_005",
+          "name": "圣梯露台 南墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -300,
+              350,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_terrace_006",
+          "name": "圣梯露台 南墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              350,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_terrace_007",
+          "name": "圣梯露台 南墙 3",
+          "type": "box",
+          "transform": {
+            "position": [
+              300,
+              350,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              308,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "stairs_terrace_008",
+          "name": "圣梯露台上行梯",
+          "type": "stairs-linear",
+          "transform": {
+            "position": [
+              240,
+              0,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "StairsSize": [
+              170,
+              520,
+              300
+            ],
+            "NumberOfSteps": 17,
+            "StairsType": "BOX",
+            "blockout_material_color": [
+              0.77,
+              0.59,
+              0.13,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.94,
+              0.78,
+              0.28,
+              1
+            ]
+          }
+        },
+        {
+          "id": "doorway_terrace_009",
+          "name": "捷径单向门",
+          "type": "doorway",
+          "transform": {
+            "position": [
+              -450,
+              -150,
+              40
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "DoorwaySize": [
+              50,
+              150,
+              260
+            ],
+            "TopThickness": 45,
+            "SideThickness": 35,
+            "blockout_material_color": [
+              0.83,
+              0.69,
+              0.18,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.97,
+              0.85,
+              0.4,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_terrace_1",
+          "name": "1 · 楼梯",
+          "type": "port",
+          "transform": {
+            "position": [
+              -450,
+              0,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_terrace_2",
+          "name": "2 · 楼梯",
+          "type": "port",
+          "transform": {
+            "position": [
+              450,
+              0,
+              0
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_terrace_4",
+          "name": "4 · 单向门",
+          "type": "port",
+          "transform": {
+            "position": [
+              -450,
+              -150,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 150,
+            "depth": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_gallery",
+      "name": "③ 圣像回廊",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_gallery_001",
+          "name": "圣像回廊楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              1000,
+              500,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_gallery_002",
+          "name": "圣像回廊 北墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -333.33333333333337,
+              -250,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              341.3333333333333,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_gallery_003",
+          "name": "圣像回廊 北墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -250,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              341.3333333333333,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_gallery_004",
+          "name": "圣像回廊 北墙 3",
+          "type": "box",
+          "transform": {
+            "position": [
+              333.33333333333337,
+              -250,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              341.3333333333333,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_gallery_005",
+          "name": "圣像回廊 南墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -333.33333333333337,
+              250,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              341.3333333333333,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_gallery_006",
+          "name": "圣像回廊 南墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              250,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              341.3333333333333,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_gallery_007",
+          "name": "圣像回廊 南墙 3",
+          "type": "box",
+          "transform": {
+            "position": [
+              333.33333333333337,
+              250,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              341.3333333333333,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "stairs_gallery_008",
+          "name": "圣像回廊上行梯",
+          "type": "stairs-linear",
+          "transform": {
+            "position": [
+              240,
+              0,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "StairsSize": [
+              170,
+              520,
+              300
+            ],
+            "NumberOfSteps": 17,
+            "StairsType": "BOX",
+            "blockout_material_color": [
+              0.77,
+              0.59,
+              0.13,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.94,
+              0.78,
+              0.28,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_gallery_2",
+          "name": "2 · 楼梯",
+          "type": "port",
+          "transform": {
+            "position": [
+              -500,
+              0,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_gallery_3",
+          "name": "3 · 楼梯",
+          "type": "port",
+          "transform": {
+            "position": [
+              500,
+              0,
+              0
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_gallery_6",
+          "name": "6 · 下坠",
+          "type": "port",
+          "transform": {
+            "position": [
+              -500,
+              150,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_sanctum",
+      "name": "④ 深渊圣所 · 首领",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_sanctum_001",
+          "name": "深渊圣所楼板 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -360,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              552,
+              192,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_002",
+          "name": "深渊圣所楼板 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -180,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              836.8636250920512,
+              192,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_003",
+          "name": "深渊圣所楼板 3",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              912,
+              192,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_004",
+          "name": "深渊圣所楼板 4",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              180,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              836.8636250920512,
+              192,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_005",
+          "name": "深渊圣所楼板 5",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              360,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              552,
+              192,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_006",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              419.8557158514987,
+              112.49999999999999,
+              40
+            ],
+            "rotation": 105
+          },
+          "parameters": {
+            "BoxSize": [
+              232.93714059226863,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_007",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              307.35571585149876,
+              307.35571585149864,
+              40
+            ],
+            "rotation": 135
+          },
+          "parameters": {
+            "BoxSize": [
+              232.93714059226863,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_008",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              112.50000000000004,
+              419.85571585149864,
+              40
+            ],
+            "rotation": 165
+          },
+          "parameters": {
+            "BoxSize": [
+              232.93714059226875,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_009",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -112.49999999999993,
+              419.8557158514987,
+              40
+            ],
+            "rotation": 194.99999999999997
+          },
+          "parameters": {
+            "BoxSize": [
+              232.93714059226858,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_010",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -307.35571585149864,
+              307.3557158514987,
+              40
+            ],
+            "rotation": 224.99999999999997
+          },
+          "parameters": {
+            "BoxSize": [
+              232.9371405922688,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_011",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -419.8557158514987,
+              112.50000000000001,
+              40
+            ],
+            "rotation": 255
+          },
+          "parameters": {
+            "BoxSize": [
+              232.93714059226858,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_012",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -419.85571585149864,
+              -112.5,
+              40
+            ],
+            "rotation": 285
+          },
+          "parameters": {
+            "BoxSize": [
+              232.93714059226878,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_013",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -307.35571585149876,
+              -307.3557158514987,
+              40
+            ],
+            "rotation": 315
+          },
+          "parameters": {
+            "BoxSize": [
+              232.93714059226843,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_014",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              307.35571585149864,
+              -307.35571585149876,
+              40
+            ],
+            "rotation": 45
+          },
+          "parameters": {
+            "BoxSize": [
+              232.9371405922684,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_015",
+          "name": "深渊圣所圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              419.85571585149864,
+              -112.50000000000016,
+              40
+            ],
+            "rotation": 75
+          },
+          "parameters": {
+            "BoxSize": [
+              232.9371405922688,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_016",
+          "name": "深渊祭坛高台",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              260,
+              260,
+              80
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_017",
+          "name": "仪式烛台柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              300,
+              0,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              46,
+              46,
+              320
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_018",
+          "name": "仪式烛台柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              150.00000000000003,
+              259.8076211353316,
+              40
+            ],
+            "rotation": 60
+          },
+          "parameters": {
+            "BoxSize": [
+              46,
+              46,
+              320
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_019",
+          "name": "仪式烛台柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              -149.99999999999994,
+              259.8076211353316,
+              40
+            ],
+            "rotation": 120
+          },
+          "parameters": {
+            "BoxSize": [
+              46,
+              46,
+              320
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_020",
+          "name": "仪式烛台柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              -300,
+              3.6739403974420595e-14,
+              40
+            ],
+            "rotation": 180
+          },
+          "parameters": {
+            "BoxSize": [
+              46,
+              46,
+              320
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_021",
+          "name": "仪式烛台柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              -150.00000000000014,
+              -259.80762113533154,
+              40
+            ],
+            "rotation": 240
+          },
+          "parameters": {
+            "BoxSize": [
+              46,
+              46,
+              320
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sanctum_022",
+          "name": "仪式烛台柱",
+          "type": "box",
+          "transform": {
+            "position": [
+              150.00000000000003,
+              -259.8076211353316,
+              40
+            ],
+            "rotation": 300
+          },
+          "parameters": {
+            "BoxSize": [
+              46,
+              46,
+              320
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_sanctum_3",
+          "name": "3 · 楼梯",
+          "type": "port",
+          "transform": {
+            "position": [
+              -450,
+              0,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_sanctum_5",
+          "name": "5 · 下坠",
+          "type": "port",
+          "transform": {
+            "position": [
+              -450,
+              200,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_sanctum_8",
+          "name": "8 · 门",
+          "type": "port",
+          "transform": {
+            "position": [
+              450,
+              0,
+              0
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "width": 150,
+            "depth": 90
+          }
+        },
+        {
+          "id": "port_sanctum_10",
+          "name": "10 · 楼梯",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              450,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_nook",
+      "name": "⑤ 隐修壁龛 · 遗物",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_nook_001",
+          "name": "隐修壁龛楼板 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -144,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              228,
+              84,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_002",
+          "name": "隐修壁龛楼板 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -72,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              341.9454500368205,
+              84,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_003",
+          "name": "隐修壁龛楼板 3",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              372,
+              84,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_004",
+          "name": "隐修壁龛楼板 4",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              72,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              341.9454500368205,
+              84,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_005",
+          "name": "隐修壁龛楼板 5",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              144,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              228,
+              84,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_006",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              167.94228634059948,
+              44.99999999999999,
+              40
+            ],
+            "rotation": 105
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690744,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_007",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              122.94228634059948,
+              122.94228634059948,
+              40
+            ],
+            "rotation": 135
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690747,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_008",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -122.94228634059945,
+              122.94228634059948,
+              40
+            ],
+            "rotation": 224.99999999999997
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690752,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_009",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -167.94228634059948,
+              45.00000000000001,
+              40
+            ],
+            "rotation": 255
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690742,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_010",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -167.94228634059948,
+              -45,
+              40
+            ],
+            "rotation": 285
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690752,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_011",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -122.94228634059952,
+              -122.94228634059948,
+              40
+            ],
+            "rotation": 315
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690739,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_012",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -45.00000000000006,
+              -167.94228634059948,
+              40
+            ],
+            "rotation": 345
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690753,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_013",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              44.999999999999986,
+              -167.94228634059948,
+              40
+            ],
+            "rotation": 15
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690752,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_014",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              122.94228634059945,
+              -122.94228634059952,
+              40
+            ],
+            "rotation": 45
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690737,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_015",
+          "name": "隐修壁龛圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              167.94228634059945,
+              -45.000000000000064,
+              40
+            ],
+            "rotation": 75
+          },
+          "parameters": {
+            "BoxSize": [
+              93.17485623690753,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_nook_016",
+          "name": "遗物祭坛",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              90,
+              90,
+              60
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_nook_6",
+          "name": "6 · 下坠",
+          "type": "port",
+          "transform": {
+            "position": [
+              -180,
+              0,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_crypt",
+      "name": "⑥ 潮湿地窟 · 暗区",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_crypt_001",
+          "name": "潮湿地窟楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              460,
+              520,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_crypt_002",
+          "name": "潮湿地窟 南墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -115,
+              260,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              238,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_crypt_003",
+          "name": "潮湿地窟 南墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              115,
+              260,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              238,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_crypt_004",
+          "name": "潮湿地窟 西墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -230,
+              -130,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "BoxSize": [
+              268,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_crypt_005",
+          "name": "潮湿地窟 西墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              -230,
+              130,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "BoxSize": [
+              268,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_crypt_006",
+          "name": "潮湿地窟 东墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              230,
+              -130,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "BoxSize": [
+              268,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_crypt_007",
+          "name": "潮湿地窟 东墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              230,
+              130,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "BoxSize": [
+              268,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_crypt_008",
+          "name": "地窟暗柜",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              120,
+              120,
+              50
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_crypt_7",
+          "name": "7 · 下坠",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              180,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_sacristy",
+      "name": "⑦ 圣器室 · 储室",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_sacristy_001",
+          "name": "圣器室楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              420,
+              360,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sacristy_002",
+          "name": "圣器室 北墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -105,
+              -180,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              218,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sacristy_003",
+          "name": "圣器室 北墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              105,
+              -180,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              218,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sacristy_004",
+          "name": "圣器室 南墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -105,
+              180,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              218,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sacristy_005",
+          "name": "圣器室 南墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              105,
+              180,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              218,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sacristy_006",
+          "name": "圣器室 东墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              210,
+              0,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "BoxSize": [
+              360,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_sacristy_007",
+          "name": "圣器箱",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              110,
+              110,
+              60
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_sacristy_8",
+          "name": "8 · 门",
+          "type": "port",
+          "transform": {
+            "position": [
+              -210,
+              0,
+              0
+            ],
+            "rotation": 270
+          },
+          "parameters": {
+            "width": 150,
+            "depth": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_attach",
+      "name": "⑧ 庭院库房 · 两向门",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_attach_001",
+          "name": "庭院库房楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              420,
+              380,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_attach_002",
+          "name": "庭院库房 北墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -105,
+              -190,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              218,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_attach_003",
+          "name": "庭院库房 北墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              105,
+              -190,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              218,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_attach_004",
+          "name": "庭院库房 南墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -105,
+              190,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              218,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_attach_005",
+          "name": "庭院库房 南墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              105,
+              190,
+              40
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              218,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_attach_006",
+          "name": "庭院库房 西墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -210,
+              -95,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "BoxSize": [
+              198,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_attach_007",
+          "name": "庭院库房 西墙 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              -210,
+              95,
+              40
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "BoxSize": [
+              198,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_attach_008",
+          "name": "货架",
+          "type": "box",
+          "transform": {
+            "position": [
+              -60,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              120,
+              240,
+              70
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_attach_9",
+          "name": "9 · 门",
+          "type": "port",
+          "transform": {
+            "position": [
+              210,
+              0,
+              0
+            ],
+            "rotation": 90
+          },
+          "parameters": {
+            "width": 150,
+            "depth": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_lookout",
+      "name": "⑨ 瞭望台 · 崖顶",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "box_lookout_001",
+          "name": "瞭望台楼板 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -192,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              300,
+              108,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_002",
+          "name": "瞭望台楼板 2",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -96,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              451.92726671576065,
+              108,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_003",
+          "name": "瞭望台楼板 3",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              492,
+              108,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_004",
+          "name": "瞭望台楼板 4",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              96,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              451.92726671576065,
+              108,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_005",
+          "name": "瞭望台楼板 5",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              192,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              300,
+              108,
+              40
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_006",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              223.92304845413264,
+              59.99999999999999,
+              40
+            ],
+            "rotation": 105
+          },
+          "parameters": {
+            "BoxSize": [
+              124.23314164920994,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_007",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              163.92304845413264,
+              163.9230484541326,
+              40
+            ],
+            "rotation": 135
+          },
+          "parameters": {
+            "BoxSize": [
+              124.23314164920994,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_008",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              60.00000000000002,
+              223.92304845413264,
+              40
+            ],
+            "rotation": 165
+          },
+          "parameters": {
+            "BoxSize": [
+              124.23314164921,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_009",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -59.999999999999964,
+              223.92304845413264,
+              40
+            ],
+            "rotation": 194.99999999999997
+          },
+          "parameters": {
+            "BoxSize": [
+              124.23314164920991,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_010",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -163.9230484541326,
+              163.92304845413264,
+              40
+            ],
+            "rotation": 224.99999999999997
+          },
+          "parameters": {
+            "BoxSize": [
+              124.23314164921003,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_011",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -163.9230484541327,
+              -163.92304845413264,
+              40
+            ],
+            "rotation": 315
+          },
+          "parameters": {
+            "BoxSize": [
+              124.2331416492098,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_012",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              -60.00000000000008,
+              -223.9230484541326,
+              40
+            ],
+            "rotation": 345
+          },
+          "parameters": {
+            "BoxSize": [
+              124.23314164921005,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_013",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              59.99999999999999,
+              -223.92304845413264,
+              40
+            ],
+            "rotation": 15
+          },
+          "parameters": {
+            "BoxSize": [
+              124.23314164921003,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_014",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              163.92304845413264,
+              -163.9230484541327,
+              40
+            ],
+            "rotation": 45
+          },
+          "parameters": {
+            "BoxSize": [
+              124.2331416492098,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_015",
+          "name": "瞭望台圆墙 1",
+          "type": "box",
+          "transform": {
+            "position": [
+              223.9230484541326,
+              -60.000000000000085,
+              40
+            ],
+            "rotation": 75
+          },
+          "parameters": {
+            "BoxSize": [
+              124.23314164921004,
+              44,
+              360
+            ],
+            "blockout_material_color": [
+              0.055,
+              0.06,
+              0.058,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.16,
+              0.17,
+              0.165,
+              1
+            ]
+          }
+        },
+        {
+          "id": "box_lookout_016",
+          "name": "观测石台",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              110,
+              110,
+              70
+            ],
+            "blockout_material_color": [
+              0.46,
+              0.49,
+              0.51,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.66,
+              0.69,
+              0.7,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_lookout_10",
+          "name": "10 · 楼梯",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              -240,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 180,
+            "depth": 90
+          }
+        }
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "id": "instance_plaza",
+      "definitionId": "module_plaza",
+      "name": "① 沉没庭院 · 篝火",
+      "graphPosition": [
+        0,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_terrace",
+      "definitionId": "module_terrace",
+      "name": "② 圣梯露台",
+      "graphPosition": [
+        480,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          300
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_gallery",
+      "definitionId": "module_gallery",
+      "name": "③ 圣像回廊",
+      "graphPosition": [
+        960,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          600
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_sanctum",
+      "definitionId": "module_sanctum",
+      "name": "④ 深渊圣所 · 首领",
+      "graphPosition": [
+        1440,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          900
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_nook",
+      "definitionId": "module_nook",
+      "name": "⑤ 隐修壁龛 · 遗物",
+      "graphPosition": [
+        1200,
+        300
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          300
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_crypt",
+      "definitionId": "module_crypt",
+      "name": "⑥ 潮湿地窟 · 暗区",
+      "graphPosition": [
+        480,
+        300
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          -300
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_sacristy",
+      "definitionId": "module_sacristy",
+      "name": "⑦ 圣器室 · 储室",
+      "graphPosition": [
+        1880,
+        300
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          900
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_attach",
+      "definitionId": "module_attach",
+      "name": "⑧ 庭院库房 · 两向门",
+      "graphPosition": [
+        480,
+        -340
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_lookout",
+      "definitionId": "module_lookout",
+      "name": "⑨ 瞭望台 · 崖顶",
+      "graphPosition": [
+        1880,
+        -340
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          1200
+        ],
+        "rotation": 0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "connection_1",
+      "type": "stairs",
+      "sourceInstanceId": "instance_plaza",
+      "sourcePortId": "port_plaza_1",
+      "targetInstanceId": "instance_terrace",
+      "targetPortId": "port_terrace_1",
+      "waypoints": [
+        [
+          240,
+          0
+        ],
+        [
+          240,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "connection_2",
+      "type": "stairs",
+      "sourceInstanceId": "instance_terrace",
+      "sourcePortId": "port_terrace_2",
+      "targetInstanceId": "instance_gallery",
+      "targetPortId": "port_gallery_2",
+      "waypoints": [
+        [
+          720,
+          0
+        ],
+        [
+          720,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "connection_3",
+      "type": "stairs",
+      "sourceInstanceId": "instance_gallery",
+      "sourcePortId": "port_gallery_3",
+      "targetInstanceId": "instance_sanctum",
+      "targetPortId": "port_sanctum_3",
+      "waypoints": [
+        [
+          1200,
+          0
+        ],
+        [
+          1200,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "connection_4",
+      "type": "one-way-door",
+      "sourceInstanceId": "instance_terrace",
+      "sourcePortId": "port_terrace_4",
+      "targetInstanceId": "instance_plaza",
+      "targetPortId": "port_plaza_4",
+      "waypoints": [
+        [
+          240,
+          0
+        ],
+        [
+          240,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "connection_5",
+      "type": "drop",
+      "sourceInstanceId": "instance_sanctum",
+      "sourcePortId": "port_sanctum_5",
+      "targetInstanceId": "instance_plaza",
+      "targetPortId": "port_plaza_5",
+      "waypoints": [
+        [
+          720,
+          0
+        ],
+        [
+          720,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "connection_6",
+      "type": "drop",
+      "sourceInstanceId": "instance_gallery",
+      "sourcePortId": "port_gallery_6",
+      "targetInstanceId": "instance_nook",
+      "targetPortId": "port_nook_6",
+      "waypoints": [
+        [
+          1080,
+          0
+        ],
+        [
+          1080,
+          300
+        ]
+      ]
+    },
+    {
+      "id": "connection_7",
+      "type": "drop",
+      "sourceInstanceId": "instance_plaza",
+      "sourcePortId": "port_plaza_7",
+      "targetInstanceId": "instance_crypt",
+      "targetPortId": "port_crypt_7",
+      "waypoints": [
+        [
+          240,
+          0
+        ],
+        [
+          240,
+          300
+        ]
+      ]
+    },
+    {
+      "id": "connection_8",
+      "type": "door",
+      "sourceInstanceId": "instance_sanctum",
+      "sourcePortId": "port_sanctum_8",
+      "targetInstanceId": "instance_sacristy",
+      "targetPortId": "port_sacristy_8",
+      "waypoints": [
+        [
+          1660,
+          0
+        ],
+        [
+          1660,
+          300
+        ]
+      ]
+    },
+    {
+      "id": "connection_9",
+      "type": "door",
+      "sourceInstanceId": "instance_plaza",
+      "sourcePortId": "port_plaza_9",
+      "targetInstanceId": "instance_attach",
+      "targetPortId": "port_attach_9",
+      "waypoints": [
+        [
+          240,
+          0
+        ],
+        [
+          240,
+          -340
+        ]
+      ]
+    },
+    {
+      "id": "connection_10",
+      "type": "stairs",
+      "sourceInstanceId": "instance_sanctum",
+      "sourcePortId": "port_sanctum_10",
+      "targetInstanceId": "instance_lookout",
+      "targetPortId": "port_lookout_10",
+      "waypoints": [
+        [
+          1660,
+          0
+        ],
+        [
+          1660,
+          -340
+        ]
+      ]
+    }
+  ],
+  "blockoutProfile": {
+    "enabled": true,
+    "enforceUeImport": true,
+    "capsuleRadius": 42,
+    "capsuleHalfHeight": 96,
+    "maxStepHeight": 45,
+    "minDoorWidth": 100,
+    "minDoorHeight": 210,
+    "maxStairRise": 20,
+    "minStairTread": 28
+  },
+  "updatedAt": "2026-06-01T00:00:00.000Z"
+}

@@ -1,0 +1,3665 @@
+{
+  "projectId": "project_sunken_sanctum",
+  "name": "沉没圣所 · 自创魂系小关卡",
+  "actorCount": 104,
+  "actors": [
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_001",
+      "label": "① 沉没庭院 · 篝火 / 沉没庭院楼板",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          1200,
+          900,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_002",
+      "label": "① 沉没庭院 · 篝火 / 沉没庭院 南墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -450,
+        -450,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_003",
+      "label": "① 沉没庭院 · 篝火 / 沉没庭院 南墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -150,
+        -450,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_004",
+      "label": "① 沉没庭院 · 篝火 / 沉没庭院 南墙 3",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        150,
+        -450,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_005",
+      "label": "① 沉没庭院 · 篝火 / 沉没庭院 南墙 4",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        450,
+        -450,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_006",
+      "label": "① 沉没庭院 · 篝火 / 篝火祭坛",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        0,
+        -200,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          130,
+          130,
+          70
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_007",
+      "label": "① 沉没庭院 · 篝火 / 庭院立柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -430,
+        300,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          64,
+          64,
+          300
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_008",
+      "label": "① 沉没庭院 · 篝火 / 庭院立柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        430,
+        300,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          64,
+          64,
+          300
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_009",
+      "label": "① 沉没庭院 · 篝火 / 庭院立柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -430,
+        -300,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          64,
+          64,
+          300
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_plaza/box_plaza_010",
+      "label": "① 沉没庭院 · 篝火 / 庭院立柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        430,
+        -300,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          64,
+          64,
+          300
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/box_terrace_001",
+      "label": "② 圣梯露台 / 圣梯露台楼板",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1050,
+        -400,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          900,
+          700,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/box_terrace_002",
+      "label": "② 圣梯露台 / 圣梯露台 北墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        750,
+        -50,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/box_terrace_003",
+      "label": "② 圣梯露台 / 圣梯露台 北墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1050,
+        -50,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/box_terrace_004",
+      "label": "② 圣梯露台 / 圣梯露台 北墙 3",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1350,
+        -50,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/box_terrace_005",
+      "label": "② 圣梯露台 / 圣梯露台 南墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        750,
+        -750,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/box_terrace_006",
+      "label": "② 圣梯露台 / 圣梯露台 南墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1050,
+        -750,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/box_terrace_007",
+      "label": "② 圣梯露台 / 圣梯露台 南墙 3",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1350,
+        -750,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          308,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/stairs_terrace_008",
+      "label": "② 圣梯露台 / 圣梯露台上行梯",
+      "blockType": "stairs-linear",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+      "location": [
+        1290,
+        -400,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "StairsSize": [
+          170,
+          520,
+          300
+        ],
+        "NumberOfSteps": 17,
+        "StairsType": "BOX",
+        "blockout_material_color": [
+          0.77,
+          0.59,
+          0.13,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.94,
+          0.78,
+          0.28,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_terrace/doorway_terrace_009",
+      "label": "② 圣梯露台 / 捷径单向门",
+      "blockType": "doorway",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Doorway.Blockout_Doorway_C",
+      "location": [
+        600,
+        -250,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "DoorwaySize": [
+          50,
+          150,
+          260
+        ],
+        "TopThickness": 45,
+        "SideThickness": 35,
+        "blockout_material_color": [
+          0.83,
+          0.69,
+          0.18,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.97,
+          0.85,
+          0.4,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_gallery/box_gallery_001",
+      "label": "③ 圣像回廊 / 圣像回廊楼板",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        2000,
+        -800,
+        600
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          1000,
+          500,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_gallery/box_gallery_002",
+      "label": "③ 圣像回廊 / 圣像回廊 北墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1666.6666666666665,
+        -550,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          341.3333333333333,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_gallery/box_gallery_003",
+      "label": "③ 圣像回廊 / 圣像回廊 北墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        2000,
+        -550,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          341.3333333333333,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_gallery/box_gallery_004",
+      "label": "③ 圣像回廊 / 圣像回廊 北墙 3",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        2333.3333333333335,
+        -550,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          341.3333333333333,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_gallery/box_gallery_005",
+      "label": "③ 圣像回廊 / 圣像回廊 南墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1666.6666666666665,
+        -1050,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          341.3333333333333,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_gallery/box_gallery_006",
+      "label": "③ 圣像回廊 / 圣像回廊 南墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        2000,
+        -1050,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          341.3333333333333,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_gallery/box_gallery_007",
+      "label": "③ 圣像回廊 / 圣像回廊 南墙 3",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        2333.3333333333335,
+        -1050,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          341.3333333333333,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_gallery/stairs_gallery_008",
+      "label": "③ 圣像回廊 / 圣像回廊上行梯",
+      "blockType": "stairs-linear",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+      "location": [
+        2240,
+        -800,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "StairsSize": [
+          170,
+          520,
+          300
+        ],
+        "NumberOfSteps": 17,
+        "StairsType": "BOX",
+        "blockout_material_color": [
+          0.77,
+          0.59,
+          0.13,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.94,
+          0.78,
+          0.28,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_001",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所楼板 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -310.0000000000001,
+        899.9999999999999,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          552,
+          192,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_002",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所楼板 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -130.00000000000009,
+        900,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          836.8636250920512,
+          192,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_003",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所楼板 3",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        49.999999999999915,
+        900,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          912,
+          192,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_004",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所楼板 4",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        229.99999999999991,
+        900,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          836.8636250920512,
+          192,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_005",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所楼板 5",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        409.9999999999999,
+        900.0000000000001,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          552,
+          192,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_006",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        162.49999999999983,
+        1319.8557158514986,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -375
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.93714059226863,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_007",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        357.35571585149853,
+        1207.3557158514989,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -405
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.93714059226863,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_008",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        469.85571585149853,
+        1012.5000000000001,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -435
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.93714059226875,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_009",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        469.85571585149864,
+        787.5000000000001,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -465
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.93714059226858,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_010",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        357.35571585149864,
+        592.6442841485014,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -495
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.9371405922688,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_011",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        162.5,
+        480.1442841485013,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -525
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.93714059226858,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_012",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -62.500000000000014,
+        480.14428414850136,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -555
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.93714059226878,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_013",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -257.35571585149876,
+        592.6442841485011,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -585
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.93714059226843,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_014",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -257.35571585149887,
+        1207.3557158514986,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -315
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.9371405922684,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_015",
+      "label": "④ 深渊圣所 · 首领 / 深渊圣所圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -62.50000000000031,
+        1319.8557158514986,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -345
+      ],
+      "parameters": {
+        "BoxSize": [
+          232.9371405922688,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_016",
+      "label": "④ 深渊圣所 · 首领 / 深渊祭坛高台",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        49.999999999999915,
+        900,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          260,
+          260,
+          80
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_017",
+      "label": "④ 深渊圣所 · 首领 / 仪式烛台柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        49.99999999999986,
+        1200,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          46,
+          46,
+          320
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_018",
+      "label": "④ 深渊圣所 · 首领 / 仪式烛台柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        309.8076211353315,
+        1050,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -330
+      ],
+      "parameters": {
+        "BoxSize": [
+          46,
+          46,
+          320
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_019",
+      "label": "④ 深渊圣所 · 首领 / 仪式烛台柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        309.8076211353315,
+        750.0000000000001,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -390
+      ],
+      "parameters": {
+        "BoxSize": [
+          46,
+          46,
+          320
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_020",
+      "label": "④ 深渊圣所 · 首领 / 仪式烛台柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        50.00000000000001,
+        600,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -450
+      ],
+      "parameters": {
+        "BoxSize": [
+          46,
+          46,
+          320
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_021",
+      "label": "④ 深渊圣所 · 首领 / 仪式烛台柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -209.80762113533163,
+        749.9999999999998,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -510
+      ],
+      "parameters": {
+        "BoxSize": [
+          46,
+          46,
+          320
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sanctum/box_sanctum_022",
+      "label": "④ 深渊圣所 · 首领 / 仪式烛台柱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -209.8076211353317,
+        1050,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -570
+      ],
+      "parameters": {
+        "BoxSize": [
+          46,
+          46,
+          320
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_001",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛楼板 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1320,
+        -844,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          228,
+          84,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_002",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛楼板 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1320,
+        -772,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          341.9454500368205,
+          84,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_003",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛楼板 3",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1320,
+        -700,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          372,
+          84,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_004",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛楼板 4",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1320,
+        -628,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          341.9454500368205,
+          84,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_005",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛楼板 5",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1320,
+        -556,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          228,
+          84,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_006",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1152.0577136594006,
+        -655,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -285
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690744,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_007",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1197.0577136594004,
+        -577.0577136594005,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -315
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690747,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_008",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1442.9422863405994,
+        -577.0577136594005,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -405
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690752,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_009",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1487.9422863405994,
+        -655,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -435
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690742,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_010",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1487.9422863405994,
+        -745,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -465
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690752,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_011",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1442.9422863405996,
+        -822.9422863405995,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -495
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690739,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_012",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1365,
+        -867.9422863405995,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -525
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690753,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_013",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1275,
+        -867.9422863405995,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -195
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690752,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_014",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1197.0577136594006,
+        -822.9422863405996,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -225
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690737,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_015",
+      "label": "⑤ 隐修壁龛 · 遗物 / 隐修壁龛圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1152.0577136594006,
+        -745.0000000000001,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -255
+      ],
+      "parameters": {
+        "BoxSize": [
+          93.17485623690753,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_nook/box_nook_016",
+      "label": "⑤ 隐修壁龛 · 遗物 / 遗物祭坛",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        1320,
+        -700,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          90,
+          90,
+          60
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_crypt/box_crypt_001",
+      "label": "⑥ 潮湿地窟 · 暗区 / 潮湿地窟楼板",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        250.00000000000003,
+        -630,
+        -300
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          460,
+          520,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_crypt/box_crypt_002",
+      "label": "⑥ 潮湿地窟 · 暗区 / 潮湿地窟 南墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        365,
+        -370,
+        -260
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          238,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_crypt/box_crypt_003",
+      "label": "⑥ 潮湿地窟 · 暗区 / 潮湿地窟 南墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        135,
+        -370,
+        -260
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          238,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_crypt/box_crypt_004",
+      "label": "⑥ 潮湿地窟 · 暗区 / 潮湿地窟 西墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        480.00000000000006,
+        -760,
+        -260
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          268,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_crypt/box_crypt_005",
+      "label": "⑥ 潮湿地窟 · 暗区 / 潮湿地窟 西墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        480,
+        -500,
+        -260
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          268,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_crypt/box_crypt_006",
+      "label": "⑥ 潮湿地窟 · 暗区 / 潮湿地窟 东墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        20.000000000000057,
+        -760,
+        -260
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          268,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_crypt/box_crypt_007",
+      "label": "⑥ 潮湿地窟 · 暗区 / 潮湿地窟 东墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        20,
+        -500,
+        -260
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          268,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_crypt/box_crypt_008",
+      "label": "⑥ 潮湿地窟 · 暗区 / 地窟暗柜",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        250.00000000000003,
+        -630,
+        -300
+      ],
+      "rotation": [
+        0,
+        0,
+        -180
+      ],
+      "parameters": {
+        "BoxSize": [
+          120,
+          120,
+          50
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sacristy/box_sacristy_001",
+      "label": "⑦ 圣器室 · 储室 / 圣器室楼板",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        49.999999999999794,
+        1560,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          420,
+          360,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sacristy/box_sacristy_002",
+      "label": "⑦ 圣器室 · 储室 / 圣器室 北墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -130.00000000000017,
+        1455,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          218,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sacristy/box_sacristy_003",
+      "label": "⑦ 圣器室 · 储室 / 圣器室 北墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -130.00000000000023,
+        1665,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          218,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sacristy/box_sacristy_004",
+      "label": "⑦ 圣器室 · 储室 / 圣器室 南墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        229.99999999999983,
+        1455,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          218,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sacristy/box_sacristy_005",
+      "label": "⑦ 圣器室 · 储室 / 圣器室 南墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        229.99999999999977,
+        1665,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          218,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sacristy/box_sacristy_006",
+      "label": "⑦ 圣器室 · 储室 / 圣器室 东墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        49.99999999999976,
+        1770,
+        340
+      ],
+      "rotation": [
+        0,
+        0,
+        -360
+      ],
+      "parameters": {
+        "BoxSize": [
+          360,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_sacristy/box_sacristy_007",
+      "label": "⑦ 圣器室 · 储室 / 圣器箱",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        49.999999999999794,
+        1560,
+        300
+      ],
+      "rotation": [
+        0,
+        0,
+        -270
+      ],
+      "parameters": {
+        "BoxSize": [
+          110,
+          110,
+          60
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_attach/box_attach_001",
+      "label": "⑧ 庭院库房 · 两向门 / 庭院库房楼板",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -810,
+        -450,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          420,
+          380,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_attach/box_attach_002",
+      "label": "⑧ 庭院库房 · 两向门 / 庭院库房 北墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -915,
+        -260,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          218,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_attach/box_attach_003",
+      "label": "⑧ 庭院库房 · 两向门 / 庭院库房 北墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -705,
+        -260,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          218,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_attach/box_attach_004",
+      "label": "⑧ 庭院库房 · 两向门 / 庭院库房 南墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -915,
+        -640,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          218,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_attach/box_attach_005",
+      "label": "⑧ 庭院库房 · 两向门 / 庭院库房 南墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -705,
+        -640,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          218,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_attach/box_attach_006",
+      "label": "⑧ 庭院库房 · 两向门 / 庭院库房 西墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -1020,
+        -355,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "BoxSize": [
+          198,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_attach/box_attach_007",
+      "label": "⑧ 庭院库房 · 两向门 / 庭院库房 西墙 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -1020,
+        -545,
+        40
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "BoxSize": [
+          198,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_attach/box_attach_008",
+      "label": "⑧ 庭院库房 · 两向门 / 货架",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        -870,
+        -450,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parameters": {
+        "BoxSize": [
+          120,
+          240,
+          70
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_001",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台楼板 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        451.99999999999983,
+        1300,
+        600
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "BoxSize": [
+          300,
+          108,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_002",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台楼板 2",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        355.99999999999983,
+        1300,
+        600
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "BoxSize": [
+          451.92726671576065,
+          108,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_003",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台楼板 3",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        259.99999999999983,
+        1300,
+        600
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "BoxSize": [
+          492,
+          108,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_004",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台楼板 4",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        163.99999999999983,
+        1300,
+        600
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "BoxSize": [
+          451.92726671576065,
+          108,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_005",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台楼板 5",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        67.99999999999983,
+        1300,
+        600
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "BoxSize": [
+          300,
+          108,
+          40
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_006",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        199.99999999999986,
+        1076.0769515458674,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -195
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.23314164920994,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_007",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        96.07695154586722,
+        1136.0769515458674,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -225
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.23314164920994,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_008",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        36.07695154586719,
+        1240,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -255
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.23314164921,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_009",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        36.07695154586719,
+        1360,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -285
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.23314164920991,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_010",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        96.07695154586719,
+        1463.9230484541326,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -315
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.23314164921003,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_011",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        423.92304845413247,
+        1463.9230484541326,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -405
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.2331416492098,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_012",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        483.9230484541324,
+        1360,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -435
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.23314164921005,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_013",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        483.92304845413247,
+        1240,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -105
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.23314164921003,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_014",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        423.9230484541325,
+        1136.0769515458674,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -135
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.2331416492098,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_015",
+      "label": "⑨ 瞭望台 · 崖顶 / 瞭望台圆墙 1",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        319.99999999999994,
+        1076.0769515458674,
+        640
+      ],
+      "rotation": [
+        0,
+        0,
+        -165
+      ],
+      "parameters": {
+        "BoxSize": [
+          124.23314164921004,
+          44,
+          360
+        ],
+        "blockout_material_color": [
+          0.055,
+          0.06,
+          0.058,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.16,
+          0.17,
+          0.165,
+          1
+        ]
+      }
+    },
+    {
+      "syncKey": "project_sunken_sanctum/instance_lookout/box_lookout_016",
+      "label": "⑨ 瞭望台 · 崖顶 / 观测石台",
+      "blockType": "box",
+      "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+      "location": [
+        259.99999999999983,
+        1300,
+        600
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "parameters": {
+        "BoxSize": [
+          110,
+          110,
+          70
+        ],
+        "blockout_material_color": [
+          0.46,
+          0.49,
+          0.51,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.66,
+          0.69,
+          0.7,
+          1
+        ]
+      }
+    }
+  ],
+  "assemblyIssues": [
+    {
+      "connectionId": "connection_3",
+      "positionError": 3014.133374620307,
+      "rotationError": 90
+    },
+    {
+      "connectionId": "connection_4",
+      "positionError": 1261.9429464123962,
+      "rotationError": 180
+    }
+  ]
+}

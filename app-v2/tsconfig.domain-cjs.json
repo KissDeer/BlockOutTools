@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "outDir": ".domain-verify",
+    "rootDir": "src/domain"
+  },
+  "include": ["src/domain/**/*.ts"],
+  "exclude": ["src/domain/**/*.test.ts", "src/domain/**/*.test.tsx"]
+}

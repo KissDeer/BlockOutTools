@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="828" height="996" viewBox="-850 -3450 3450 4150" font-family="Arial, 'Microsoft YaHei', sans-serif">
+<rect x="-850" y="-3450" width="3450" height="4150" fill="#14171a"/>
+<line x1="-1000" y1="-3450" x2="-1000" y2="700" stroke="#20262b" stroke-width="6"/>
+<line x1="0" y1="-3450" x2="0" y2="700" stroke="#20262b" stroke-width="6"/>
+<line x1="1000" y1="-3450" x2="1000" y2="700" stroke="#20262b" stroke-width="6"/>
+<line x1="2000" y1="-3450" x2="2000" y2="700" stroke="#20262b" stroke-width="6"/>
+<line x1="-850" y1="-4000" x2="2600" y2="-4000" stroke="#20262b" stroke-width="6"/>
+<line x1="-850" y1="-3000" x2="2600" y2="-3000" stroke="#20262b" stroke-width="6"/>
+<line x1="-850" y1="-2000" x2="2600" y2="-2000" stroke="#20262b" stroke-width="6"/>
+<line x1="-850" y1="-1000" x2="2600" y2="-1000" stroke="#20262b" stroke-width="6"/>
+<line x1="-850" y1="0" x2="2600" y2="0" stroke="#20262b" stroke-width="6"/>
+<line x1="0" y1="-300" x2="0" y2="-300" stroke="#E8A33D" stroke-width="40" stroke-dasharray="none"/>
+<text x="0" y="-360" fill="#E8A33D" font-size="100" text-anchor="middle">door</text>
+<line x1="0" y1="-1900" x2="0" y2="-2150" stroke="#5FA8D3" stroke-width="40" stroke-dasharray="80 60"/>
+<text x="0" y="-2085" fill="#5FA8D3" font-size="100" text-anchor="middle">stairs</text>
+<line x1="1050" y1="-2600" x2="1300" y2="-2600" stroke="#E8A33D" stroke-width="40" stroke-dasharray="none"/>
+<text x="1175" y="-2660" fill="#E8A33D" font-size="100" text-anchor="middle">door</text>
+<g>
+<rect x="-300" y="-300" width="600" height="600" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="-300" y="-390" fill="#eef2ee" font-size="130" >① Hotel Krat 起点</text>
+<text x="-300" y="450" fill="#9da69f" font-size="105">Z 0 cm · 600×600</text>
+<circle cx="0" cy="-300" r="46" fill="#E59A42" stroke="#14171a" stroke-width="10"/>
+<text x="0" y="-390" fill="#E8C48A" font-size="100" text-anchor="middle">上行口</text>
+</g>
+<g>
+<rect x="-240" y="-1900" width="480" height="1600" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="-240" y="-1990" fill="#eef2ee" font-size="130" >② 大道下段通道</text>
+<text x="-240" y="-150" fill="#9da69f" font-size="105">Z 0 cm · 480×1600</text>
+<circle cx="0" cy="-1900" r="46" fill="#E59A42" stroke="#14171a" stroke-width="10"/>
+<text x="0" y="-1990" fill="#E8C48A" font-size="100" text-anchor="middle">上行口</text>
+<circle cx="0" cy="-300" r="46" fill="#E59A42" stroke="#14171a" stroke-width="10"/>
+<text x="0" y="-390" fill="#E8C48A" font-size="100" text-anchor="middle">起点侧口</text>
+</g>
+<g>
+<rect x="-450" y="-3050" width="1500" height="900" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="-450" y="-3140" fill="#eef2ee" font-size="130" >③ 前厅 · 通往 Passage</text>
+<text x="-450" y="-2000" fill="#9da69f" font-size="105">Z 300 cm · 1500×900</text>
+<circle cx="0" cy="-2150" r="46" fill="#E59A42" stroke="#14171a" stroke-width="10"/>
+<text x="0" y="-2240" fill="#E8C48A" font-size="100" text-anchor="middle">走廊口</text>
+<circle cx="1050" cy="-2600" r="46" fill="#E59A42" stroke="#14171a" stroke-width="10"/>
+<text x="1050" y="-2690" fill="#E8C48A" font-size="100" text-anchor="middle">通往 Passage</text>
+</g>
+<g>
+<rect x="1300" y="-2950" width="900" height="700" rx="40" fill="#20262b" stroke="#4b8f7a" stroke-width="24"/>
+<text x="1300" y="-3040" fill="#eef2ee" font-size="130" >④ Passage 通道口</text>
+<text x="1300" y="-2100" fill="#9da69f" font-size="105">Z 300 cm · 900×700</text>
+<circle cx="1750" cy="-2950" r="46" fill="#E59A42" stroke="#14171a" stroke-width="10"/>
+<text x="1750" y="-3040" fill="#E8C48A" font-size="100" text-anchor="middle">Throwing Cell 口</text>
+<circle cx="1300" cy="-2600" r="46" fill="#E59A42" stroke="#14171a" stroke-width="10"/>
+<text x="1300" y="-2690" fill="#E8C48A" font-size="100" text-anchor="middle">前厅口</text>
+</g>
+</svg>

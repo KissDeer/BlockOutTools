@@ -1,0 +1,1416 @@
+{
+  "schemaVersion": 2,
+  "projectId": "project_elysian_boulevard_rebuild",
+  "name": "Elysian Boulevard · 结构还原（重建）",
+  "modules": [
+    {
+      "id": "module_hotel_krat",
+      "name": "① Hotel Krat 起点",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "module_hotel_krat_floor",
+          "name": "Hotel Krat 起点 楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              600,
+              600,
+              40
+            ],
+            "blockout_material_color": [
+              0.32,
+              0.34,
+              0.33,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.78,
+              0.8,
+              0.78,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_hotel_krat_wall_001",
+          "name": "Hotel Krat 起点 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -180,
+              -300,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              240,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_hotel_krat_wall_002",
+          "name": "Hotel Krat 起点 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              180,
+              -300,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              240,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_hotel_krat_door_003",
+          "name": "Hotel Krat 起点 门洞",
+          "type": "doorway",
+          "transform": {
+            "position": [
+              0,
+              -300,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "DoorwaySize": [
+              44,
+              260,
+              120
+            ],
+            "TopThickness": 40,
+            "SideThickness": 40,
+            "blockout_material_color": [
+              0.23,
+              0.25,
+              0.24,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.58,
+              0.62,
+              0.59,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_hotel_north",
+          "name": "上行口",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              -300,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 120,
+            "depth": 80
+          }
+        },
+        {
+          "id": "module_hotel_krat_wall_004",
+          "name": "Hotel Krat 起点 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              300,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              600,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_hotel_krat_wall_005",
+          "name": "Hotel Krat 起点 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -300,
+              0,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              600,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_hotel_krat_wall_006",
+          "name": "Hotel Krat 起点 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              300,
+              0,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              600,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_corridor_lower",
+      "name": "② 大道下段通道",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "module_corridor_lower_floor",
+          "name": "大道下段通道 楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              480,
+              1600,
+              40
+            ],
+            "blockout_material_color": [
+              0.32,
+              0.34,
+              0.33,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.78,
+              0.8,
+              0.78,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_corridor_lower_wall_007",
+          "name": "大道下段通道 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -150,
+              -800,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              180,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_corridor_lower_wall_008",
+          "name": "大道下段通道 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              150,
+              -800,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              180,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_corridor_lower_door_009",
+          "name": "大道下段通道 门洞",
+          "type": "doorway",
+          "transform": {
+            "position": [
+              0,
+              -800,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "DoorwaySize": [
+              44,
+              260,
+              120
+            ],
+            "TopThickness": 40,
+            "SideThickness": 40,
+            "blockout_material_color": [
+              0.23,
+              0.25,
+              0.24,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.58,
+              0.62,
+              0.59,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_corridor_north",
+          "name": "上行口",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              -800,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 120,
+            "depth": 80
+          }
+        },
+        {
+          "id": "module_corridor_lower_wall_010",
+          "name": "大道下段通道 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -150,
+              800,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              180,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_corridor_lower_wall_011",
+          "name": "大道下段通道 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              150,
+              800,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              180,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_corridor_lower_door_012",
+          "name": "大道下段通道 门洞",
+          "type": "doorway",
+          "transform": {
+            "position": [
+              0,
+              800,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "DoorwaySize": [
+              44,
+              260,
+              120
+            ],
+            "TopThickness": 40,
+            "SideThickness": 40,
+            "blockout_material_color": [
+              0.23,
+              0.25,
+              0.24,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.58,
+              0.62,
+              0.59,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_corridor_south",
+          "name": "起点侧口",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              800,
+              0
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 120,
+            "depth": 80
+          }
+        },
+        {
+          "id": "module_corridor_lower_wall_013",
+          "name": "大道下段通道 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -240,
+              0,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              1600,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_corridor_lower_wall_014",
+          "name": "大道下段通道 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              240,
+              0,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              1600,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_entry_hall",
+      "name": "③ 前厅 · 通往 Passage",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "module_entry_hall_floor",
+          "name": "前厅 楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              1500,
+              900,
+              40
+            ],
+            "blockout_material_color": [
+              0.32,
+              0.34,
+              0.33,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.78,
+              0.8,
+              0.78,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_entry_hall_wall_015",
+          "name": "前厅 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              -450,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              1500,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_entry_hall_wall_016",
+          "name": "前厅 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -555,
+              450,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              390,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_entry_hall_wall_017",
+          "name": "前厅 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              255,
+              450,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              990,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_entry_hall_door_018",
+          "name": "前厅 门洞",
+          "type": "doorway",
+          "transform": {
+            "position": [
+              -300,
+              450,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "DoorwaySize": [
+              44,
+              260,
+              120
+            ],
+            "TopThickness": 40,
+            "SideThickness": 40,
+            "blockout_material_color": [
+              0.23,
+              0.25,
+              0.24,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.58,
+              0.62,
+              0.59,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_hall_south",
+          "name": "走廊口",
+          "type": "port",
+          "transform": {
+            "position": [
+              -300,
+              450,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 120,
+            "depth": 80
+          }
+        },
+        {
+          "id": "module_entry_hall_wall_019",
+          "name": "前厅 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -750,
+              0,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              900,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_entry_hall_wall_020",
+          "name": "前厅 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              750,
+              -260,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              380,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_entry_hall_wall_021",
+          "name": "前厅 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              750,
+              260,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              380,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_entry_hall_door_022",
+          "name": "前厅 门洞",
+          "type": "doorway",
+          "transform": {
+            "position": [
+              750,
+              0,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "DoorwaySize": [
+              140,
+              280,
+              44
+            ],
+            "TopThickness": 40,
+            "SideThickness": 40,
+            "blockout_material_color": [
+              0.23,
+              0.25,
+              0.24,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.58,
+              0.62,
+              0.59,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_hall_east",
+          "name": "通往 Passage",
+          "type": "port",
+          "transform": {
+            "position": [
+              750,
+              0,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 120,
+            "depth": 80
+          }
+        },
+        {
+          "id": "stairs_hall_south",
+          "name": "前厅上行梯",
+          "type": "stairs-linear",
+          "transform": {
+            "position": [
+              0,
+              200,
+              150
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "StairsSize": [
+              360,
+              900,
+              300
+            ],
+            "NumberOfSteps": 8,
+            "StairsType": "BOX",
+            "blockout_material_color": [
+              0.52,
+              0.4,
+              0.22,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.78,
+              0.65,
+              0.4,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_passage",
+      "name": "④ Passage 通道口",
+      "revision": 1,
+      "blocks": [
+        {
+          "id": "module_passage_floor",
+          "name": "Passage 通道口 楼板",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              0,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              900,
+              700,
+              40
+            ],
+            "blockout_material_color": [
+              0.32,
+              0.34,
+              0.33,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.78,
+              0.8,
+              0.78,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_passage_wall_023",
+          "name": "Passage 通道口 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -255,
+              -350,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              390,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_passage_wall_024",
+          "name": "Passage 通道口 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              255,
+              -350,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              390,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_passage_door_025",
+          "name": "Passage 通道口 门洞",
+          "type": "doorway",
+          "transform": {
+            "position": [
+              0,
+              -350,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "DoorwaySize": [
+              44,
+              260,
+              120
+            ],
+            "TopThickness": 40,
+            "SideThickness": 40,
+            "blockout_material_color": [
+              0.23,
+              0.25,
+              0.24,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.58,
+              0.62,
+              0.59,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_passage_north",
+          "name": "Throwing Cell 口",
+          "type": "port",
+          "transform": {
+            "position": [
+              0,
+              -350,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 120,
+            "depth": 80
+          }
+        },
+        {
+          "id": "module_passage_wall_026",
+          "name": "Passage 通道口 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              0,
+              350,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              900,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_passage_wall_027",
+          "name": "Passage 通道口 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -450,
+              -210,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              280,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_passage_wall_028",
+          "name": "Passage 通道口 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              -450,
+              210,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              280,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "module_passage_door_029",
+          "name": "Passage 通道口 门洞",
+          "type": "doorway",
+          "transform": {
+            "position": [
+              -450,
+              0,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "DoorwaySize": [
+              140,
+              280,
+              44
+            ],
+            "TopThickness": 40,
+            "SideThickness": 40,
+            "blockout_material_color": [
+              0.23,
+              0.25,
+              0.24,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.58,
+              0.62,
+              0.59,
+              1
+            ]
+          }
+        },
+        {
+          "id": "port_passage_west",
+          "name": "前厅口",
+          "type": "port",
+          "transform": {
+            "position": [
+              -450,
+              0,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "width": 120,
+            "depth": 80
+          }
+        },
+        {
+          "id": "module_passage_wall_030",
+          "name": "Passage 通道口 墙",
+          "type": "box",
+          "transform": {
+            "position": [
+              450,
+              0,
+              450
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              40,
+              700,
+              300
+            ],
+            "blockout_material_color": [
+              0.16,
+              0.18,
+              0.17,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.5,
+              0.53,
+              0.5,
+              1
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "id": "instance_hotel_krat",
+      "definitionId": "module_hotel_krat",
+      "name": "① Hotel Krat 起点",
+      "graphPosition": [
+        0,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_corridor_lower",
+      "definitionId": "module_corridor_lower",
+      "name": "② 大道下段通道",
+      "graphPosition": [
+        220,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          -1100,
+          0
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_entry_hall",
+      "definitionId": "module_entry_hall",
+      "name": "③ 前厅 · 通往 Passage",
+      "graphPosition": [
+        450,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          300,
+          -2600,
+          300
+        ],
+        "rotation": 0
+      }
+    },
+    {
+      "id": "instance_passage",
+      "definitionId": "module_passage",
+      "name": "④ Passage 通道口",
+      "graphPosition": [
+        680,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          1750,
+          -2600,
+          300
+        ],
+        "rotation": 0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_seg1_001",
+      "type": "door",
+      "sourceInstanceId": "instance_hotel_krat",
+      "sourcePortId": "port_hotel_north",
+      "targetInstanceId": "instance_corridor_lower",
+      "targetPortId": "port_corridor_south",
+      "waypoints": [
+        [
+          0,
+          -550
+        ]
+      ]
+    },
+    {
+      "id": "conn_seg1_002",
+      "type": "stairs",
+      "sourceInstanceId": "instance_corridor_lower",
+      "sourcePortId": "port_corridor_north",
+      "targetInstanceId": "instance_entry_hall",
+      "targetPortId": "port_hall_south",
+      "waypoints": [
+        [
+          0,
+          -1850
+        ]
+      ]
+    },
+    {
+      "id": "conn_seg1_003",
+      "type": "door",
+      "sourceInstanceId": "instance_entry_hall",
+      "sourcePortId": "port_hall_east",
+      "targetInstanceId": "instance_passage",
+      "targetPortId": "port_passage_west",
+      "waypoints": [
+        [
+          1050,
+          -2600
+        ]
+      ]
+    }
+  ],
+  "blockoutProfile": {
+    "enabled": true,
+    "enforceUeImport": true,
+    "capsuleRadius": 42,
+    "capsuleHalfHeight": 96,
+    "maxStepHeight": 45,
+    "minDoorWidth": 100,
+    "minDoorHeight": 210,
+    "maxStairRise": 20,
+    "minStairTread": 28
+  },
+  "updatedAt": "2026-09-02T17:24:31.360Z"
+}
