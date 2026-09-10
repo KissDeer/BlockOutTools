@@ -3,6 +3,8 @@ import { NumberField } from "../../components/NumberField";
 import { TextField } from "../../components/TextField";
 import type { Block, Rgba, Vec3 } from "../../domain/types";
 import { useProjectStore } from "../../store/project-store";
+import { StairLandingFields } from "./StairLandingFields";
+import { blockBaseZ, surfaceZ } from "../../domain/spatial";
 
 const typeInfo = {
   box: { label: "Box 盒体", Icon: Box, status: "UE Blueprint" },
@@ -66,7 +68,11 @@ export function BlockInspector() {
       <section className="inspector-section">
         <h3>关键参数</h3>
         {block.type === "box" ? (
-          <Vector3Fields labels={["长度 X", "宽度 Y", "高度 Z"]} value={block.parameters.BoxSize} onCommit={(value) => patch((next) => { if (next.type === "box") next.parameters.BoxSize = value; })} />
+          <>
+            <label>用途<select value={block.role ?? "solid"} onChange={(event) => patch((next) => { if (next.type === "box") next.role = event.target.value as typeof next.role; })}><option value="solid">普通实体</option><option value="floor">楼板</option><option value="landing">落脚平台</option><option value="wall">墙壁</option><option value="edging">包边</option></select></label>
+            <label>高度基准<select value={block.elevationReference ?? "bottom"} onChange={(event) => patch((next) => { if (next.type !== "box") return; const z = event.target.value === "surface" ? surfaceZ(next) : blockBaseZ(next); next.elevationReference = event.target.value as "bottom" | "surface"; next.transform.position[2] = z; })}><option value="bottom">底面 Z（兼容旧积木）</option><option value="surface">行走表面 Z（厚度向下）</option></select></label>
+            <Vector3Fields labels={["长度 X", "宽度 Y", "高度 Z"]} value={block.parameters.BoxSize} onCommit={(value) => patch((next) => { if (next.type === "box") next.parameters.BoxSize = value; })} />
+          </>
         ) : null}
         {block.type === "doorway" ? (
           <>
@@ -79,6 +85,8 @@ export function BlockInspector() {
           <>
             <Vector3Fields labels={["宽度 X", "进深 Y", "高度 Z"]} value={block.parameters.StairsSize} onCommit={(value) => patch((next) => { if (next.type === "stairs-linear") next.parameters.StairsSize = value; })} />
             <NumberField label="台阶数" value={block.parameters.NumberOfSteps} min={1} step={1} unit="级" onCommit={(value) => patch((next) => { if (next.type === "stairs-linear") next.parameters.NumberOfSteps = Math.round(value); })} />
+            <StairLandingFields key={block.id} block={block} module={module!} profile={project.blockoutProfile} onChange={updateBlock} />
+            {block.parameters.StairsType !== "BOX" ? <p className="status-warning">{block.parameters.StairsType} 的 UE 形态尚未核实，预览仅显示 BOX 近似，请勿据此验收。</p> : null}
           </>
         ) : null}
         {block.type === "port" ? (

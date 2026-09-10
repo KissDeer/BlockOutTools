@@ -54,13 +54,17 @@ function rotate2d(x: number, y: number, degrees: number): [number, number] {
   return [x * cos - y * sin, x * sin + y * cos];
 }
 
-function offsetFor(type: ConnectionType, sourceRotation: number): Vec3 {
-  const rule = CONNECTION_RULES[type];
-  const [x, y] = rotate2d(rule.forward, 0, sourceRotation);
+export function connectionSpacing(connection: Connection): { forward: number; lateral: number; vertical: number } {
+  return connection.spacing ?? { ...CONNECTION_RULES[connection.type], lateral: 0 };
+}
+
+function offsetFor(connection: Connection, sourceRotation: number): Vec3 {
+  const rule = connectionSpacing(connection);
+  const [x, y] = rotate2d(rule.forward, rule.lateral, sourceRotation);
   return [x, y, rule.vertical];
 }
 
-function worldPortPose(transform: Transform, port: PortBlock): PortPose {
+export function worldPortPose(transform: Transform, port: PortBlock): PortPose {
   const [x, y] = rotate2d(port.transform.position[0], port.transform.position[1], transform.rotation);
   return {
     position: [
@@ -81,19 +85,19 @@ function transformFromPortPose(port: PortBlock, pose: PortPose): Transform {
   };
 }
 
-function solveTarget(type: ConnectionType, sourceTransform: Transform, sourcePort: PortBlock, targetPort: PortBlock): Transform {
+function solveTarget(connection: Connection, sourceTransform: Transform, sourcePort: PortBlock, targetPort: PortBlock): Transform {
   const sourcePose = worldPortPose(sourceTransform, sourcePort);
-  const offset = offsetFor(type, sourcePose.rotation);
+  const offset = offsetFor(connection, sourcePose.rotation);
   return transformFromPortPose(targetPort, {
     position: [sourcePose.position[0] + offset[0], sourcePose.position[1] + offset[1], sourcePose.position[2] + offset[2]],
     rotation: normalizeRotation(sourcePose.rotation + 180),
   });
 }
 
-function solveSource(type: ConnectionType, targetTransform: Transform, sourcePort: PortBlock, targetPort: PortBlock): Transform {
+function solveSource(connection: Connection, targetTransform: Transform, sourcePort: PortBlock, targetPort: PortBlock): Transform {
   const targetPose = worldPortPose(targetTransform, targetPort);
   const sourceRotation = normalizeRotation(targetPose.rotation - 180);
-  const offset = offsetFor(type, sourceRotation);
+  const offset = offsetFor(connection, sourceRotation);
   return transformFromPortPose(sourcePort, {
     position: [targetPose.position[0] - offset[0], targetPose.position[1] - offset[1], targetPose.position[2] - offset[2]],
     rotation: sourceRotation,
@@ -133,7 +137,7 @@ export function resolveAssembly(project: BlockoutProject): ResolvedAssembly {
   const transforms = new Map<string, Transform>();
   const missingConnections = new Set<string>();
   const instanceById = new Map(project.instances.map((instance) => [instance.id, instance]));
-  const rootOrder = [...new Set([...project.connections.map((connection) => connection.sourceInstanceId), ...project.instances.map((instance) => instance.id)])];
+  const rootOrder = [...new Set([...(project.assemblyAnchorInstanceId ? [project.assemblyAnchorInstanceId] : []), ...project.instances.map((instance) => instance.id)])];
   for (const rootId of rootOrder) {
     const root = instanceById.get(rootId);
     if (!root) continue;
@@ -144,7 +148,7 @@ export function resolveAssembly(project: BlockoutProject): ResolvedAssembly {
       const currentId = queue[index];
       const currentTransform = transforms.get(currentId);
       if (!currentTransform) continue;
-      for (const connection of connectionsByInstance.get(currentId) ?? []) {
+      for (const connection of [...(connectionsByInstance.get(currentId) ?? [])].sort((a, b) => a.id.localeCompare(b.id))) {
         const pair = connectionReferences(references, connection);
         if (!pair) {
           missingConnections.add(connection.id);
@@ -155,8 +159,8 @@ export function resolveAssembly(project: BlockoutProject): ResolvedAssembly {
         const other = currentIsSource ? target : source;
         if (transforms.has(other.instance.id)) continue;
         const transform = currentIsSource
-          ? solveTarget(connection.type, currentTransform, source.port, target.port)
-          : solveSource(connection.type, currentTransform, source.port, target.port);
+          ? solveTarget(connection, currentTransform, source.port, target.port)
+          : solveSource(connection, currentTransform, source.port, target.port);
         transforms.set(other.instance.id, transform);
         queue.push(other.instance.id);
       }
@@ -178,7 +182,7 @@ export function resolveAssembly(project: BlockoutProject): ResolvedAssembly {
     const [source, target] = pair;
     const sourcePose = worldPortPose(sourceTransform, source.port);
     const targetPose = worldPortPose(targetTransform, target.port);
-    const offset = offsetFor(connection.type, sourcePose.rotation);
+    const offset = offsetFor(connection, sourcePose.rotation);
     const expected: Vec3 = [sourcePose.position[0] + offset[0], sourcePose.position[1] + offset[1], sourcePose.position[2] + offset[2]];
     const positionError = Math.hypot(targetPose.position[0] - expected[0], targetPose.position[1] - expected[1], targetPose.position[2] - expected[2]);
     const rotationError = angularDistance(targetPose.rotation, sourcePose.rotation + 180);

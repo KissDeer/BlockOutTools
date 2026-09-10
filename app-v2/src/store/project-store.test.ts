@@ -8,6 +8,23 @@ afterEach(() => {
 });
 
 describe("project store clipboard actions", () => {
+  it("keeps preview snapshots until explicit refresh and clears deleted selections on undo", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("localStorage", { getItem: vi.fn(() => null), setItem: vi.fn() });
+    const { useProjectStore } = await import("./project-store");
+    useProjectStore.getState().replaceProject(createDemoProject());
+    useProjectStore.getState().refreshPreview();
+    const snapshot = useProjectStore.getState().previewProject;
+    useProjectStore.getState().addModule();
+    useProjectStore.getState().togglePreview();
+    useProjectStore.getState().togglePreview();
+    expect(useProjectStore.getState().previewProject).toBe(snapshot);
+    expect(useProjectStore.getState().previewDirty).toBe(true);
+    useProjectStore.getState().undo();
+    expect(useProjectStore.getState().selectedInstanceId).toBeNull();
+    useProjectStore.getState().refreshPreview();
+    expect(useProjectStore.getState().previewProject).toBe(useProjectStore.getState().project);
+  });
   it("copies and pastes a module instance without copying its connections", async () => {
     vi.useFakeTimers();
     vi.stubGlobal("localStorage", {

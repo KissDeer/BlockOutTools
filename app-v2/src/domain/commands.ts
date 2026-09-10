@@ -29,6 +29,7 @@ export function addModule(project: BlockoutProject, graphPosition: Vec2 = [320, 
   };
   next.modules.push(module);
   next.instances.push(instance);
+  next.assemblyAnchorInstanceId ??= next.instances[0].id;
   return { project: touch(next), module, instance };
 }
 
@@ -50,6 +51,7 @@ export function duplicateInstance(project: BlockoutProject, instanceId: string):
 export function removeInstance(project: BlockoutProject, instanceId: string): BlockoutProject {
   const next = cloneProject(project);
   next.instances = next.instances.filter((item) => item.id !== instanceId);
+  if (next.assemblyAnchorInstanceId === instanceId) next.assemblyAnchorInstanceId = next.instances[0]?.id;
   next.connections = next.connections.filter((item) => item.sourceInstanceId !== instanceId && item.targetInstanceId !== instanceId);
   return touch(next);
 }
@@ -123,12 +125,27 @@ export function addConnection(project: BlockoutProject, type: ConnectionType, so
   return touch(next);
 }
 
-export function updateConnection(project: BlockoutProject, connectionId: string, patch: Pick<Connection, "type">): BlockoutProject {
+export function updateConnection(project: BlockoutProject, connectionId: string, patch: Partial<Pick<Connection, "type" | "spacing" | "waypoints">>): BlockoutProject {
   const next = cloneProject(project);
   const connection = next.connections.find((item) => item.id === connectionId);
-  if (!connection || connection.type === patch.type) return project;
-  connection.type = patch.type;
+  if (!connection) return project;
+  Object.assign(connection, structuredClone(patch));
   return touch(next);
+}
+
+export function updateModule(project: BlockoutProject, module: ModuleDefinition): BlockoutProject {
+  const next = cloneProject(project);
+  const index = next.modules.findIndex((item) => item.id === module.id);
+  if (index < 0) return project;
+  const portIds = new Set(module.blocks.filter((block) => block.type === "port").map((block) => block.id));
+  const removedPorts = new Set(next.modules[index].blocks.filter((block) => block.type === "port" && !portIds.has(block.id)).map((block) => block.id));
+  next.connections = next.connections.filter((connection) => !removedPorts.has(connection.sourcePortId) && !removedPorts.has(connection.targetPortId));
+  next.modules[index] = { ...structuredClone(module), revision: next.modules[index].revision + 1 };
+  return touch(next);
+}
+
+export function updateProjectSettings(project: BlockoutProject, patch: Partial<Pick<BlockoutProject, "assemblyAnchorInstanceId" | "blockoutProfile">>): BlockoutProject {
+  return touch({ ...cloneProject(project), ...structuredClone(patch) });
 }
 
 export function removeConnection(project: BlockoutProject, connectionId: string): BlockoutProject {

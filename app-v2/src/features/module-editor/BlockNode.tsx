@@ -29,9 +29,11 @@ interface BlockNodeProps {
   mode: TransformMode;
   onSelect: (event: KonvaEventObject<MouseEvent | TouchEvent>) => void;
   onChange: (block: Block) => void;
+  grid?: number;
+  panning?: boolean;
 }
 
-export function BlockNode({ block, selected, mode, onSelect, onChange }: BlockNodeProps) {
+export function BlockNode({ block, selected, mode, onSelect, onChange, grid = 50, panning = false }: BlockNodeProps) {
   const groupRef = useRef<Konva.Group>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
   const [width, height] = blockPlanSize(block);
@@ -45,11 +47,12 @@ export function BlockNode({ block, selected, mode, onSelect, onChange }: BlockNo
   function commitTransform() {
     const node = groupRef.current;
     if (!node) return;
-    const nextWidth = Math.max(10, snap(width * Math.abs(node.scaleX()), 10));
-    const nextHeight = Math.max(10, snap(height * Math.abs(node.scaleY()), 10));
-    const next = resizedBlock(block, nextWidth, nextHeight);
-    next.transform.position = [snap(node.x()), snap(node.y()), block.transform.position[2]];
-    next.transform.rotation = Math.round(node.rotation());
+    const nextWidth = Math.max(1, width * Math.abs(node.scaleX()));
+    const nextHeight = Math.max(1, height * Math.abs(node.scaleY()));
+    const next = mode === "scale" ? resizedBlock(block, nextWidth, nextHeight) : structuredClone(block);
+    if (mode === "move") next.transform.position = [grid > 0 ? snap(node.x(), grid) : node.x(), grid > 0 ? snap(node.y(), grid) : node.y(), block.transform.position[2]];
+    if (mode === "scale") next.transform.position = [node.x(), node.y(), block.transform.position[2]];
+    if (mode === "rotate") next.transform.rotation = node.rotation();
     node.scale({ x: 1, y: 1 });
     onChange(next);
   }
@@ -62,7 +65,7 @@ export function BlockNode({ block, selected, mode, onSelect, onChange }: BlockNo
         x={block.transform.position[0]}
         y={block.transform.position[1]}
         rotation={block.transform.rotation}
-        draggable={mode === "move"}
+        draggable={mode === "move" && !panning}
         onClick={onSelect}
         onTap={onSelect}
         onDragEnd={commitTransform}
@@ -83,12 +86,16 @@ export function BlockNode({ block, selected, mode, onSelect, onChange }: BlockNo
           const y = -height / 2 + (height / block.parameters.NumberOfSteps) * (index + 1);
           return <Line key={index} points={[-width / 2, y, width / 2, y]} stroke="rgba(238,242,238,.55)" strokeWidth={4} />;
         }) : null}
-        <Text text={block.name} x={-width / 2 + 12} y={-height / 2 + 10} width={Math.max(60, width - 24)} fontSize={44} fill="#eef2ee" ellipsis wrap="none" listening={false} />
+      </Group>
+      <Group x={block.transform.position[0]} y={block.transform.position[1]} rotation={block.transform.rotation} listening={false}>
+        <Text text={block.name} x={-width / 2 + 12} y={-height / 2 + 10} width={Math.max(1, width - 24)} fontSize={Math.min(44, height / 3)} fill="#eef2ee" ellipsis wrap="none" listening={false} />
       </Group>
       {selected ? (
         <Transformer
           ref={transformerRef}
-          rotateEnabled={mode === "rotate" || mode === "scale"}
+          rotateEnabled={mode === "rotate"}
+          flipEnabled={false}
+          ignoreStroke
           resizeEnabled={mode === "scale"}
           enabledAnchors={mode === "scale" ? ["top-left", "top-right", "bottom-left", "bottom-right", "middle-left", "middle-right", "top-center", "bottom-center"] : []}
           borderStroke="#6bd2b4"

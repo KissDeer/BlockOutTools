@@ -51,7 +51,7 @@ export function App() {
   useEffect(() => setNameDraft(project.name), [project.name]);
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (isTypingTarget(event.target)) return;
+      if (isTypingTarget(event.target) || document.querySelector('[role="dialog"]') || (event.target instanceof HTMLElement && event.target.isContentEditable) || previewOpen || uePlanOpen) return;
       const modifier = event.ctrlKey || event.metaKey;
       if (modifier && event.key.toLowerCase() === "z") {
         event.preventDefault();
@@ -84,7 +84,7 @@ export function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [copyBlocks, copyInstance, deleteBlocks, deleteConnection, deleteInstance, duplicateBlocks, duplicateInstance, pasteBlocks, pasteInstance, redo, selectedConnectionId, setTransformMode, undo, view]);
+  }, [copyBlocks, copyInstance, deleteBlocks, deleteConnection, deleteInstance, duplicateBlocks, duplicateInstance, pasteBlocks, pasteInstance, redo, selectedConnectionId, setTransformMode, undo, view, previewOpen, uePlanOpen]);
 
   const activeInstance = project.instances.find((item) => item.id === activeInstanceId);
   const activeModule = project.modules.find((item) => item.id === activeInstance?.definitionId);

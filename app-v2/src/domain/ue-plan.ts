@@ -1,5 +1,6 @@
 import { CATALOG, isDeployableBlock } from "./catalog";
 import { actorSyncKey } from "./ids";
+import { blockBaseZ } from "./spatial";
 import { resolveAssembly, type AssemblyConstraintIssue } from "./assembly-resolver";
 import type { Block, BlockoutProject } from "./types";
 
@@ -48,7 +49,7 @@ export function buildLocalUEDryRun(project: BlockoutProject): UEDryRunPlan {
         location: [
           instance.assemblyTransform.position[0] + offsetX,
           -(instance.assemblyTransform.position[1] + offsetY),
-          instance.assemblyTransform.position[2] + block.transform.position[2],
+          instance.assemblyTransform.position[2] + blockBaseZ(block),
         ],
         rotation: [0, 0, -(instance.assemblyTransform.rotation + block.transform.rotation)],
         parameters: structuredClone(block.parameters),

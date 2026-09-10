@@ -1,17 +1,9 @@
 import { ArrowRight, Link2, Trash2 } from "lucide-react";
 import type { BlockoutProject, ConnectionType, PortBlock } from "../../domain/types";
 import { useProjectStore } from "../../store/project-store";
-
-export const CONNECTION_LABELS: Record<ConnectionType, string> = {
-  door: "普通门",
-  "one-way-door": "单向门",
-  stairs: "楼梯",
-  "spiral-stairs": "螺旋楼梯",
-  elevator: "普通电梯",
-  "one-way-elevator": "单向电梯",
-  road: "普通路",
-  drop: "单向下落路",
-};
+import { NumberField } from "../../components/NumberField";
+import { connectionSpacing } from "../../domain/assembly-resolver";
+import { CONNECTION_LABELS } from "../../domain/connection-labels";
 
 function getEndpoint(project: BlockoutProject, instanceId: string, portId: string) {
   const instance = project.instances.find((item) => item.id === instanceId);
@@ -25,11 +17,13 @@ export function ConnectionInspector() {
   const selectedId = useProjectStore((state) => state.selectedConnectionId);
   const updateType = useProjectStore((state) => state.updateSelectedConnectionType);
   const remove = useProjectStore((state) => state.deleteSelectedConnection);
+  const updateSpacing = useProjectStore((state) => state.updateSelectedConnectionSpacing);
   const connection = project.connections.find((item) => item.id === selectedId);
 
   if (!connection) return null;
   const source = getEndpoint(project, connection.sourceInstanceId, connection.sourcePortId);
   const target = getEndpoint(project, connection.targetInstanceId, connection.targetPortId);
+  const spacing = connectionSpacing(connection);
 
   return (
     <div className="inspector-content">
@@ -59,6 +53,14 @@ export function ConnectionInspector() {
           <small>{target.port?.name ?? connection.targetPortId}</small>
           {target.port ? <code>XY {target.port.transform.position[0]}, {target.port.transform.position[1]} · {target.port.transform.rotation}°</code> : null}
         </article>
+      </section>
+      <section className="inspector-section">
+        <h3>端口相对距离</h3>
+        <NumberField label="向前间距" value={spacing.forward} onCommit={(forward) => updateSpacing({ ...spacing, forward })} />
+        <NumberField label="横向偏移" value={spacing.lateral} onCommit={(lateral) => updateSpacing({ ...spacing, lateral })} />
+        <NumberField label="终点相对高差" value={spacing.vertical} onCommit={(vertical) => updateSpacing({ ...spacing, vertical })} />
+        <p className="field-help">以起点箭头为前方。高差正数表示终点更高，负数表示更低，与是否单向通行无关。自定义距离在切换类型时保留。</p>
+        <button type="button" onClick={() => updateSpacing(undefined)}>恢复该类型默认距离</button>
       </section>
       <section className="inspector-section">
         <h3>部署影响</h3>

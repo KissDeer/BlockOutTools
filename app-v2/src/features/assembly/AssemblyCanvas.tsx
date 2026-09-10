@@ -12,10 +12,12 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import { useProjectStore } from "../../store/project-store";
-import { CONNECTION_LABELS } from "./ConnectionInspector";
+import { CONNECTION_LABELS } from "../../domain/connection-labels";
+import { RoutingEdge } from "./RoutingEdge";
 import { ModuleNode, type ModuleNodeData } from "./ModuleNode";
 
 const nodeTypes: NodeTypes = { module: ModuleNode };
+const edgeTypes = { routing: RoutingEdge };
 
 interface PendingPort {
   instanceId: string;
@@ -78,7 +80,9 @@ export function AssemblyCanvas() {
     sourceHandle: connection.sourcePortId,
     target: connection.targetInstanceId,
     targetHandle: connection.targetPortId,
-    type: "smoothstep",
+    type: "routing",
+    data: { waypoints: connection.waypoints },
+    zIndex: 1,
     label: CONNECTION_LABELS[connection.type],
     selected: connection.id === selectedConnectionId,
     interactionWidth: 28,
@@ -113,6 +117,7 @@ export function AssemblyCanvas() {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}
         fitView
         fitViewOptions={{ padding: 0.28, maxZoom: 1.15 }}

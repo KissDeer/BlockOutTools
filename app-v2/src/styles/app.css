@@ -247,3 +247,32 @@ button:disabled { opacity: 0.34; cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+/* Desktop utility windows share one pattern for files, references and diagnostics. */
+.utility-panel { position: fixed; z-index: 100; top: 65px; right: 24px; width: 430px; max-height: calc(100vh - 110px); overflow: auto; padding: 20px; background: #202722; border: 1px solid #536358; border-radius: 8px; box-shadow: 0 14px 60px #0009; color: #ecf0ec; white-space: normal; }
+.utility-panel header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.utility-panel p { line-height: 1.6; overflow-wrap: anywhere; }
+.utility-panel button { padding: 7px 10px; margin: 4px; border: 1px solid #526157; border-radius: 4px; background: #303a33; color: #ecf0ec; cursor: pointer; }
+.utility-panel label { display: block; margin: 8px 0; }
+.utility-panel .library-item { display: block; width: 100%; margin: 10px 0; text-align: left; }
+.library-item small { display: block; color: #a3b2a7; margin-top: 6px; }
+.inspector-section select { width: 100%; margin: 6px 0; }
+.inspector-section summary { cursor: pointer; padding: 8px 0; }
+.inspector-section > button, .inspector-section details button { color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; margin: 4px 0; font-size: 12px; cursor: pointer; }
+.preview-header select, .preview-header input[type="number"], .editor-toolbar select { background: #27312a; color: #d7e5db; border: 1px solid #536358; border-radius: 4px; padding: 5px; font: inherit; }
+.preview-header label { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+.disk-save-state { color: #a8c2b3; font-size: 10px; max-width: 75px; line-height: 1.4; }
+.route-point { position: absolute; width: 12px; height: 12px; border: 2px solid #e9f4ec; background: #ae8137; border-radius: 50%; padding: 0; pointer-events: all; cursor: move; }
+.editor-toolbar > button { color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; min-height: 30px; padding: 0 9px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.topbar .back-button, .topbar .text-command, .topbar .issue-indicator { white-space: nowrap; flex-shrink: 0; }
+.project-title { flex: 1; min-width: 150px; }
+.project-title > span { white-space: nowrap; max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
+.project-title input { min-width: 80px; width: 150px; }
+.topbar-actions { flex-shrink: 0; }
+@media (max-width: 1450px) {
+  .brand-lockup { width: 150px; flex-shrink: 0; }
+  .topbar { gap: 8px; }
+  .save-state span { display: none; }
+  .project-title { min-width: 120px; }
+  .project-title > span { display: none; }
+  .disk-save-state { max-width: 60px; }
+}

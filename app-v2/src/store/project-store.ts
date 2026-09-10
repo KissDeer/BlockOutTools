@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { addBlock, addConnection, addModule, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform } from "../domain/commands";
+import { addBlock, addConnection, addModule, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform, updateModule, updateProjectSettings } from "../domain/commands";
 import { createDemoProject } from "../domain/demo-project";
 import { createId } from "../domain/ids";
 import { loadDraft, saveDraft } from "../domain/persistence";
-import type { Block, BlockoutProject, BlockType, ConnectionType, Transform, Vec2 } from "../domain/types";
+import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, Transform, Vec2 } from "../domain/types";
 
 export type AppView = "assembly" | "module";
 export type TransformMode = "move" | "rotate" | "scale";
@@ -21,6 +21,7 @@ interface ProjectStore {
   previewOpen: boolean;
   previewDirty: boolean;
   previewRevision: number;
+  previewProject: BlockoutProject | null;
   saveStatus: SaveStatus;
   past: BlockoutProject[];
   future: BlockoutProject[];
@@ -51,6 +52,11 @@ interface ProjectStore {
   duplicateSelectedBlocks: () => void;
   connectPorts: (sourceInstanceId: string, sourcePortId: string, targetInstanceId: string, targetPortId: string) => void;
   updateSelectedConnectionType: (type: ConnectionType) => void;
+  updateSelectedConnectionSpacing: (spacing: Connection["spacing"]) => void;
+  updateConnectionWaypoints: (connectionId: string, points: Vec2[]) => void;
+  updateModule: (module: ModuleDefinition) => void;
+  updateSettings: (patch: Partial<Pick<BlockoutProject, "assemblyAnchorInstanceId" | "blockoutProfile">>) => void;
+  acceptProject: (project: BlockoutProject) => void;
   deleteSelectedConnection: () => void;
   undo: () => void;
   redo: () => void;
@@ -104,25 +110,29 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     previewOpen: false,
     previewDirty: true,
     previewRevision: 0,
+    previewProject: null,
     saveStatus: "saved",
     past: [],
     future: [],
     instanceClipboardId: null,
     blockClipboard: [],
     setView: (view) => set({ view }),
-    openModule: (instanceId) => set({ view: "module", activeInstanceId: instanceId, selectedInstanceId: instanceId, selectedBlockIds: [] }),
+    openModule: (instanceId) => set({ view: "module", activeInstanceId: instanceId, selectedInstanceId: instanceId, selectedConnectionId: null, selectedBlockIds: [] }),
     setSelectedInstance: (selectedInstanceId) => set({ selectedInstanceId, selectedConnectionId: null }),
     setSelectedConnection: (selectedConnectionId) => set({ selectedConnectionId, selectedInstanceId: null }),
     setSelectedBlocks: (selectedBlockIds) => set({ selectedBlockIds }),
     setTransformMode: (transformMode) => set({ transformMode }),
     setConnectionType: (connectionType) => set({ connectionType }),
     togglePreview: () => set((state) => ({ previewOpen: !state.previewOpen })),
-    refreshPreview: () => set((state) => ({ previewRevision: state.previewRevision + 1, previewDirty: false, previewOpen: true })),
+    refreshPreview: () => set((state) => ({ previewRevision: state.previewRevision + 1, previewProject: state.project, previewDirty: false, previewOpen: true })),
     renameProject: (name) => commit(renameProject(get().project, name)),
+    updateModule: (module) => commit(updateModule(get().project, module)),
+    updateSettings: (patch) => commit(updateProjectSettings(get().project, patch)),
+    acceptProject: (project) => commit(project),
     addModule: (position) => {
       const result = addModule(get().project, position);
       commit(result.project);
-      set({ selectedInstanceId: result.instance.id });
+      set({ selectedInstanceId: result.instance.id, selectedConnectionId: null });
     },
     duplicateSelectedInstance: () => {
       const selected = get().selectedInstanceId;
@@ -130,7 +140,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const result = duplicateInstance(get().project, selected);
       if (!result.instance) return;
       commit(result.project);
-      set({ selectedInstanceId: result.instance.id });
+      set({ selectedInstanceId: result.instance.id, selectedConnectionId: null });
     },
     copySelectedInstance: () => {
       const selected = get().selectedInstanceId;
@@ -142,7 +152,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const result = duplicateInstance(get().project, sourceId);
       if (!result.instance) return;
       commit(result.project);
-      set({ selectedInstanceId: result.instance.id });
+      set({ selectedInstanceId: result.instance.id, selectedConnectionId: null });
     },
     deleteSelectedInstance: () => {
       const selected = get().selectedInstanceId;
@@ -220,6 +230,11 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       if (!selected) return;
       commit(updateConnection(get().project, selected, { type }));
     },
+    updateSelectedConnectionSpacing: (spacing) => {
+      const id = get().selectedConnectionId;
+      if (id) commit(updateConnection(get().project, id, { spacing }));
+    },
+    updateConnectionWaypoints: (id, waypoints) => commit(updateConnection(get().project, id, { waypoints })),
     deleteSelectedConnection: () => {
       const selected = get().selectedConnectionId;
       if (!selected) return;
@@ -230,18 +245,18 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const state = get();
       const previous = state.past.at(-1);
       if (!previous) return;
-      set({ project: previous, past: state.past.slice(0, -1), future: [state.project, ...state.future].slice(0, 100), previewDirty: true });
+      set({ project: previous, past: state.past.slice(0, -1), future: [state.project, ...state.future].slice(0, 100), previewDirty: true, selectedConnectionId: null, selectedInstanceId: null, selectedBlockIds: [], ...(previous.instances.some((item) => item.id === state.activeInstanceId) ? {} : { view: "assembly" as const, activeInstanceId: null }) });
       scheduleSave(previous, set);
     },
     redo: () => {
       const state = get();
       const next = state.future[0];
       if (!next) return;
-      set({ project: next, past: [...state.past, state.project].slice(-100), future: state.future.slice(1), previewDirty: true });
+      set({ project: next, past: [...state.past, state.project].slice(-100), future: state.future.slice(1), previewDirty: true, selectedConnectionId: null, selectedInstanceId: null, selectedBlockIds: [] });
       scheduleSave(next, set);
     },
     replaceProject: (project) => {
-      set({ project, view: "assembly", activeInstanceId: null, selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [], past: [], future: [], previewDirty: true });
+      set({ project, view: "assembly", activeInstanceId: null, selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [], past: [], future: [], previewDirty: true, previewProject: null, previewRevision: 0 });
       scheduleSave(project, set);
     },
   };

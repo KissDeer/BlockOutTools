@@ -18,16 +18,24 @@ export function saveDraft(project: BlockoutProject): void {
   localStorage.setItem(DRAFT_KEY, JSON.stringify(project));
 }
 
+export function archiveDraft(project: BlockoutProject): void {
+  localStorage.setItem(`blockout-v2:recovery:${project.projectId}`, JSON.stringify(project));
+}
+
 export function parseProjectFile(text: string): BlockoutProject {
   return projectSchema.parse(JSON.parse(text));
 }
 
 export function downloadProject(project: BlockoutProject): void {
-  const blob = new Blob([`${JSON.stringify(project, null, 2)}\n`], { type: "application/json" });
+  downloadJson(project, `${project.name.replace(/[\\/:*?"<>|]+/g, "-") || "blockout-project"}.blockout.json`);
+}
+
+export function downloadJson(value: unknown, filename: string): void {
+  const blob = new Blob([`${JSON.stringify(value, null, 2)}\n`], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `${project.name.replace(/[\\/:*?"<>|]+/g, "-") || "blockout-project"}.blockout.json`;
+  anchor.download = filename;
   anchor.click();
   URL.revokeObjectURL(url);
 }

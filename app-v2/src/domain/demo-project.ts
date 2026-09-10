@@ -69,10 +69,11 @@ const westPort: PortBlock = {
 };
 
 export function createDemoProject(): BlockoutProject {
-  return {
+  return structuredClone({
     schemaVersion: 2,
     projectId: "project_demo_highwall",
     name: "洛斯里克模块验证",
+    assemblyAnchorInstanceId: "instance_courtyard",
     modules: [
       { id: "module_courtyard", name: "城墙庭院", revision: 1, blocks: [floor, wall, doorway, stairs, eastPort, westPort] },
       {
@@ -106,5 +107,5 @@ export function createDemoProject(): BlockoutProject {
       minStairTread: 28,
     },
     updatedAt: new Date().toISOString(),
-  };
+  });
 }

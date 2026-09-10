@@ -4,6 +4,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RefreshCw, X } from "lucide-react";
 import { buildDeploymentGeometry } from "../../domain/deployment-geometry";
 import { resolveAssembly } from "../../domain/assembly-resolver";
+import { worldPortPose } from "../../domain/assembly-resolver";
+import { validateProject } from "../../domain/validation";
 import { IconButton } from "../../components/IconButton";
 import { useProjectStore } from "../../store/project-store";
 
@@ -15,11 +17,18 @@ export default function PreviewPanel() {
   const hostRef = useRef<HTMLDivElement>(null);
   const project = useProjectStore((state) => state.project);
   const revision = useProjectStore((state) => state.previewRevision);
+  // Display controls operate on the last explicitly refreshed project, not live edits.
+  const previewProject = useProjectStore((state) => state.previewProject);
+  const snapshot = previewProject ?? project;
   const dirty = useProjectStore((state) => state.previewDirty);
   const toggle = useProjectStore((state) => state.togglePreview);
   const refresh = useProjectStore((state) => state.refreshPreview);
   const [primitiveCount, setPrimitiveCount] = useState(0);
   const [assemblyIssueCount, setAssemblyIssueCount] = useState(0);
+  const [spatialIssueCount, setSpatialIssueCount] = useState(0);
+  const [isolateId, setIsolateId] = useState("");
+  const [showPorts, setShowPorts] = useState(true);
+  const [cutHeight, setCutHeight] = useState("");
 
   useEffect(() => {
     const host = hostRef.current;
@@ -40,23 +49,37 @@ export default function PreviewPanel() {
 
     const content = new THREE.Group();
     scene.add(content);
-    const resolution = resolveAssembly(project);
-    const primitives = buildDeploymentGeometry(project, resolution.instances);
+    const resolution = resolveAssembly(snapshot);
+    const instances = resolution.instances.filter((item) => !isolateId || item.id === isolateId);
+    const primitives = buildDeploymentGeometry(snapshot, instances);
     setPrimitiveCount(primitives.length);
     setAssemblyIssueCount(resolution.issues.length);
+    setSpatialIssueCount(validateProject(snapshot).length);
+    renderer.localClippingEnabled = cutHeight !== "";
+    const clippingPlanes = cutHeight === "" ? [] : [new THREE.Plane(new THREE.Vector3(0, -1, 0), Number(cutHeight))];
     for (const primitive of primitives) {
       const geometry = new THREE.BoxGeometry(primitive.size[0], primitive.size[2], primitive.size[1]);
-      const material = new THREE.MeshStandardMaterial({ color: threeColor(primitive.color), roughness: 0.82, metalness: 0.02 });
-      const mesh = new THREE.Mesh(geometry, material);
+      const materials = Array.from({ length: 6 }, (_, side) => new THREE.MeshStandardMaterial({ color: threeColor(side === 2 ? primitive.topColor : primitive.color), roughness: 0.82, metalness: 0.02, clippingPlanes }));
+      const mesh = new THREE.Mesh(geometry, materials);
       mesh.name = primitive.label;
       mesh.position.set(primitive.position[0], primitive.position[2], -primitive.position[1]);
-      mesh.rotation.y = (-primitive.rotation * Math.PI) / 180;
+      mesh.rotation.y = (primitive.rotation * Math.PI) / 180;
       content.add(mesh);
       if (primitive.size[2] > 60 && !primitive.id.includes(":step-")) {
-        const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0x18201c, transparent: true, opacity: 0.42 }));
+        const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0x18201c, transparent: true, opacity: 0.42, clippingPlanes }));
         edges.position.copy(mesh.position);
         edges.rotation.copy(mesh.rotation);
         content.add(edges);
+      }
+    }
+    if (showPorts) for (const instance of instances) {
+      const module = snapshot.modules.find((item) => item.id === instance.definitionId);
+      for (const port of module?.blocks ?? []) {
+        if (port.type !== "port") continue;
+        const pose = worldPortPose(instance.assemblyTransform, port);
+        const radians = pose.rotation * Math.PI / 180;
+        const arrow = new THREE.ArrowHelper(new THREE.Vector3(Math.cos(radians), 0, -Math.sin(radians)), new THREE.Vector3(pose.position[0], pose.position[2] + 8, -pose.position[1]), 120, 0xeeb84f, 36, 24);
+        content.add(arrow);
       }
     }
 
@@ -106,7 +129,7 @@ export default function PreviewPanel() {
       observer.disconnect();
       controls.dispose();
       scene.traverse((object) => {
-        if (object instanceof THREE.Mesh || object instanceof THREE.LineSegments) {
+        if (object instanceof THREE.Mesh || object instanceof THREE.Line) {
           object.geometry.dispose();
           const materials = Array.isArray(object.material) ? object.material : [object.material];
           materials.forEach((material) => material.dispose());
@@ -115,13 +138,16 @@ export default function PreviewPanel() {
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [revision]);
+  }, [revision, snapshot, isolateId, showPorts, cutHeight]);
 
   return (
     <aside className="preview-panel" aria-label="三维预览">
       <header className="panel-header preview-header">
-        <div><strong>3D 预览</strong><span>{revision === 0 ? "尚未生成" : `${primitiveCount} 个预览几何 · ${assemblyIssueCount === 0 ? "端口拼装完成" : `${assemblyIssueCount} 条连接未闭合`}`}</span></div>
+        <div><strong>3D 预览</strong><span>{revision === 0 ? "尚未生成" : `${primitiveCount} 个预览几何 · ${assemblyIssueCount === 0 ? "端口约束闭合" : `${assemblyIssueCount} 条连接未闭合`} · ${spatialIssueCount} 项规范提示`}</span></div>
         <div className="toolbar-group">
+          <select aria-label="预览模块" value={isolateId} onChange={(event) => setIsolateId(event.target.value)}><option value="">全部模块</option>{project.instances.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
+          <label><input type="checkbox" checked={showPorts} onChange={(event) => setShowPorts(event.target.checked)} />端口方向</label>
+          <input aria-label="剖切高度" type="number" placeholder="剖切高度 cm" value={cutHeight} onChange={(event) => setCutHeight(event.target.value)} style={{ width: 110 }} />
           <button type="button" className={`refresh-preview ${dirty ? "is-dirty" : ""}`} onClick={refresh}><RefreshCw size={15} />{dirty || revision === 0 ? "刷新" : "重新生成"}</button>
           <IconButton label="收起 3D 预览" onClick={toggle}><X size={17} /></IconButton>
         </div>
@@ -129,7 +155,7 @@ export default function PreviewPanel() {
       <div ref={hostRef} className="preview-host">
         {revision === 0 ? <div className="preview-empty"><BoxGlyph /><strong>3D 尚未生成</strong><span>点击刷新，根据当前模块实例重建预览。</span></div> : null}
       </div>
-      <footer className="preview-footer"><span>左键旋转 · 右键平移 · 滚轮缩放</span>{dirty ? <em>当前项目有未刷新的修改</em> : assemblyIssueCount > 0 ? <em>{assemblyIssueCount} 条端口约束未闭合</em> : <strong>按端口拼装 · 与项目同步</strong>}</footer>
+      <footer className="preview-footer"><span>左键旋转 · 右键平移 · 滚轮缩放 · 端口闭合不代表路径可走</span>{dirty ? <em>当前项目有未刷新的修改</em> : assemblyIssueCount > 0 ? <em>{assemblyIssueCount} 条端口约束未闭合</em> : <strong>检查楼梯落脚点与通道净空</strong>}</footer>
     </aside>
   );
 }

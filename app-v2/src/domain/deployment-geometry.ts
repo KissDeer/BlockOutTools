@@ -1,6 +1,7 @@
 import { actorSyncKey } from "./ids";
 import { isDeployableBlock } from "./catalog";
 import { resolveAssembly } from "./assembly-resolver";
+import { blockBaseZ } from "./spatial";
 import type { Block, BlockoutProject, ModuleInstance, Rgba, Vec3 } from "./types";
 
 export interface DeploymentPrimitive {
@@ -13,6 +14,7 @@ export interface DeploymentPrimitive {
   position: Vec3;
   rotation: number;
   color: Rgba;
+  topColor: Rgba;
 }
 
 function rotate2d(x: number, y: number, degrees: number): [number, number] {
@@ -46,10 +48,11 @@ function worldPrimitive(
     position: [
       instance.assemblyTransform.position[0] + instanceX,
       instance.assemblyTransform.position[1] + instanceY,
-      instance.assemblyTransform.position[2] + block.transform.position[2] + localOffset[2],
+      instance.assemblyTransform.position[2] + blockBaseZ(block) + localOffset[2],
     ],
     rotation: instance.assemblyTransform.rotation + block.transform.rotation,
     color,
+    topColor: block.type === "port" ? color : block.parameters.blockout_material_top_color,
   };
 }
 
@@ -86,7 +89,7 @@ function blockPrimitives(project: BlockoutProject, instance: ModuleInstance, blo
       `step-${index + 1}`,
       [0, -depth / 2 + tread * (index + 0.5), stepHeight / 2],
       [width, tread, stepHeight],
-      index === count - 1 ? block.parameters.blockout_material_top_color : block.parameters.blockout_material_color,
+      block.parameters.blockout_material_color,
     ));
   }
   return primitives;

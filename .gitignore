@@ -7,3 +7,6 @@ Thumbs.db
 *.log
 __pycache__/
 *.pyc
+.playwright-cli/
+output/playwright/
+data/projects-v2/**/.save-*.tmp

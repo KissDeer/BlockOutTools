@@ -11,6 +11,7 @@ export function InstanceInspector() {
   const openModule = useProjectStore((state) => state.openModule);
   const duplicate = useProjectStore((state) => state.duplicateSelectedInstance);
   const remove = useProjectStore((state) => state.deleteSelectedInstance);
+  const settings = useProjectStore((state) => state.updateSettings);
   const instance = project.instances.find((item) => item.id === selectedId);
   const module = project.modules.find((item) => item.id === instance?.definitionId);
 
@@ -29,6 +30,8 @@ export function InstanceInspector() {
           <NumberField label="旋转" value={transform.rotation} unit="°" step={15} onCommit={(value) => updateTransform(instance.id, { ...transform, rotation: value })} />
         </div>
         <p className="field-help">关系图拖动不会修改这里的坐标。</p>
+        <button type="button" onClick={() => settings({ assemblyAnchorInstanceId: instance.id })}>{project.assemblyAnchorInstanceId === instance.id ? "当前组装基准" : "设为组装基准"}</button>
+        <p className="field-help">基准实例保持上述坐标；相连实例的位置由端口约束求解。</p>
       </section>
       <section className="inspector-section">
         <h3>连接形式</h3>

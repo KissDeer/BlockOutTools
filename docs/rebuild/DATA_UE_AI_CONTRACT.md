@@ -2,6 +2,8 @@
 
 状态：`Draft 1`
 
+当前实现补充（2026-09-10）：本地库保存到 `data/projects-v2/project-<身份摘要>/`。清单引用 `modules/<内容摘要>.blockout-module.json`，旧模块版本保留，清单最后原子替换；不是下文建议的按显示名称覆盖模块文件。保存版本由清单和引用模块内容共同计算，外部变更拒绝覆盖。三方合并支持独立字段，同字段冲突仍由 Git 处理。新增可选字段 `assemblyAnchorInstanceId`、连接 `spacing`、Box `role/elevationReference`、模块 `reference/interpretation` 和积木 `provenance`；旧 V2 数据保持原有底面坐标语义。
+
 ## 1. 单一领域模型
 
 运行时只存在一套规范化领域模型。2D、3D、文件、AI、验证和 UE 转换不得各自维护形状解释。

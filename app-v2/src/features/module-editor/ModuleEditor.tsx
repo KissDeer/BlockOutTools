@@ -2,10 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Group, Layer, Line, Stage } from "react-konva";
 import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { Grid3X3, Magnet, Move, RotateCw, Scaling, ScanSearch } from "lucide-react";
+import { Grid3X3, Move, RotateCw, Scaling, ScanSearch } from "lucide-react";
 import { IconButton } from "../../components/IconButton";
 import { useProjectStore } from "../../store/project-store";
 import { BlockNode } from "./BlockNode";
+import { createModulePreviewModel } from "../assembly/module-preview-model";
+import { ReferenceTools, ReferenceUnderlay } from "./ReferenceTools";
 
 const GRID_SIZE = 50;
 const WORLD_LIMIT = 5000;
@@ -34,16 +36,19 @@ export function ModuleEditor() {
   const setSelected = useProjectStore((state) => state.setSelectedBlocks);
   const updateBlock = useProjectStore((state) => state.updateBlock);
   const [spacePressed, setSpacePressed] = useState(false);
+  const [grid, setGrid] = useState(GRID_SIZE);
   const [stageTransform, setStageTransform] = useState({ x: size.width / 2, y: size.height / 2, scale: 0.24 });
   const instance = project.instances.find((item) => item.id === activeInstanceId);
   const module = project.modules.find((item) => item.id === instance?.definitionId);
 
   useEffect(() => setStageTransform((current) => ({ ...current, x: size.width / 2, y: size.height / 2 })), [size.height, size.width]);
   useEffect(() => {
-    const onDown = (event: KeyboardEvent) => { if (event.code === "Space" && !(event.target instanceof HTMLInputElement)) setSpacePressed(true); };
+    const onDown = (event: KeyboardEvent) => { if (event.code === "Space" && !document.querySelector('[role="dialog"]') && !(event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement)) { event.preventDefault(); setSpacePressed(true); } };
     const onUp = (event: KeyboardEvent) => { if (event.code === "Space") setSpacePressed(false); };
+    const onBlur = () => setSpacePressed(false);
+    window.addEventListener("blur", onBlur);
     window.addEventListener("keydown", onDown); window.addEventListener("keyup", onUp);
-    return () => { window.removeEventListener("keydown", onDown); window.removeEventListener("keyup", onUp); };
+    return () => { window.removeEventListener("keydown", onDown); window.removeEventListener("keyup", onUp); window.removeEventListener("blur", onBlur); };
   }, []);
 
   const gridLines = useMemo(() => {
@@ -72,9 +77,9 @@ export function ModuleEditor() {
           <IconButton label="R 缩放" active={mode === "scale"} onClick={() => setMode("scale")}><Scaling size={16} /></IconButton>
         </div>
         <div className="toolbar-separator" />
-        <span className="toolbar-state"><Grid3X3 size={15} />网格 50cm</span>
-        <span className="toolbar-state"><Magnet size={15} />吸附开启</span>
-        <button type="button" className="fit-command" onClick={() => setStageTransform({ x: size.width / 2, y: size.height / 2, scale: 0.24 })}><ScanSearch size={15} />适应模块</button>
+        <span className="toolbar-state"><Grid3X3 size={15} /><select aria-label="吸附间距" value={grid} onChange={(event) => setGrid(Number(event.target.value))}><option value={0}>自由移动</option>{[1, 10, 50, 100].map((value) => <option key={value} value={value}>吸附 {value}cm</option>)}</select></span>
+        <button type="button" className="fit-command" onClick={() => { const model = createModulePreviewModel(module, size.width, size.height, 60); const centerX = (model.bounds.minX + model.bounds.maxX) / 2; const centerY = (model.bounds.minY + model.bounds.maxY) / 2; setStageTransform({ x: size.width / 2 - centerX * model.scale, y: size.height / 2 - centerY * model.scale, scale: model.scale }); }}><ScanSearch size={15} />适应模块</button>
+        <ReferenceTools module={module} />
         <span className="editor-toolbar-hint">按住 Space 拖动画布 · 滚轮缩放</span>
       </div>
       <div className={`konva-host ${spacePressed ? "is-panning" : ""}`} ref={containerRef}>
@@ -98,15 +103,16 @@ export function ModuleEditor() {
             if (!stage || !pointer) return;
             const oldScale = stage.scaleX();
             const world = { x: (pointer.x - stage.x()) / oldScale, y: (pointer.y - stage.y()) / oldScale };
-            const nextScale = Math.max(0.08, Math.min(1.2, oldScale * (event.evt.deltaY > 0 ? 0.9 : 1.1)));
+            const nextScale = Math.max(0.001, Math.min(8, oldScale * (event.evt.deltaY > 0 ? 0.9 : 1.1)));
             setStageTransform({ x: pointer.x - world.x * nextScale, y: pointer.y - world.y * nextScale, scale: nextScale });
           }}
           onMouseDown={(event) => { if (event.target === event.target.getStage()) setSelected([]); }}
         >
           <Layer listening={false}><Group>{gridLines}</Group></Layer>
+          <Layer listening={false}>{module.reference ? <ReferenceUnderlay reference={module.reference} /> : null}</Layer>
           <Layer>
             {module.blocks.map((block) => (
-              <BlockNode key={block.id} block={block} selected={selectedIds.includes(block.id)} mode={mode} onSelect={(event) => selectBlock(block.id, event)} onChange={updateBlock} />
+              <BlockNode key={block.id} block={block} selected={selectedIds.includes(block.id)} mode={mode} grid={grid} panning={spacePressed} onSelect={(event) => selectBlock(block.id, event)} onChange={updateBlock} />
             ))}
           </Layer>
         </Stage>

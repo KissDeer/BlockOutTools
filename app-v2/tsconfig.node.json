@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
     "composite": true,
     "skipLibCheck": true,
     "noEmit": true,
@@ -7,5 +10,5 @@
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "server/project-library.ts", "src/domain/project-schema.ts"]
 }

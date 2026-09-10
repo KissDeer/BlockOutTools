@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -160,7 +160,8 @@ function addDoor(module, name, center, rotation = 0) {
 
 function addStairs(module, name, center, width, requestedDepth, height, rotation = 0) {
   const steps = Math.max(4, Math.ceil(height / 18));
-  const depth = Math.max(requestedDepth, steps * 30);
+  const depth = requestedDepth;
+  if (depth / steps < 28) throw new Error(`${name}：进深 ${depth}cm 无法容纳 ${steps} 级楼梯。历史生成器已停止自动拉长；请通过已校准底图与上下落脚点重新确定位置，使用 generate-diagram-project.mjs 生成候选。`);
   module.definition.blocks.push({
     id: nextBlockId(module, "stairs"),
     name,
@@ -396,6 +397,18 @@ for (const stair of stairs) {
 }
 if (project.modules.length !== 10 || project.connections.length !== 13 || stairs.length < 10) throw new Error("Lothric topology is incomplete.");
 
+// This historical generator uses ordinal IDs. Refuse identity reassignment on edits;
+// new diagrams should use the feature-based interpretation pipeline instead.
+let baseline;
+try { baseline = JSON.parse(await readFile(OUTPUT, "utf8")); }
+catch (error) { if (error.code !== "ENOENT") throw error; }
+if (baseline) {
+  const previous = new Map(baseline.modules.flatMap((module) => module.blocks.map((block) => [block.id, block])));
+  for (const block of allBlocks) {
+    const old = previous.get(block.id);
+    if (old && (old.name !== block.name || old.type !== block.type)) throw new Error(`历史生成器会重分配 ${block.id} 的身份，已停止覆盖。请使用特征 ID 解释文件生成候选。`);
+  }
+}
 await mkdir(dirname(OUTPUT), { recursive: true });
 await writeFile(OUTPUT, `${JSON.stringify(project, null, 2)}\n`, "utf8");
 console.log(`Generated ${OUTPUT}`);

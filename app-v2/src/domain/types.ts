@@ -14,10 +14,13 @@ interface BlockBase {
   name: string;
   type: BlockType;
   transform: Transform;
+  provenance?: { sourceId: string; featureId: string; status: "estimated" | "confirmed"; note: string };
 }
 
 export interface BoxBlock extends BlockBase {
   type: "box";
+  role?: "solid" | "floor" | "wall" | "edging" | "landing";
+  elevationReference?: "bottom" | "surface";
   parameters: {
     BoxSize: Vec3;
     blockout_material_color: Rgba;
@@ -62,6 +65,22 @@ export interface ModuleDefinition {
   name: string;
   revision: number;
   blocks: Block[];
+  reference?: DiagramReference;
+  interpretation?: Record<string, unknown>;
+}
+
+export interface DiagramReference {
+  id: string;
+  name: string;
+  imageData: string;
+  pixelSize: Vec2;
+  origin: Vec2;
+  cmPerPixel: number;
+  rotation: number;
+  opacity: number;
+  visible: boolean;
+  confirmed: boolean;
+  legend: string;
 }
 
 export interface ModuleInstance {
@@ -90,6 +109,7 @@ export interface Connection {
   targetInstanceId: string;
   targetPortId: string;
   waypoints: Vec2[];
+  spacing?: { forward: number; lateral: number; vertical: number };
 }
 
 export interface BlockoutProfile {
@@ -113,6 +133,7 @@ export interface BlockoutProject {
   connections: Connection[];
   blockoutProfile: BlockoutProfile;
   updatedAt: string;
+  assemblyAnchorInstanceId?: string;
 }
 
 export interface ValidationIssue {
