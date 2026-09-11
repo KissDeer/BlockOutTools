@@ -1,0 +1,21 @@
+{
+  "definitionVersion": 1,
+  "type": "doorway",
+  "label": "Doorway 门洞",
+  "shortLabel": "门洞",
+  "deployable": true,
+  "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Doorway.Blockout_Doorway_C",
+  "review": { "usage": "沿用当前实现，待逐项确认", "preview": "两侧立柱与顶部盒体", "ue": "待实测" },
+  "defaults": {
+    "name": "Doorway",
+    "parameters": {
+      "DoorwaySize": [40, 140, 240],
+      "TopThickness": 40,
+      "SideThickness": 40,
+      "blockout_material_color": [0.22, 0.57, 0.48, 1],
+      "blockout_material_top_color": [0.72, 0.86, 0.8, 1]
+    }
+  },
+  "usageFile": "usage.md",
+  "examples": []
+}

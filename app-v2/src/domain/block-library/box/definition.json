@@ -1,0 +1,32 @@
+{
+  "definitionVersion": 1,
+  "type": "box",
+  "label": "Box 盒体",
+  "shortLabel": "盒体",
+  "deployable": true,
+  "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
+  "review": { "usage": "用户已确认：墙壁与地面均使用 Box", "preview": "网页矩形盒体", "ue": "待实测" },
+  "defaults": {
+    "name": "Box",
+    "parameters": {
+      "BoxSize": [600, 400, 40],
+      "blockout_material_color": [0.22, 0.57, 0.48, 1],
+      "blockout_material_top_color": [0.72, 0.86, 0.8, 1]
+    }
+  },
+  "parameters": {
+    "BoxSize": { "label": "尺寸 XYZ", "unit": "cm", "axes": ["长度 X", "宽度 Y", "高度或厚度 Z"], "constraint": "三个分量均为有限正数", "editable": true },
+    "blockout_material_color": { "label": "主体颜色", "unit": "rgba", "constraint": "四个分量均在 0 到 1", "editable": true },
+    "blockout_material_top_color": { "label": "顶面颜色", "unit": "rgba", "constraint": "四个分量均在 0 到 1", "editable": true }
+  },
+  "spatial": {
+    "xyOrigin": "平面中心",
+    "defaultElevationReference": "bottom",
+    "bottom": "底面等于位置 Z，顶面等于 Z + BoxSize[2]",
+    "surface": "顶面等于位置 Z，底面等于 Z - BoxSize[2]",
+    "rotation": "当前编辑器仅支持平面旋转，单位为度",
+    "uePivot": "待实测；当前 dry-run 使用底面 Z"
+  },
+  "usageFile": "usage.md",
+  "examples": ["examples/floor-wall.blockout.json"]
+}

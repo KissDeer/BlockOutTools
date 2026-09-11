@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 2,
+  "projectId": "example_box_floor_wall",
+  "name": "Box 用法 · 楼板与墙壁",
+  "modules": [
+    {
+      "id": "example_box_module",
+      "name": "楼板与墙壁",
+      "revision": 0,
+      "blocks": [
+        {
+          "id": "example_box_floor",
+          "name": "楼板 表面300",
+          "type": "box",
+          "role": "floor",
+          "elevationReference": "surface",
+          "transform": {
+            "position": [
+              0,
+              0,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              600,
+              400,
+              40
+            ],
+            "blockout_material_color": [
+              0.22,
+              0.57,
+              0.48,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.72,
+              0.86,
+              0.8,
+              1
+            ]
+          }
+        },
+        {
+          "id": "example_box_wall",
+          "name": "墙壁 底面300",
+          "type": "box",
+          "role": "wall",
+          "elevationReference": "bottom",
+          "transform": {
+            "position": [
+              0,
+              180,
+              300
+            ],
+            "rotation": 0
+          },
+          "parameters": {
+            "BoxSize": [
+              600,
+              40,
+              300
+            ],
+            "blockout_material_color": [
+              0.22,
+              0.57,
+              0.48,
+              1
+            ],
+            "blockout_material_top_color": [
+              0.72,
+              0.86,
+              0.8,
+              1
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "id": "example_box_instance",
+      "definitionId": "example_box_module",
+      "name": "Box 示例",
+      "graphPosition": [
+        0,
+        0
+      ],
+      "assemblyTransform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": 0
+      }
+    }
+  ],
+  "connections": [],
+  "blockoutProfile": {
+    "enabled": true,
+    "enforceUeImport": false,
+    "capsuleRadius": 34,
+    "capsuleHalfHeight": 88,
+    "maxStepHeight": 45,
+    "minDoorWidth": 100,
+    "minDoorHeight": 200,
+    "maxStairRise": 20,
+    "minStairTread": 25
+  },
+  "updatedAt": "2026-09-11T00:00:00.000Z"
+}

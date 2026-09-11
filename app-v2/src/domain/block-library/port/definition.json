@@ -1,0 +1,11 @@
+{
+  "definitionVersion": 1,
+  "type": "port",
+  "label": "模块出入口",
+  "shortLabel": "出入口",
+  "deployable": false,
+  "review": { "usage": "按模块内部位置与朝向连接", "preview": "方向箭头", "ue": "不部署" },
+  "defaults": { "name": "出入口", "parameters": { "width": 120, "depth": 80 } },
+  "usageFile": "usage.md",
+  "examples": []
+}

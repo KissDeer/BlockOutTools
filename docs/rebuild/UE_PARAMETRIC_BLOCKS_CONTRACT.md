@@ -1,5 +1,7 @@
 # `config/ue-parametric-blocks.json` 契约（待填模板）
 
+2026-09-11 更新：当前网页实际使用的积木目录为 [block-library](../../app-v2/src/domain/block-library/README.md)。名称、默认参数和类路径已从 catalog.ts 移入各类型 definition.json；下文硬编码说明仅为历史描述。下文 pivot=center 也是未验证示意值，不是网页或 UE 实测结论。网页 Box 的 XY 为中心，Z 默认底面，也支持行走表面基准。新增定义以规则库为入口，UE 实测证据补充到对应类型，不再另外维护一套默认值。
+
 仓库 `docs/rebuild/README.md` 把 `config/ue-parametric-blocks.json` 列为“经过 UE 实测的 Blockout Tools 蓝图 Schema”的权威来源，但该文件当前**不存在于仓库**。本文件只定义它应有的字段结构（契约），**不伪造 UE 实测值**，等你提供真实文件后替换。
 
 > 用途：`app-v2/src/domain/catalog.ts` 与 `ue-plan.ts` 目前把积木参数、默认值与 Blueprint 类路径**硬编码**在源码里。把本契约落到 `config/ue-parametric-blocks.json` 后，可改成“从该文件读取”并按官方参数精确构造积木。

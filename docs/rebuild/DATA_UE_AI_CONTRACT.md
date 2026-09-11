@@ -70,6 +70,8 @@ UE 同步键必须由 `projectId + moduleInstanceId + blockId`形成，不依赖
 
 ## 5. 参数化积木 Schema
 
+当前目录入口为 `app-v2/src/domain/block-library/README.md`。网页目录直接读取各类型 `definition.json` 的标签、默认值和 UE 类路径；硬校验仍在 `project-schema.ts`，几何仍由类型实现提供。AI 先读通用规则，再按类型读取定义与用法，最后结合项目规范。Box 只开放尺寸、变换及主体/顶面颜色，碰撞、渲染与其他材质属性不因“高级区域”而开放。新增类型不能仅靠添加规则文件启用。
+
 每种可部署类型至少声明：
 
 - 稳定 `blockType`

@@ -1,8 +1,10 @@
-import type { Block, BlockType, Rgba } from "./types";
+import type { Block, BlockType, Vec3 } from "./types";
 import { createId } from "./ids";
-
-const BODY_COLOR: Rgba = [0.22, 0.57, 0.48, 1];
-const TOP_COLOR: Rgba = [0.72, 0.86, 0.8, 1];
+import { blockSchema } from "./project-schema";
+import box from "./block-library/box/definition.json";
+import doorway from "./block-library/doorway/definition.json";
+import stairs from "./block-library/stairs-linear/definition.json";
+import port from "./block-library/port/definition.json";
 
 export interface CatalogItem {
   type: BlockType;
@@ -12,88 +14,30 @@ export interface CatalogItem {
   blueprintClassPath?: string;
 }
 
-export const CATALOG: CatalogItem[] = [
-  {
-    type: "box",
-    label: "Box 盒体",
-    shortLabel: "盒体",
-    deployable: true,
-    blueprintClassPath: "/BlockoutToolsPlugin/Blueprints/Blockout_Box.Blockout_Box_C",
-  },
-  {
-    type: "doorway",
-    label: "Doorway 门洞",
-    shortLabel: "门洞",
-    deployable: true,
-    blueprintClassPath: "/BlockoutToolsPlugin/Blueprints/Blockout_Doorway.Blockout_Doorway_C",
-  },
-  {
-    type: "stairs-linear",
-    label: "Stairs Linear 线性楼梯",
-    shortLabel: "直梯",
-    deployable: true,
-    blueprintClassPath: "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
-  },
-  {
-    type: "port",
-    label: "模块出入口",
-    shortLabel: "出入口",
-    deployable: false,
-  },
-];
+// Only implemented types are registered. Documentation alone cannot add geometry.
+export const BLOCK_DEFINITIONS = [box, doorway, stairs, port];
+const templates = new Map<BlockType, Block>();
+export const CATALOG: CatalogItem[] = BLOCK_DEFINITIONS.map((definition) => {
+  const template = blockSchema.parse({
+    ...definition.defaults,
+    id: "catalog-template",
+    type: definition.type,
+    transform: { position: [0, 0, 0], rotation: 0 },
+  });
+  if (templates.has(template.type)) throw new Error(`重复积木类型：${template.type}`);
+  templates.set(template.type, template);
+  const blueprintClassPath = "blueprintClassPath" in definition ? definition.blueprintClassPath : undefined;
+  if (definition.deployable && !blueprintClassPath) throw new Error(`缺少 UE 类路径：${template.type}`);
+  return { type: template.type, label: definition.label, shortLabel: definition.shortLabel, deployable: definition.deployable, blueprintClassPath };
+});
 
-export function createBlock(type: BlockType, position: [number, number, number] = [0, 0, 0]): Block {
-  const transform = { position, rotation: 0 };
-  switch (type) {
-    case "box":
-      return {
-        id: createId("block"),
-        name: "Box",
-        type,
-        transform,
-        parameters: {
-          BoxSize: [600, 400, 40],
-          blockout_material_color: BODY_COLOR,
-          blockout_material_top_color: TOP_COLOR,
-        },
-      };
-    case "doorway":
-      return {
-        id: createId("block"),
-        name: "Doorway",
-        type,
-        transform,
-        parameters: {
-          DoorwaySize: [40, 140, 240],
-          TopThickness: 40,
-          SideThickness: 40,
-          blockout_material_color: BODY_COLOR,
-          blockout_material_top_color: TOP_COLOR,
-        },
-      };
-    case "stairs-linear":
-      return {
-        id: createId("block"),
-        name: "Stairs Linear",
-        type,
-        transform,
-        parameters: {
-          StairsSize: [180, 360, 180],
-          NumberOfSteps: 10,
-          StairsType: "BOX",
-          blockout_material_color: BODY_COLOR,
-          blockout_material_top_color: TOP_COLOR,
-        },
-      };
-    case "port":
-      return {
-        id: createId("port"),
-        name: "出入口",
-        type,
-        transform,
-        parameters: { width: 120, depth: 80 },
-      };
-  }
+export function createBlock(type: BlockType, position: Vec3 = [0, 0, 0]): Block {
+  const template = templates.get(type);
+  if (!template) throw new Error(`未实现的积木类型：${type}`);
+  const block = structuredClone(template);
+  block.id = createId(type === "port" ? "port" : "block");
+  block.transform.position = [...position];
+  return block;
 }
 
 export function blockPlanSize(block: Block): [number, number] {
@@ -113,5 +57,5 @@ export function blockPlanSize(block: Block): [number, number] {
 }
 
 export function isDeployableBlock(block: Block): boolean {
-  return block.type !== "port";
+  return CATALOG.some((item) => item.type === block.type && item.deployable);
 }

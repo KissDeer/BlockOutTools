@@ -1,0 +1,21 @@
+{
+  "definitionVersion": 1,
+  "type": "stairs-linear",
+  "label": "Stairs Linear 线性楼梯",
+  "shortLabel": "直梯",
+  "deployable": true,
+  "blueprintClassPath": "/BlockoutToolsPlugin/Blueprints/Blockout_Stairs_Linear.Blockout_Stairs_Linear_C",
+  "review": { "usage": "沿用当前实现，待逐项确认", "preview": "BOX 台阶；CLOSED/SLOPED 仅近似", "ue": "待实测" },
+  "defaults": {
+    "name": "Stairs Linear",
+    "parameters": {
+      "StairsSize": [180, 360, 180],
+      "NumberOfSteps": 10,
+      "StairsType": "BOX",
+      "blockout_material_color": [0.22, 0.57, 0.48, 1],
+      "blockout_material_top_color": [0.72, 0.86, 0.8, 1]
+    }
+  },
+  "usageFile": "usage.md",
+  "examples": []
+}

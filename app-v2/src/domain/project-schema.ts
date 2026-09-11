@@ -18,7 +18,7 @@ export const referenceSchema = z.object({
   visible: z.boolean(), confirmed: z.boolean(), legend: z.string(),
 });
 
-const block = z.discriminatedUnion("type", [
+export const blockSchema = z.discriminatedUnion("type", [
   blockBase.extend({
     type: z.literal("box"),
     role: z.enum(["solid", "floor", "wall", "edging", "landing"]).optional(),
@@ -44,7 +44,7 @@ export const projectSchema = z.object({
   projectId: z.string().min(1),
   name: z.string().min(1),
   assemblyAnchorInstanceId: z.string().min(1).optional(),
-  modules: z.array(z.object({ id: z.string().min(1), name: z.string().min(1), revision: z.number().int().nonnegative(), blocks: z.array(block), reference: referenceSchema.optional(), interpretation: z.record(z.string(), z.unknown()).optional() })),
+  modules: z.array(z.object({ id: z.string().min(1), name: z.string().min(1), revision: z.number().int().nonnegative(), blocks: z.array(blockSchema), reference: referenceSchema.optional(), interpretation: z.record(z.string(), z.unknown()).optional() })),
   instances: z.array(z.object({ id: z.string().min(1), definitionId: z.string().min(1), name: z.string().min(1), graphPosition: vec2, assemblyTransform: transform })),
   connections: z.array(z.object({
     id: z.string().min(1),

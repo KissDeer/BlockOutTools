@@ -43,3 +43,7 @@
 “UE 计划”仍是本地 dry-run，不连接 MCP、不写 UE。CLOSED/SLOPED 楼梯缺少插件实测依据，预览标记为 BOX 近似；不得当成已确认的 UE 几何。实际 UE 导入和回读另行执行。
 
 需求见 [docs/rebuild](docs/rebuild/README.md)，工具 Skill 见 [skills/layout-tools-workflow](skills/layout-tools-workflow/SKILL.md)。旧宿主代码已从当前工作目录移除，历史行为通过 Git 查阅。
+
+## 积木规则入口
+
+[积木索引与用法](app-v2/src/domain/block-library/README.md)：每种积木一个目录，定义文件供网页读取，使用说明供人和 AI 引用。Box 已整理完整样板；其他积木记录现有实现和待确认项。修改定义后运行 `node scripts/generate-block-library-index.mjs` 更新索引。
