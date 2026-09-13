@@ -1,18 +1,21 @@
 import { useMemo } from "react";
-import { CircleAlert, Info, Layers, Trash2, TriangleAlert } from "lucide-react";
-import { createEmptyTopology } from "../../domain/concept";
+import { CircleAlert, CornerDownRight, Info, Layers, Maximize2, Minimize2, Trash2, TriangleAlert } from "lucide-react";
 import { deriveModuleLinks, summarizeDecomposition, validateDecomposition } from "../../domain/concept-decomposition";
 import { useProjectStore } from "../../store/project-store";
 import { moduleColor } from "./module-colors";
+import { useCurrentTopology } from "./use-current-topology";
 
 const SEVERITY_ICON = { error: <CircleAlert size={13} />, warning: <TriangleAlert size={13} />, info: <Info size={13} /> } as const;
 
 export function ConceptDecompositionInspector() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
   const decomposition = useProjectStore((state) => state.decomposition);
   const updateLogicModule = useProjectStore((state) => state.updateLogicModule);
   const removeLogicModule = useProjectStore((state) => state.removeLogicModule);
+  const expandLogicModule = useProjectStore((state) => state.expandLogicModule);
+  const collapseLogicModule = useProjectStore((state) => state.collapseLogicModule);
+  const setConceptScope = useProjectStore((state) => state.setConceptScope);
   const setNodeModule = useProjectStore((state) => state.setNodeModule);
 
   const issues = useMemo(() => validateDecomposition(topology), [topology]);
@@ -65,7 +68,19 @@ export function ConceptDecompositionInspector() {
                 aria-label="模块名称"
                 onChange={(event) => updateLogicModule(module.id, { name: event.target.value })}
               />
-              <small>{module.nodeIds.length} 区域</small>
+              <small>{module.nodeIds.length} 区域{module.childScopeId ? " · 已展开" : ""}</small>
+              {module.childScopeId ? (
+                <button type="button" title="进入这个子作用域" onClick={() => setConceptScope(module.childScopeId as string)}>
+                  <CornerDownRight size={13} />
+                </button>
+              ) : null}
+              <button
+                type="button"
+                title={module.childScopeId ? "收起：解除子作用域引用（作用域本身保留，可能还有别的模块在复用）" : "展开为子作用域：这个模块内部还有一层"}
+                onClick={() => (module.childScopeId ? collapseLogicModule(module.id) : expandLogicModule(module.id))}
+              >
+                {module.childScopeId ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+              </button>
               <button
                 type="button"
                 title="解散这个模块（区域本身保留）"

@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { Box, Cuboid, ExternalLink, Flag, KeyRound, Link2, Plus, Trash2, Unlink } from "lucide-react";
 import {
-  createEmptyTopology,
   LOGIC_KINDS,
   NODE_ROLES,
   TRAVERSALS,
@@ -16,6 +15,7 @@ import { SelectField } from "../../components/SelectField";
 import { TextField } from "../../components/TextField";
 import { useProjectStore } from "../../store/project-store";
 import { ModulePlanPreview } from "./ModulePlanPreview";
+import { useCurrentTopology } from "./use-current-topology";
 
 const LOGIC_OPTIONS = (Object.keys(LOGIC_KINDS) as LogicKind[]).map((kind) => ({ value: kind, label: LOGIC_KINDS[kind].label }));
 const ROLE_OPTIONS = (Object.keys(NODE_ROLES) as LogicNodeRole[]).map((role) => ({ value: role, label: NODE_ROLES[role] }));
@@ -23,7 +23,7 @@ const TRAVERSAL_OPTIONS = (Object.keys(TRAVERSALS) as LogicTraversal[]).map((val
 
 export function ConceptInspector() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
   const selectedNodeId = useProjectStore((state) => state.selectedLogicNodeId);
   const selectedLinkId = useProjectStore((state) => state.selectedLogicLinkId);
   const updateNode = useProjectStore((state) => state.updateLogicNode);

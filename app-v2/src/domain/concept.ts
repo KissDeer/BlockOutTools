@@ -76,42 +76,65 @@ export interface LogicModule {
   name: string;
   /** 属于这个模块的节点（LogicNode.id） */
   nodeIds: string[];
-  /** 基础构型落成的阶段二模块定义（体块 + 端口） */
+  /** 基础构型落成的阶段二模块定义（体块 + 端口）。展开成子作用域的模块没有自己的构型 */
   moduleDefinitionId?: string;
   /** 该模块局部坐标系原点在父级里的位置（厘米）—— 阶段二拼装时需要 */
   relativeOrigin?: Vec2;
+  /**
+   * 展开：这个模块内部还有一层（游乐园 → 鬼屋）。
+   * 指向本拓扑 scopes 池里的一个作用域；同一个作用域可以被多个模块引用（复用）。
+   */
+  childScopeId?: string;
   note: string;
 }
 
-export interface LogicTopology {
+/** 一个可编辑的作用域。根作用域就是拓扑本身，子作用域放在 LogicTopology.scopes 池里。 */
+export interface LogicScope {
+  id: string;
+  name: string;
+  inputs: LogicInputs;
   nodes: LogicNode[];
   links: LogicLink[];
   keys: LogicKey[];
   startNodeId: string | null;
-  /** 拆解依据的输入材料；digest 是完整性指纹 */
-  inputs: LogicInputs;
-  /** 拆解结果登记；每条都绑定它依据的输入 digest */
   proposals: DecompositionProposal[];
   /** 横向拆解：节点到模块的划分 */
   modules: LogicModule[];
+  note: string;
+}
+
+export interface LogicTopology extends LogicScope {
+  /**
+   * 全部子作用域（扁平池，可被任意层的模块复用）。
+   * 因为可以复用，环检测是必须的：作用域不能直接或间接包含自己。
+   */
+  scopes: LogicScope[];
+}
+
+export function createEmptyScope(id: string, name: string): LogicScope {
+  return { id, name, inputs: createEmptyInputs(), nodes: [], links: [], keys: [], startNodeId: null, proposals: [], modules: [], note: "" };
 }
 
 export function createEmptyTopology(): LogicTopology {
-  return { nodes: [], links: [], keys: [], startNodeId: null, inputs: createEmptyInputs(), proposals: [], modules: [] };
+  return { ...createEmptyScope("scope_root", "根作用域"), scopes: [] };
 }
 
 /**
- * 拓扑内容指纹：只包含会改变"拆解含义"的字段。
+ * 拓扑内容指纹：只包含会改变"拆解含义"的字段，**覆盖全部子作用域**。
  * 用于发现"提案给出之后，拓扑已经被改过"。
  */
 export function computeTopologyDigest(topology: LogicTopology): string {
-  const nodes = [...topology.nodes].sort((a, b) => a.id.localeCompare(b.id))
-    .map((node) => [node.id, node.name, node.role, node.floor].join("\u0001"));
-  const links = [...topology.links].sort((a, b) => a.id.localeCompare(b.id))
-    .map((link) => [link.id, link.from, link.to, link.logic, link.traversal, link.requires ?? ""].join("\u0001"));
-  const keys = [...topology.keys].sort((a, b) => a.id.localeCompare(b.id))
-    .map((key) => [key.id, key.name, key.foundAt, [...key.unlocks].sort().join(",")].join("\u0001"));
-  return fingerprint([nodes.join("\u0002"), links.join("\u0002"), keys.join("\u0002")].join("\u0003"));
+  const scopeSignature = (scope: LogicScope): string => {
+    const nodes = [...scope.nodes].sort((a, b) => a.id.localeCompare(b.id))
+      .map((node) => [node.id, node.name, node.role, node.floor].join("\u0001"));
+    const links = [...scope.links].sort((a, b) => a.id.localeCompare(b.id))
+      .map((link) => [link.id, link.from, link.to, link.logic, link.traversal, link.requires ?? ""].join("\u0001"));
+    const keys = [...scope.keys].sort((a, b) => a.id.localeCompare(b.id))
+      .map((key) => [key.id, key.name, key.foundAt, [...key.unlocks].sort().join(",")].join("\u0001"));
+    return [scope.id, scope.name, nodes.join("\u0002"), links.join("\u0002"), keys.join("\u0002")].join("\u0001");
+  };
+  const scopes = [...topology.scopes].sort((a, b) => a.id.localeCompare(b.id)).map(scopeSignature);
+  return fingerprint([scopeSignature(topology), ...scopes].join("\u0003"));
 }
 
 export interface LogicKindMeta {
@@ -203,18 +226,32 @@ export const logicModuleSchema = z.object({
   nodeIds: z.array(z.string().min(1)),
   moduleDefinitionId: z.string().min(1).optional(),
   relativeOrigin: vec2.optional(),
+  childScopeId: z.string().min(1).optional(),
   note: z.string(),
 });
 
-export const logicTopologySchema = z.object({
+const logicScopeFields = {
+  id: z.string().min(1),
+  name: z.string().min(1),
+  inputs: logicInputsSchema,
   nodes: z.array(logicNodeSchema),
   links: z.array(logicLinkSchema),
   keys: z.array(logicKeySchema),
   startNodeId: z.string().min(1).nullable(),
-  // 旧草稿没有这些字段，用 default 兜底
-  inputs: logicInputsSchema,
   proposals: z.array(decompositionProposalSchema).default([]),
   modules: z.array(logicModuleSchema).default([]),
+  note: z.string().default(""),
+};
+
+export const logicScopeSchema = z.object(logicScopeFields);
+
+export const logicTopologySchema = z.object({
+  ...logicScopeFields,
+  // 旧草稿的根作用域没有 id/name（子作用域才需要显式给），给默认值兜底
+  id: z.string().min(1).default("scope_root"),
+  name: z.string().min(1).default("根作用域"),
+  // 旧草稿没有子作用域
+  scopes: z.array(logicScopeSchema).default([]),
 }).superRefine((topology, context) => {
   const fail = (message: string) => context.addIssue({ code: "custom", message });
   const nodeIds = new Set(topology.nodes.map((node) => node.id));
@@ -241,4 +278,43 @@ export const logicTopologySchema = z.object({
       assigned.add(nodeId);
     }
   }
+  for (const issue of collectScopeIssues(topology)) fail(issue);
 });
+
+/**
+ * 子作用域的结构问题：身份重复、引用不存在、以及**自包含**。
+ * 作用域是可复用的（同一个鬼屋用在两张地图里），所以必须能发现环。
+ */
+export function collectScopeIssues(topology: LogicTopology): string[] {
+  const issues: string[] = [];
+  const ids = topology.scopes.map((scope) => scope.id);
+  if (new Set(ids).size !== ids.length) issues.push("子作用域身份重复");
+  const byId = new Map(topology.scopes.map((scope) => [scope.id, scope]));
+  const known = new Set(ids);
+
+  const childScopeIdsOf = (scopeId: string | null): string[] => {
+    const modules = scopeId === null ? topology.modules : byId.get(scopeId)?.modules ?? [];
+    return modules.map((module) => module.childScopeId).filter((id): id is string => Boolean(id));
+  };
+
+  for (const scopeId of childScopeIdsOf(null)) if (!known.has(scopeId)) issues.push(`模块引用了不存在的子作用域：${scopeId}`);
+  for (const scope of topology.scopes) {
+    for (const scopeId of childScopeIdsOf(scope.id)) if (!known.has(scopeId)) issues.push(`模块引用了不存在的子作用域：${scopeId}`);
+  }
+
+  // 环检测：从某个作用域出发往下走，能不能再走回它自己
+  for (const scope of topology.scopes) {
+    const seen = new Set<string>();
+    const stack = [...childScopeIdsOf(scope.id)];
+    let cyclic = false;
+    while (stack.length > 0) {
+      const current = stack.pop() as string;
+      if (current === scope.id) { cyclic = true; break; }
+      if (seen.has(current)) continue;
+      seen.add(current);
+      stack.push(...childScopeIdsOf(current));
+    }
+    if (cyclic) issues.push(`作用域“${scope.name}”直接或间接包含了自己`);
+  }
+  return issues;
+}

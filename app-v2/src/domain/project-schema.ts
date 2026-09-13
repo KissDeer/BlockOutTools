@@ -46,7 +46,7 @@ export const projectSchema = z.object({
   name: z.string().min(1),
   assemblyAnchorInstanceId: z.string().min(1).optional(),
   modules: z.array(z.object({ id: z.string().min(1), name: z.string().min(1), revision: z.number().int().nonnegative(), blocks: z.array(blockSchema), reference: referenceSchema.optional(), interpretation: z.record(z.string(), z.unknown()).optional() })),
-  instances: z.array(z.object({ id: z.string().min(1), definitionId: z.string().min(1), name: z.string().min(1), graphPosition: vec2, assemblyTransform: transform })),
+  instances: z.array(z.object({ id: z.string().min(1), definitionId: z.string().min(1), name: z.string().min(1), graphPosition: vec2, assemblyTransform: transform, scopePath: z.array(z.string().min(1)).optional() })),
   connections: z.array(z.object({
     id: z.string().min(1),
     type: z.enum(["door", "one-way-door", "locked-door", "shortcut", "stairs", "spiral-stairs", "elevator", "one-way-elevator", "road", "drop"]),

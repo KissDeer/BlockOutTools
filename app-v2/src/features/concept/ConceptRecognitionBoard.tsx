@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CircleAlert, Download, ImageOff, RefreshCw, Upload } from "lucide-react";
-import { createEmptyTopology, LOGIC_KINDS } from "../../domain/concept";
+import { LOGIC_KINDS } from "../../domain/concept";
 import { recognitionCandidateSchema, summarizeCandidate, validateCandidate, type RecognitionCandidate } from "../../domain/concept-candidate";
 import { useProjectStore } from "../../store/project-store";
+import { useCurrentTopology } from "./use-current-topology";
 
 export function ConceptRecognitionBoard() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
   const candidate = useProjectStore((state) => state.candidate);
   const excluded = useProjectStore((state) => state.candidateExcluded);
   const selectedNodeId = useProjectStore((state) => state.selectedCandidateNodeId);

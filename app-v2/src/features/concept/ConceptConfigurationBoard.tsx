@@ -1,14 +1,16 @@
 import { useMemo, useRef, useState } from "react";
 import { CircleAlert, Download, Layers, RefreshCw, TriangleAlert, Upload, Wand2 } from "lucide-react";
-import { createEmptyTopology } from "../../domain/concept";
 import { configurationCandidateSchema, summarizeConfiguration, validateConfiguration } from "../../domain/concept-configuration";
 import { useProjectStore } from "../../store/project-store";
 import { conceptSnapshot } from "./concept-snapshot";
 import { moduleColor } from "./module-colors";
+import { useCurrentTopology, useRootTopology } from "./use-current-topology";
 
 export function ConceptConfigurationBoard() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
+  // 快照要给 agent 全树：构型可能发生在任何一层
+  const rootTopology = useRootTopology();
   const configuration = useProjectStore((state) => state.configuration);
   const setConfiguration = useProjectStore((state) => state.setConfiguration);
   const generateConfiguration = useProjectStore((state) => state.generateConfiguration);
@@ -155,7 +157,7 @@ export function ConceptConfigurationBoard() {
 /** 平面位置图：读**已落成**的模块定义（体块 + 模块原点），套用之后仍然能看 */
 function ConfigurationPlan() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
 
   const model = useMemo(() => {
     const moduleIndexOf = new Map(topology.modules.map((module, index) => [module.id, index]));

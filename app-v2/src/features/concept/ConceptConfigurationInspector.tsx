@@ -1,13 +1,15 @@
 import { useMemo } from "react";
 import { CircleAlert, ExternalLink, Layers, Wand2 } from "lucide-react";
-import { createEmptyTopology } from "../../domain/concept";
 import { validateConfiguration } from "../../domain/concept-configuration";
+import { allModules } from "../../domain/concept-scopes";
 import { useProjectStore } from "../../store/project-store";
 import { moduleColor } from "./module-colors";
+import { useCurrentTopology, useRootTopology } from "./use-current-topology";
 
 export function ConceptConfigurationInspector() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
+  const rootTopology = useRootTopology();
   const configuration = useProjectStore((state) => state.configuration);
   const generateConfiguration = useProjectStore((state) => state.generateConfiguration);
   const applyConfigurationCandidate = useProjectStore((state) => state.applyConfigurationCandidate);
@@ -17,6 +19,8 @@ export function ConceptConfigurationInspector() {
 
   const issues = useMemo(() => (configuration ? validateConfiguration(topology, configuration) : []), [configuration, topology]);
   const errors = issues.filter((issue) => issue.severity === "error").length;
+  // 构型可能落在任意一层作用域，判断要覆盖全树
+  const hasConfiguredModule = useMemo(() => allModules(rootTopology).some(({ module }) => module.moduleDefinitionId), [rootTopology]);
 
   return (
     <div className="inspector-content">
@@ -90,12 +94,12 @@ export function ConceptConfigurationInspector() {
           type="button"
           className="primary-command"
           style={{ width: "100%" }}
-          disabled={!topology.modules.some((module) => module.moduleDefinitionId)}
+          disabled={!hasConfiguredModule}
           onClick={generateAssembly}
         >
           生成组装
         </button>
-        {!topology.modules.some((module) => module.moduleDefinitionId) ? (
+        {!hasConfiguredModule ? (
           <p className="field-help">先生成并套用基础构型，模块才有几何可以摆放。</p>
         ) : null}
         {assemblyResult ? (

@@ -1,16 +1,18 @@
 import { useMemo, useRef, useState } from "react";
 import { CircleAlert, Download, Info, Layers, RefreshCw, TriangleAlert, Upload, Wand2 } from "lucide-react";
-import { createEmptyTopology } from "../../domain/concept";
 import { decompositionCandidateSchema, deriveModuleLinks, summarizeDecomposition, validateDecomposition, validateDecompositionCandidate, type DecompositionIssue } from "../../domain/concept-decomposition";
 import { useProjectStore } from "../../store/project-store";
 import { conceptSnapshot } from "./concept-snapshot";
 import { moduleColor } from "./module-colors";
+import { useCurrentTopology, useRootTopology } from "./use-current-topology";
 
 const SEVERITY_ICON = { error: <CircleAlert size={13} />, warning: <TriangleAlert size={13} />, info: <Info size={13} /> } as const;
 
 export function ConceptDecompositionBoard() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
+  // 快照要给 agent 全树：拆解可能发生在任何一层
+  const rootTopology = useRootTopology();
   const decomposition = useProjectStore((state) => state.decomposition);
   const setDecomposition = useProjectStore((state) => state.setDecomposition);
   const seedModules = useProjectStore((state) => state.seedModules);
@@ -29,7 +31,7 @@ export function ConceptDecompositionBoard() {
   async function syncState() {
     setStatus("正在同步拓扑到本地服务…");
     try {
-      const response = await fetch("/api/concept/state", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(conceptSnapshot(topology)) });
+      const response = await fetch("/api/concept/state", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(conceptSnapshot(rootTopology)) });
       const data = (await response.json()) as { error?: string };
       setStatus(data.error ? `同步失败：${data.error}` : "已同步拓扑，可以在 DSH 里让我给拆解提案");
     } catch {

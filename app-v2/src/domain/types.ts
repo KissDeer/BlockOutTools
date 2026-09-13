@@ -91,6 +91,11 @@ export interface ModuleInstance {
   name: string;
   graphPosition: Vec2;
   assemblyTransform: Transform;
+  /**
+   * 层级路径（从根到该实例经过的模块 id 链）。
+   * 嵌套之后用它区分"不同位置上的同名积木"；扁平项目里为空。
+   */
+  scopePath?: string[];
 }
 
 export type ConnectionType =

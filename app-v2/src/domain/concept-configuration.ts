@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { computeTopologyDigest } from "./concept";
 import { computeDecompositionDigest, deriveModuleLinks } from "./concept-decomposition";
+import { findModule, nodesOfScope, scopeViews } from "./concept-scopes";
 import type { LogicNodeRole, LogicTopology } from "./concept";
 import type { Vec2, Vec3 } from "./types";
 
@@ -104,44 +105,54 @@ function portPose(from: Vec2 | null, to: Vec2 | null, size: Vec3): { offset: Vec
  * 只保证"合法、可复现、可用"，不假装懂设计意图。
  */
 export function generateConfiguration(topology: LogicTopology): ConfigurationCandidate {
-  const moduleLinks = deriveModuleLinks(topology);
-  const nodeById = new Map(topology.nodes.map((node) => [node.id, node]));
   const warnings: string[] = [];
+  const modules: ModuleConfiguration[] = [];
+  const unplaced: string[] = [];
 
-  const modules: ModuleConfiguration[] = topology.modules.map((module) => {
-    const areas: ConfigurationArea[] = module.nodeIds.map((nodeId) => {
-      const node = nodeById.get(nodeId);
-      const template = ROLE_TEMPLATES[node?.role ?? "transition"];
-      return {
-        nodeId,
-        size: [template.width, template.depth, template.height] as Vec3,
-        role: "solid" as const,
-        note: `模板尺寸（${template.label}），请按设计调整`,
-      };
-    });
-    const sizeOf = new Map(areas.map((area) => [area.nodeId, area.size]));
+  // 每个作用域各自生成：链路与拆解都是按作用域独立的
+  for (const { view } of scopeViews(topology)) {
+    const nodeById = new Map(view.nodes.map((node) => [node.id, node]));
+    const moduleLinks = deriveModuleLinks(view);
 
-    const ports: ConfigurationPort[] = [];
-    for (const link of moduleLinks) {
-      const outgoing = link.fromModuleId === module.id;
-      const incoming = link.toModuleId === module.id;
-      if (!outgoing && !incoming) continue;
-      const selfNodeId = outgoing ? link.from : link.to;
-      const otherNodeId = outgoing ? link.to : link.from;
-      const self = nodeById.get(selfNodeId);
-      const other = nodeById.get(otherNodeId);
-      if (!self || !other) continue;
-      const size = sizeOf.get(selfNodeId) ?? [1200, 1200, 400];
-      const pose = portPose(self.relativePosition, other.relativePosition, size as Vec3);
-      if (!self.relativePosition || !other.relativePosition) warnings.push(`“${self.name}”或“${other.name}”还没有相对位置，端口只能放在区域中心`);
-      ports.push({ linkId: link.linkId, nodeId: selfNodeId, offset: pose.offset, rotation: pose.rotation, width: 200, note: `对外连接 ${link.label}` });
+    for (const module of view.modules) {
+      // 展开成子作用域的模块不产出自己的几何，几何由子层里的模块负责
+      if (module.childScopeId) continue;
+
+      const areas: ConfigurationArea[] = module.nodeIds.map((nodeId) => {
+        const node = nodeById.get(nodeId);
+        const template = ROLE_TEMPLATES[node?.role ?? "transition"];
+        return {
+          nodeId,
+          size: [template.width, template.depth, template.height] as Vec3,
+          role: "solid" as const,
+          note: `模板尺寸（${template.label}），请按设计调整`,
+        };
+      });
+      const sizeOf = new Map(areas.map((area) => [area.nodeId, area.size]));
+
+      const ports: ConfigurationPort[] = [];
+      for (const link of moduleLinks) {
+        const outgoing = link.fromModuleId === module.id;
+        const incoming = link.toModuleId === module.id;
+        if (!outgoing && !incoming) continue;
+        const selfNodeId = outgoing ? link.from : link.to;
+        const otherNodeId = outgoing ? link.to : link.from;
+        const self = nodeById.get(selfNodeId);
+        const other = nodeById.get(otherNodeId);
+        if (!self || !other) continue;
+        const size = sizeOf.get(selfNodeId) ?? [1200, 1200, 400];
+        const pose = portPose(self.relativePosition, other.relativePosition, size as Vec3);
+        if (!self.relativePosition || !other.relativePosition) warnings.push(`“${self.name}”或“${other.name}”还没有相对位置，端口只能放在区域中心`);
+        ports.push({ linkId: link.linkId, nodeId: selfNodeId, offset: pose.offset, rotation: pose.rotation, width: 200, note: `对外连接 ${link.label}` });
+      }
+      modules.push({ moduleId: module.id, areas, ports, note: "" });
     }
-    return { moduleId: module.id, areas, ports, note: "" };
-  });
 
-  const unplaced = topology.nodes.filter((node) => !node.relativePosition);
-  if (unplaced.length) warnings.push(`有 ${unplaced.length} 个区域没有相对位置，体块会叠在同一处，请先在识别面板定位`);
-  if (topology.modules.length === 0) warnings.push("还没有做横向拆解，先完成拆解再生成构型");
+    for (const node of view.nodes) if (!node.relativePosition) unplaced.push(node.name);
+  }
+
+  if (unplaced.length) warnings.push(`有 ${unplaced.length} 个区域没有相对位置（${unplaced.slice(0, 4).join("、")}${unplaced.length > 4 ? "…" : ""}），体块会叠在同一处，请先在识别面板定位`);
+  if (modules.length === 0) warnings.push("还没有可生成构型的模块：先完成横向拆解，或把已展开的模块收起来");
 
   return {
     ...createEmptyConfigurationCandidate(topology),
@@ -166,8 +177,6 @@ export function validateConfiguration(topology: LogicTopology, candidate: Config
     issues.push({ id: "cfg:decomposition-stale", severity: "error", message: "模块划分已改动，构型需要重新生成" });
   }
 
-  const moduleById = new Map(topology.modules.map((module) => [module.id, module]));
-  const nodeById = new Map(topology.nodes.map((node) => [node.id, node]));
   const moduleLinks = deriveModuleLinks(topology);
   const covered = new Set<string>();
 
@@ -176,59 +185,63 @@ export function validateConfiguration(topology: LogicTopology, candidate: Config
     return issues;
   }
 
-  for (const entry of candidate.modules) {
-    const module = moduleById.get(entry.moduleId);
-    if (!module) {
-      issues.push({ id: `cfg:unknown-module:${entry.moduleId}`, severity: "error", message: `构型引用了不存在的模块：${entry.moduleId}` });
-      continue;
-    }
-    const areaNodes = new Set(entry.areas.map((area) => area.nodeId));
-    for (const area of entry.areas) {
-      covered.add(area.nodeId);
-      const node = nodeById.get(area.nodeId);
-      if (!node) {
-        issues.push({ id: `cfg:unknown-node:${area.nodeId}`, severity: "error", message: `构型引用了不存在的区域：${area.nodeId}` });
-        continue;
+  // 逐作用域校验：区域与对外连接都按作用域独立
+  for (const { view } of scopeViews(topology)) {
+    const moduleById = new Map(view.modules.map((module) => [module.id, module]));
+    const nodeById = new Map(view.nodes.map((node) => [node.id, node]));
+    const moduleLinks = deriveModuleLinks(view);
+    const scopeName = view.name;
+
+    for (const entry of candidate.modules) {
+      const module = moduleById.get(entry.moduleId);
+      if (!module) continue;
+      const areaNodes = new Set(entry.areas.map((area) => area.nodeId));
+      for (const area of entry.areas) {
+        covered.add(area.nodeId);
+        const node = nodeById.get(area.nodeId);
+        if (!node) continue;
+        if (!module.nodeIds.includes(area.nodeId)) {
+          issues.push({ id: `cfg:extra-area:${area.nodeId}`, severity: "warning", message: `“${node.name}”不属于模块“${module.name}”，它的体块将被忽略` });
+        }
+        if (area.size.some((value) => !(value > 0))) {
+          issues.push({ id: `cfg:bad-size:${area.nodeId}`, severity: "error", message: `“${node.name}”的体块尺寸必须为正数` });
+        }
+        if (!node.relativePosition) {
+          issues.push({ id: `cfg:unplaced:${area.nodeId}`, severity: "warning", message: `“${node.name}”没有相对位置，体块会落在模块原点` });
+        }
       }
-      if (!module.nodeIds.includes(area.nodeId)) {
-        issues.push({ id: `cfg:extra-area:${area.nodeId}`, severity: "warning", message: `“${node.name}”不属于模块“${module.name}”，它的体块将被忽略` });
+      for (const nodeId of module.nodeIds) {
+        if (!areaNodes.has(nodeId)) {
+          const node = nodeById.get(nodeId);
+          issues.push({ id: `cfg:missing-area:${nodeId}`, severity: "error", message: `模块“${module.name}”里的“${node?.name ?? nodeId}”没有体块` });
+        }
       }
-      if (area.size.some((value) => !(value > 0))) {
-        issues.push({ id: `cfg:bad-size:${area.nodeId}`, severity: "error", message: `“${node.name}”的体块尺寸必须为正数` });
+
+      /* 每一条对外连接都要在本模块这一侧有端口 */
+      const touching = moduleLinks.filter((link) => link.fromModuleId === module.id || link.toModuleId === module.id);
+      for (const link of touching) {
+        const selfNodeId = link.fromModuleId === module.id ? link.from : link.to;
+        const hasPort = entry.ports.some((port) => port.linkId === link.linkId && port.nodeId === selfNodeId);
+        if (!hasPort) {
+          issues.push({
+            id: `cfg:missing-port:${module.id}:${link.linkId}`, severity: "error",
+            message: `模块“${module.name}”的对外连接 ${link.label} 没有端口，阶段二无法在这里连接`,
+          });
+        }
       }
-      if (!node.relativePosition) {
-        issues.push({ id: `cfg:unplaced:${area.nodeId}`, severity: "warning", message: `“${node.name}”没有相对位置，体块会落在模块原点` });
-      }
-    }
-    for (const nodeId of module.nodeIds) {
-      if (!areaNodes.has(nodeId)) {
-        const node = nodeById.get(nodeId);
-        issues.push({ id: `cfg:missing-area:${nodeId}`, severity: "error", message: `模块“${module.name}”里的“${node?.name ?? nodeId}”没有体块` });
+      for (const port of entry.ports) {
+        if (nodeById.has(port.nodeId) && !touching.some((link) => link.linkId === port.linkId)) {
+          issues.push({ id: `cfg:extra-port:${module.id}:${port.linkId}`, severity: "warning", message: `模块“${module.name}”上有一个不对应任何对外连接的端口` });
+        }
       }
     }
 
-    /* 每一条对外连接都要在本模块这一侧有端口 */
-    const touching = moduleLinks.filter((link) => link.fromModuleId === module.id || link.toModuleId === module.id);
-    for (const link of touching) {
-      const selfNodeId = link.fromModuleId === module.id ? link.from : link.to;
-      const hasPort = entry.ports.some((port) => port.linkId === link.linkId && port.nodeId === selfNodeId);
-      if (!hasPort) {
-        issues.push({
-          id: `cfg:missing-port:${module.id}:${link.linkId}`, severity: "error",
-          message: `模块“${module.name}”的对外连接 ${link.label} 没有端口，阶段二无法在这里连接`,
-        });
+    /* 每个还没展开的模块都必须被构型覆盖 */
+    for (const module of view.modules) {
+      if (module.childScopeId) continue;
+      if (!candidate.modules.some((entry) => entry.moduleId === module.id)) {
+        issues.push({ id: `cfg:module-missing:${module.id}`, severity: "error", message: `${scopeName} 里的模块“${module.name}”没有构型` });
       }
-    }
-    for (const port of entry.ports) {
-      if (!touching.some((link) => link.linkId === port.linkId)) {
-        issues.push({ id: `cfg:extra-port:${module.id}:${port.linkId}`, severity: "warning", message: `模块“${module.name}”上有一个不对应任何对外连接的端口` });
-      }
-    }
-  }
-
-  for (const module of topology.modules) {
-    if (!candidate.modules.some((entry) => entry.moduleId === module.id)) {
-      issues.push({ id: `cfg:module-missing:${module.id}`, severity: "error", message: `构型没有覆盖模块“${module.name}”` });
     }
   }
 
@@ -248,7 +261,9 @@ export function summarizeConfiguration(candidate: ConfigurationCandidate): { mod
  * 相对位置（父级厘米）在这里被平移到模块局部坐标系。
  */
 export function moduleLocalLayout(topology: LogicTopology, entry: ModuleConfiguration): { origin: Vec2; boxes: { nodeId: string; center: Vec2; base: number; size: Vec3; rotation: number }[] } {
-  const nodeById = new Map(topology.nodes.map((node) => [node.id, node]));
+  // 区域在模块自己所在的作用域里，不是根拓扑
+  const found = findModule(topology, entry.moduleId);
+  const nodeById = new Map((found ? nodesOfScope(topology, found.scopeId) : []).map((node) => [node.id, node]));
   const raw = entry.areas.flatMap((area) => {
     const node = nodeById.get(area.nodeId);
     if (!node) return [];

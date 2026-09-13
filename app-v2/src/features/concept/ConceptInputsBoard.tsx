@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from "react";
 import { CircleAlert, FileText, Image as ImageIcon, Plus, RefreshCw, Stamp, TriangleAlert } from "lucide-react";
-import { createEmptyTopology } from "../../domain/concept";
 import {
   checkInputsCompleteness,
   INPUT_KINDS,
@@ -10,12 +9,13 @@ import {
   type LogicInputKind,
 } from "../../domain/concept-inputs";
 import { useProjectStore } from "../../store/project-store";
+import { useCurrentTopology } from "./use-current-topology";
 
 const KIND_ORDER: LogicInputKind[] = ["logic-topology", "scope-map", "mood", "rules", "note"];
 
 export function ConceptInputsBoard() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
   const selectedInputId = useProjectStore((state) => state.selectedInputId);
   const selectInput = useProjectStore((state) => state.setSelectedInput);
   const addLogicInput = useProjectStore((state) => state.addLogicInput);

@@ -1,5 +1,6 @@
 import { CATALOG, isDeployableBlock } from "./catalog";
 import { actorSyncKey } from "./ids";
+import { allModules } from "./concept-scopes";
 import { blockBaseZ } from "./spatial";
 import { resolveAssembly, type AssemblyConstraintIssue } from "./assembly-resolver";
 import type { Block, BlockoutProject } from "./types";
@@ -32,18 +33,22 @@ function rotate2d(x: number, y: number, degrees: number): [number, number] {
 export function buildLocalUEDryRun(project: BlockoutProject): UEDryRunPlan {
   const modules = new Map(project.modules.map((module) => [module.id, module]));
   const classPathByType = new Map(CATALOG.filter((item) => item.blueprintClassPath).map((item) => [item.type, item.blueprintClassPath as string]));
+  // 层级路径上的模块名，用于给人看的标签
+  const moduleNameById = new Map(project.concept ? allModules(project.concept).map(({ module }) => [module.id, module.name]) : []);
   const actors: UEActorPlan[] = [];
   const resolution = resolveAssembly(project);
 
   for (const instance of resolution.instances) {
     const module = modules.get(instance.definitionId);
     if (!module) continue;
+    const scopePath = instance.scopePath ?? [];
+    const prefix = scopePath.map((id) => moduleNameById.get(id) ?? id);
     for (const block of module.blocks) {
       if (!isDeployableBlock(block)) continue;
       const [offsetX, offsetY] = rotate2d(block.transform.position[0], block.transform.position[1], instance.assemblyTransform.rotation);
       actors.push({
-        syncKey: actorSyncKey(project.projectId, instance.id, block.id),
-        label: `${instance.name} / ${block.name}`,
+        syncKey: actorSyncKey(project.projectId, instance.id, block.id, scopePath),
+        label: [...prefix, instance.name, block.name].join(" / "),
         blockType: block.type,
         blueprintClassPath: classPathByType.get(block.type) ?? "",
         location: [

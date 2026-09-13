@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { CircleAlert, FileText, Ruler, Stamp, Trash2 } from "lucide-react";
-import { createEmptyTopology } from "../../domain/concept";
 import { checkInputsCompleteness, INPUT_KINDS, latestProposal, proposalState } from "../../domain/concept-inputs";
 import { NumberField } from "../../components/NumberField";
 import { TextField } from "../../components/TextField";
 import { useProjectStore } from "../../store/project-store";
+import { useCurrentTopology } from "./use-current-topology";
 
 export function ConceptInputInspector() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
   const selectedInputId = useProjectStore((state) => state.selectedInputId);
   const updateInput = useProjectStore((state) => state.updateLogicInput);
   const removeInput = useProjectStore((state) => state.removeLogicInput);

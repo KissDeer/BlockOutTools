@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { CircleAlert, Flag, Info, KeyRound, LayoutGrid, Link2, Plus, TriangleAlert } from "lucide-react";
-import { createEmptyTopology, LOGIC_KINDS, NODE_ROLES, type LogicKind } from "../../domain/concept";
+import { LOGIC_KINDS, NODE_ROLES, type LogicKind } from "../../domain/concept";
 import { topologyStats } from "../../domain/concept-commands";
 import { summarizeIssues, validateTopology, type ConceptIssue } from "../../domain/concept-validation";
 import { useProjectStore } from "../../store/project-store";
+import { scopeCrumbs } from "../../domain/concept-scopes";
+import { useCurrentTopology, useRootTopology } from "./use-current-topology";
 
 const SEVERITY_ICON = {
   error: <CircleAlert size={13} />,
@@ -13,7 +15,7 @@ const SEVERITY_ICON = {
 
 export function ConceptSidebar() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
   const logicKind = useProjectStore((state) => state.logicKind);
   const setLogicKind = useProjectStore((state) => state.setLogicKind);
   const addLogicNode = useProjectStore((state) => state.addLogicNode);
@@ -21,6 +23,10 @@ export function ConceptSidebar() {
   const selectedNodeId = useProjectStore((state) => state.selectedLogicNodeId);
   const selectNode = useProjectStore((state) => state.setSelectedLogicNode);
   const selectLink = useProjectStore((state) => state.setSelectedLogicLink);
+  const scopeId = useProjectStore((state) => state.conceptScopeId);
+  const setConceptScope = useProjectStore((state) => state.setConceptScope);
+  const rootTopology = useRootTopology();
+  const crumbs = useMemo(() => scopeCrumbs(rootTopology, scopeId), [rootTopology, scopeId]);
 
   const issues = useMemo(() => validateTopology(topology), [topology]);
   const summary = useMemo(() => summarizeIssues(issues), [issues]);
@@ -33,6 +39,16 @@ export function ConceptSidebar() {
 
   return (
     <div className="sidebar-content">
+      <div className="scope-bar" aria-label="作用域路径">
+        <button type="button" className={scopeId ? "" : "is-current"} onClick={() => setConceptScope(null)}>根</button>
+        {crumbs.map((step) => (
+          <span key={step.scopeId} className="scope-step">
+            <i>›</i>
+            <button type="button" className={step.scopeId === scopeId ? "is-current" : ""} onClick={() => setConceptScope(step.scopeId)}>{step.scopeName}</button>
+          </span>
+        ))}
+        {scopeId ? <em>{stats.nodes} 区域 · {topology.modules.length} 模块</em> : null}
+      </div>
       <div className="sidebar-heading">
         <div><span>逻辑拓扑</span><strong>{stats.nodes}</strong></div>
         <Link2 size={16} />

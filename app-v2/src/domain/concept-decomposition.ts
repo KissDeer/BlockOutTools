@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { computeTopologyDigest } from "./concept";
 import { fingerprint } from "./fingerprint";
-import type { LogicKind, LogicModule, LogicTopology, LogicTraversal } from "./concept";
+import type { LogicKind, LogicModule, LogicScope, LogicTopology, LogicTraversal } from "./concept";
 
 /**
  * 横向拆解：把逻辑节点划分成模块。
@@ -90,12 +90,16 @@ export function internalLinkCount(topology: LogicTopology): number {
   return topology.links.filter((link) => owner.get(link.from) && owner.get(link.from) === owner.get(link.to)).length;
 }
 
-/** 划分指纹：模块归属变了，基于它的基础构型提案就必须重新核对 */
+/** 划分指纹：模块归属变了，基于它的基础构型提案就必须重新核对。同样覆盖全部子作用域。 */
 export function computeDecompositionDigest(topology: LogicTopology): string {
-  const modules = [...topology.modules]
+  const modulesOf = (scope: LogicScope): string => [...scope.modules]
     .sort((a, b) => a.id.localeCompare(b.id))
-    .map((module) => [module.id, module.name, [...module.nodeIds].sort().join(",")].join("\u0001"));
-  return fingerprint(modules.join("\u0002"));
+    .map((module) => [module.id, module.name, [...module.nodeIds].sort().join(","), module.childScopeId ?? ""].join("\u0001"))
+    .join("\u0002");
+  const scopes = [...topology.scopes]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((scope) => [scope.id, modulesOf(scope)].join("\u0001"));
+  return fingerprint([topology.id, modulesOf(topology), ...scopes].join("\u0003"));
 }
 
 /* ---------------- 规则兜底校验（B） ---------------- */

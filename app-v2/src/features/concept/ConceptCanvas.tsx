@@ -13,8 +13,9 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import { Eye, EyeOff, Plus } from "lucide-react";
-import { createEmptyTopology, LOGIC_KINDS, TRAVERSALS } from "../../domain/concept";
+import { LOGIC_KINDS, TRAVERSALS } from "../../domain/concept";
 import { useProjectStore } from "../../store/project-store";
+import { useCurrentTopology } from "./use-current-topology";
 import { LogicEdgeView, type LogicEdgeData } from "./LogicEdgeView";
 import { LogicNodeView, type LogicNodeData } from "./LogicNodeView";
 import { moduleColor } from "./module-colors";
@@ -29,7 +30,7 @@ const LANE_ARC = -26;
 
 export function ConceptCanvas() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
   const selectedNodeId = useProjectStore((state) => state.selectedLogicNodeId);
   const selectedLinkId = useProjectStore((state) => state.selectedLogicLinkId);
   const logicKind = useProjectStore((state) => state.logicKind);

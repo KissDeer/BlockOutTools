@@ -1,17 +1,18 @@
 import { useMemo } from "react";
 import { CircleAlert, MapPin } from "lucide-react";
-import { createEmptyTopology, LOGIC_KINDS, NODE_ROLES, type LogicNodeRole } from "../../domain/concept";
+import { LOGIC_KINDS, NODE_ROLES, type LogicNodeRole } from "../../domain/concept";
 import { summarizeCandidate, validateCandidate } from "../../domain/concept-candidate";
 import { NumberField } from "../../components/NumberField";
 import { SelectField } from "../../components/SelectField";
 import { TextField } from "../../components/TextField";
 import { useProjectStore } from "../../store/project-store";
+import { useCurrentTopology } from "./use-current-topology";
 
 const ROLE_OPTIONS = (Object.keys(NODE_ROLES) as LogicNodeRole[]).map((role) => ({ value: role, label: NODE_ROLES[role] }));
 
 export function ConceptCandidateInspector() {
   const project = useProjectStore((state) => state.project);
-  const topology = project.concept ?? createEmptyTopology();
+  const topology = useCurrentTopology();
   const candidate = useProjectStore((state) => state.candidate);
   const selectedNodeId = useProjectStore((state) => state.selectedCandidateNodeId);
   const excluded = useProjectStore((state) => state.candidateExcluded);

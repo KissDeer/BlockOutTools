@@ -1,6 +1,7 @@
 import { createBlock } from "./catalog";
 import { createId } from "./ids";
 import { moduleLocalLayout, type ConfigurationCandidate } from "./concept-configuration";
+import { allModules, nodesOfScope, findModule } from "./concept-scopes";
 import type { LogicTopology } from "./concept";
 import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
 
@@ -192,13 +193,16 @@ export function applyConfiguration(project: BlockoutProject, candidate: Configur
   if (!project.concept) return { project, moduleIds: [], blockCount: 0 };
   const next = cloneProject(project);
   const concept = next.concept as LogicTopology;
-  const nodeById = new Map(concept.nodes.map((node) => [node.id, node]));
   const moduleIds: string[] = [];
   let blockCount = 0;
+  // 节点散落在各层作用域里，按模块所在作用域取
+  const nodeById = new Map(allModules(concept).flatMap(({ scopeId }) => nodesOfScope(concept, scopeId)).map((node) => [node.id, node]));
 
   for (const entry of candidate.modules) {
-    const logicModule = concept.modules.find((item) => item.id === entry.moduleId);
-    if (!logicModule) continue;
+    // 模块可能在任何一层作用域里
+    const found = findModule(concept, entry.moduleId);
+    if (!found || found.module.childScopeId) continue;
+    const logicModule = found.module;
     const layout = moduleLocalLayout(concept, entry);
     const blocks: Block[] = [];
 

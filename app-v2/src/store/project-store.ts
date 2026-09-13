@@ -6,6 +6,7 @@ import type { DecompositionCandidate } from "../domain/concept-decomposition";
 import { generateConfiguration as generateConfigurationCommand, type ConfigurationCandidate } from "../domain/concept-configuration";
 import { generateAssembly as generateAssemblyCommand, type AssemblyGenerationResult } from "../domain/concept-assembly";
 import { createEmptyTopology } from "../domain/concept";
+import { expandModule as expandModuleCommand, collapseModule as collapseModuleCommand, scopeView, writeScopeView } from "../domain/concept-scopes";
 import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
 import type { LogicKey, LogicKind, LogicLink, LogicModule, LogicNode, LogicTopology } from "../domain/concept";
 import { createDemoProject } from "../domain/demo-project";
@@ -55,6 +56,11 @@ interface ProjectStore {
   seedModules: () => void;
   /** 基础构型：同样只存在于会话内 */
   configuration: ConfigurationCandidate | null;
+  /** 当前编辑的作用域（null = 根）。所有拓扑命令都作用在它上面 */
+  conceptScopeId: string | null;
+  setConceptScope: (scopeId: string | null) => void;
+  expandLogicModule: (moduleId: string, scopeName?: string) => void;
+  collapseLogicModule: (moduleId: string) => void;
   setConfiguration: (candidate: ConfigurationCandidate | null) => void;
   generateConfiguration: () => void;
   applyConfigurationCandidate: () => void;
@@ -171,15 +177,22 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
   }
 
   function currentTopology(): LogicTopology {
-    const concept = get().project.concept;
-    if (!concept) return createEmptyTopology();
-    // 旧草稿可能没有这两个字段（zod 已兜底，这里再防一手运行时）
-    return { ...concept, inputs: concept.inputs ?? createEmptyInputs(), proposals: concept.proposals ?? [] };
+    const root = get().project.concept ?? createEmptyTopology();
+    // 旧草稿可能缺字段（zod 已兜底，这里再防一手运行时）
+    const base: LogicTopology = {
+      ...root,
+      inputs: root.inputs ?? createEmptyInputs(),
+      proposals: root.proposals ?? [],
+      modules: root.modules ?? [],
+      scopes: root.scopes ?? [],
+    };
+    return scopeView(base, get().conceptScopeId);
   }
 
-  /** 拓扑改动一律：先算出新拓扑，再整体提交，保证不可变 + 进撤销栈 + 自动保存 */
+  /** 拓扑改动一律：先算出新的**当前作用域**，再写回它在树里的位置 */
   function commitTopology(next: LogicTopology): void {
-    commit(setConcept(get().project, next));
+    const root = get().project.concept ?? createEmptyTopology();
+    commit(setConcept(get().project, writeScopeView(root, get().conceptScopeId, next)));
   }
 
   return {
@@ -195,6 +208,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     selectedLogicLinkId: null,
     selectedInputId: null,
     conceptPane: "topology",
+    conceptScopeId: null,
     candidate: null,
     selectedCandidateNodeId: null,
     candidateExcluded: [],
@@ -224,6 +238,17 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     setSelectedLogicNode: (selectedLogicNodeId) => set({ selectedLogicNodeId, selectedLogicLinkId: null }),
     setSelectedLogicLink: (selectedLogicLinkId) => set({ selectedLogicLinkId, selectedLogicNodeId: null }),
     setConceptPane: (conceptPane) => set({ conceptPane }),
+    setConceptScope: (conceptScopeId) => set({ conceptScopeId, selectedLogicNodeId: null, selectedLogicLinkId: null }),
+    expandLogicModule: (moduleId, scopeName) => {
+      const result = expandModuleCommand(currentTopology(), moduleId, scopeName);
+      if (!result) return;
+      commitTopology(result.topology);
+      // 直接进入新作用域，省一次点击
+      set({ conceptScopeId: result.scope.id, selectedLogicNodeId: null, selectedLogicLinkId: null });
+    },
+    collapseLogicModule: (moduleId) => {
+      commitTopology(collapseModuleCommand(currentTopology(), moduleId));
+    },
     setSelectedInput: (selectedInputId) => set({ selectedInputId }),
     setCandidate: (candidate) => set({ candidate, selectedCandidateNodeId: null, candidateExcluded: [] }),
     setSelectedCandidateNode: (selectedCandidateNodeId) => set({ selectedCandidateNodeId }),
