@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { addBlock, addConnection, addModule, createModuleForNode, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, setConcept, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform, updateModule, updateProjectSettings } from "../domain/commands";
-import { addLogicKey, addLogicLink, addLogicNode, autoLayoutTopology, bindNodeModule, nextNodePosition, removeLogicKey, removeLogicLink, removeLogicNode, setStartNode, updateLogicKey, updateLogicLink, updateLogicNode } from "../domain/concept-commands";
+import { addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode, autoLayoutTopology, bindNodeModule, nextNodePosition, recordProposal as recordProposalCommand, removeInput as removeInputCommand, removeLogicKey, removeLogicLink, removeLogicNode, setStartNode, updateInput as updateInputCommand, updateLogicKey, updateLogicLink, updateLogicNode, type InputDraft } from "../domain/concept-commands";
 import { createEmptyTopology } from "../domain/concept";
+import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
 import type { LogicKey, LogicKind, LogicLink, LogicNode, LogicTopology } from "../domain/concept";
 import { createDemoProject } from "../domain/demo-project";
 import { createId } from "../domain/ids";
@@ -10,6 +11,8 @@ import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, Mod
 
 /** concept = 阶段一 构想工作台；build = 阶段二 拼接与转化 */
 export type AppStage = "concept" | "build";
+/** 阶段一里的两个工作面：逻辑拓扑 / 输入上下文 */
+export type ConceptPane = "topology" | "inputs";
 export type AppView = "assembly" | "module";
 export type TransformMode = "move" | "rotate" | "scale";
 export type SaveStatus = "saved" | "saving" | "error";
@@ -25,6 +28,8 @@ interface ProjectStore {
   selectedBlockIds: string[];
   selectedLogicNodeId: string | null;
   selectedLogicLinkId: string | null;
+  selectedInputId: string | null;
+  conceptPane: ConceptPane;
   transformMode: TransformMode;
   connectionType: ConnectionType;
   logicKind: LogicKind;
@@ -84,6 +89,12 @@ interface ProjectStore {
   autoLayoutLogic: () => void;
   bindNodeModule: (nodeId: string, moduleId: string | undefined) => void;
   createModuleForNode: (nodeId: string) => void;
+  setConceptPane: (pane: ConceptPane) => void;
+  setSelectedInput: (inputId: string | null) => void;
+  addLogicInput: (draft: InputDraft) => void;
+  updateLogicInput: (inputId: string, patch: Partial<Omit<LogicInputItem, "id">>) => void;
+  removeLogicInput: (inputId: string) => void;
+  recordProposal: (note?: string) => void;
   acceptProject: (project: BlockoutProject) => void;
   deleteSelectedConnection: () => void;
   undo: () => void;
@@ -129,7 +140,10 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
   }
 
   function currentTopology(): LogicTopology {
-    return get().project.concept ?? createEmptyTopology();
+    const concept = get().project.concept;
+    if (!concept) return createEmptyTopology();
+    // 旧草稿可能没有这两个字段（zod 已兜底，这里再防一手运行时）
+    return { ...concept, inputs: concept.inputs ?? createEmptyInputs(), proposals: concept.proposals ?? [] };
   }
 
   /** 拓扑改动一律：先算出新拓扑，再整体提交，保证不可变 + 进撤销栈 + 自动保存 */
@@ -148,6 +162,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     selectedBlockIds: [],
     selectedLogicNodeId: initialProject.concept?.nodes[0]?.id ?? null,
     selectedLogicLinkId: null,
+    selectedInputId: null,
+    conceptPane: "topology",
     transformMode: "move",
     connectionType: "stairs",
     logicKind: "normal",
@@ -170,6 +186,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     setSelectedBlocks: (selectedBlockIds) => set({ selectedBlockIds }),
     setSelectedLogicNode: (selectedLogicNodeId) => set({ selectedLogicNodeId, selectedLogicLinkId: null }),
     setSelectedLogicLink: (selectedLogicLinkId) => set({ selectedLogicLinkId, selectedLogicNodeId: null }),
+    setConceptPane: (conceptPane) => set({ conceptPane }),
+    setSelectedInput: (selectedInputId) => set({ selectedInputId }),
     setTransformMode: (transformMode) => set({ transformMode }),
     setConnectionType: (connectionType) => set({ connectionType }),
     togglePreview: () => set((state) => ({ previewOpen: !state.previewOpen })),
@@ -215,6 +233,20 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       if (!result) return;
       commit(result.project);
       set({ activeModuleId: result.module.id, selectedLogicNodeId: nodeId });
+    },
+    addLogicInput: (draft) => {
+      const result = addInputCommand(currentTopology(), draft);
+      commitTopology(result.topology);
+      set({ selectedInputId: result.item.id });
+    },
+    updateLogicInput: (inputId, patch) => commitTopology(updateInputCommand(currentTopology(), inputId, patch)),
+    removeLogicInput: (inputId) => {
+      commitTopology(removeInputCommand(currentTopology(), inputId));
+      set((state) => (state.selectedInputId === inputId ? { selectedInputId: null } : {}));
+    },
+    recordProposal: (note) => {
+      const result = recordProposalCommand(currentTopology(), note ?? "");
+      commitTopology(result.topology);
     },
     acceptProject: (project) => commit(project),
     addModule: (position) => {
@@ -348,7 +380,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       scheduleSave(next, set);
     },
     replaceProject: (project) => {
-      set({ project, stage: "concept", view: "assembly", activeInstanceId: null, activeModuleId: null, selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [], selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, past: [], future: [], previewDirty: true, previewProject: null, previewRevision: 0 });
+      set({ project, stage: "concept", view: "assembly", activeInstanceId: null, activeModuleId: null, selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [], selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, selectedInputId: null, conceptPane: "topology", past: [], future: [], previewDirty: true, previewProject: null, previewRevision: 0 });
       scheduleSave(project, set);
     },
   };

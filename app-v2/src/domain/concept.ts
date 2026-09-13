@@ -1,5 +1,12 @@
 import { z } from "zod";
 import type { Vec2 } from "./types";
+import {
+  createEmptyInputs,
+  decompositionProposalSchema,
+  logicInputsSchema,
+  type DecompositionProposal,
+  type LogicInputs,
+} from "./concept-inputs";
 
 /**
  * 逻辑拓扑：只表达"怎么连通"，不表达真实位置。
@@ -62,10 +69,14 @@ export interface LogicTopology {
   links: LogicLink[];
   keys: LogicKey[];
   startNodeId: string | null;
+  /** 拆解依据的输入材料；digest 是完整性指纹 */
+  inputs: LogicInputs;
+  /** 拆解结果登记；每条都绑定它依据的输入 digest */
+  proposals: DecompositionProposal[];
 }
 
 export function createEmptyTopology(): LogicTopology {
-  return { nodes: [], links: [], keys: [], startNodeId: null };
+  return { nodes: [], links: [], keys: [], startNodeId: null, inputs: createEmptyInputs(), proposals: [] };
 }
 
 export interface LogicKindMeta {
@@ -153,6 +164,9 @@ export const logicTopologySchema = z.object({
   links: z.array(logicLinkSchema),
   keys: z.array(logicKeySchema),
   startNodeId: z.string().min(1).nullable(),
+  // 旧草稿没有这两个字段，用 default 兜底
+  inputs: logicInputsSchema,
+  proposals: z.array(decompositionProposalSchema).default([]),
 }).superRefine((topology, context) => {
   const fail = (message: string) => context.addIssue({ code: "custom", message });
   const nodeIds = new Set(topology.nodes.map((node) => node.id));

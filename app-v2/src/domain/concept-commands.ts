@@ -10,6 +10,14 @@ import {
   type LogicTopology,
 } from "./concept";
 import { createId } from "./ids";
+import {
+  computeInputsDigest,
+  INPUT_KINDS,
+  type DecompositionProposal,
+  type LogicInputCalibration,
+  type LogicInputItem,
+  type LogicInputKind,
+} from "./concept-inputs";
 
 /** 图上标注字母：A…Z，然后 A2…Z2、A3… */
 function linkLabelAt(index: number): string {
@@ -230,3 +238,81 @@ export function topologyStats(topology: LogicTopology): { nodes: number; links: 
 
 export { createEmptyTopology };
 export type { LogicNodeRole };
+
+/* ---------------- 输入上下文包 ---------------- */
+
+function withInputs(topology: LogicTopology, items: LogicInputItem[]): LogicTopology {
+  const next = clone(topology);
+  next.inputs = {
+    revision: topology.inputs.revision + 1,
+    items,
+    digest: computeInputsDigest(items),
+    updatedAt: new Date().toISOString(),
+  };
+  return next;
+}
+
+export interface InputDraft {
+  kind: LogicInputKind;
+  name: string;
+  ref?: string;
+  imageData?: string;
+  pixelSize?: [number, number] | null;
+  text?: string;
+  note?: string;
+  calibration?: LogicInputCalibration | null;
+}
+
+export function addInput(topology: LogicTopology, draft: InputDraft): { topology: LogicTopology; item: LogicInputItem } {
+  const item: LogicInputItem = {
+    id: createId("linput"),
+    kind: draft.kind,
+    name: draft.name.trim() || INPUT_KINDS[draft.kind].label,
+    ref: draft.ref ?? "",
+    imageData: draft.imageData ?? "",
+    pixelSize: draft.pixelSize ?? null,
+    text: draft.text ?? "",
+    note: draft.note ?? "",
+    addedAt: new Date().toISOString(),
+    calibration: draft.calibration ?? null,
+  };
+  return { topology: withInputs(topology, [...topology.inputs.items, item]), item };
+}
+
+export function updateInput(topology: LogicTopology, inputId: string, patch: Partial<Omit<LogicInputItem, "id">>): LogicTopology {
+  if (!topology.inputs.items.some((item) => item.id === inputId)) return topology;
+  const items = topology.inputs.items.map((item) => item.id === inputId ? { ...structuredClone(item), ...structuredClone(patch) } : item);
+  return withInputs(topology, items);
+}
+
+export function removeInput(topology: LogicTopology, inputId: string): LogicTopology {
+  if (!topology.inputs.items.some((item) => item.id === inputId)) return topology;
+  return withInputs(topology, topology.inputs.items.filter((item) => item.id !== inputId));
+}
+
+/**
+ * 登记一次拆解结果：记录它依据的输入 digest。
+ * 之后输入一变，这条提案立刻可被判为过期，而不是悄悄沿用旧结论。
+ */
+export function recordProposal(topology: LogicTopology, note = ""): { topology: LogicTopology; proposal: DecompositionProposal } {
+  const proposal: DecompositionProposal = {
+    id: createId("lproposal"),
+    basedOnInputsDigest: topology.inputs.digest,
+    basedOnInputsRevision: topology.inputs.revision,
+    createdAt: new Date().toISOString(),
+    nodeCount: topology.nodes.length,
+    linkCount: topology.links.length,
+    keyCount: topology.keys.length,
+    note,
+  };
+  const next = clone(topology);
+  next.proposals = [...next.proposals, proposal];
+  return { topology: next, proposal };
+}
+
+export function dropProposals(topology: LogicTopology): LogicTopology {
+  if (topology.proposals.length === 0) return topology;
+  const next = clone(topology);
+  next.proposals = [];
+  return next;
+}

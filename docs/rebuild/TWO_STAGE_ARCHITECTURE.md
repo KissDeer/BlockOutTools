@@ -5,20 +5,27 @@
 
 ## 实施状态（2026-09-13）
 
-`S1-A 逻辑拓扑 MVP` 已实现并接入 app-v2，不再是纯提案：
+`S1-A 逻辑拓扑 MVP` 与 `S1-B 输入上下文包` 已实现并接入 app-v2，不再是纯提案：
 
 | 已做 | 位置 | 说明 |
 | --- | --- | --- |
 | 逻辑拓扑领域模型 | `app-v2/src/domain/concept.ts` | 10 种链路类型、节点/链路/锁钥、zod schema |
 | 拓扑命令 | `app-v2/src/domain/concept-commands.ts` | 增删改、锁钥联动、自动排版、空位选址 |
 | 拓扑校验 | `app-v2/src/domain/concept-validation.ts` | 连通性、锁钥可得性（含死锁）、单向、环路、孤立、并行链路 |
-| 阶段切换 | `app-v2/src/App.tsx` | ① 构想工作台 ⇄ ② 拼接与转化，三栏按阶段路由 |
+| **输入上下文包** | `app-v2/src/domain/concept-inputs.ts` | 四类输入、内容指纹 digest、完整性核对、拆解结果登记与过期判定 |
+| **输入命令** | `concept-commands.ts` | 增删改输入（自动重算 digest 并递增 revision）、`recordProposal` |
+| 阶段切换 | `app-v2/src/App.tsx` | ① 构想工作台 ⇄ ② 拼接与转化；阶段一内再分「逻辑拓扑 / 输入上下文」 |
 | 拓扑画布 | `app-v2/src/features/concept/` | React Flow 画布、逻辑节点/链路视图、侧栏、检视器 |
+| **输入工作面** | `ConceptInputsBoard.tsx` / `ConceptInputInspector.tsx` | 材料卡片与预览、比例标定、文案编辑、完整性与过期状态 |
 | 模块结合 | 同上 | 节点可绑定模块，节点上直接显示模块内部体块缩略图；可一键进入模块编辑或打开 3D 预览 |
 
-**顺带完成的既有缺陷修复**：`ModuleEditor` / `BlockInspector` 原先只能通过实例解析当前模块，导致"从拓扑节点进入模块"打不开；已改为优先按 `activeModuleId` 解析。
+**S1-B 的硬约定已落地并实测**：必需输入缺失时「登记拆解结果」按钮禁用；登记后补充任何输入，登记结果立刻显示为过期（登记 rev 与当前 rev 并列展示），不会被静默沿用。
 
-**下一步**：`S1-B 输入上下文包`（范围图 + digest + 完整性约定），见 §7。
+**顺带完成的既有缺陷修复**：
+- `ModuleEditor` / `BlockInspector` 原先只能通过实例解析当前模块，导致"从拓扑节点进入模块"打不开；已改为优先按 `activeModuleId` 解析。
+- 输入完整性警告原先用文案当 React key，同名文件的同类问题会撞 key；已改为结构化警告（`{ id, message }`）。
+
+**下一步**：`S1-C 识别`（逻辑拓扑图 + 范围图 → 结构化候选），见 §7。
 
 ---
 
