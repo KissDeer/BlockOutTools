@@ -20,6 +20,8 @@ export interface ResolvedAssembly {
 export const CONNECTION_RULES: Record<ConnectionType, ConnectionRule> = {
   door: { forward: 0, vertical: 0 },
   "one-way-door": { forward: 0, vertical: 0 },
+  "locked-door": { forward: 0, vertical: 0 },
+  shortcut: { forward: 0, vertical: 0 },
   stairs: { forward: 400, vertical: 300 },
   "spiral-stairs": { forward: 0, vertical: 300 },
   elevator: { forward: 0, vertical: 300 },

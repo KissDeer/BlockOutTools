@@ -38,6 +38,8 @@ export function InstanceInspector() {
         <select value={connectionType} onChange={(event) => setConnectionType(event.target.value as typeof connectionType)}>
           <option value="door">普通门</option>
           <option value="one-way-door">单向门</option>
+          <option value="locked-door">锁钥门</option>
+          <option value="shortcut">捷径</option>
           <option value="stairs">楼梯</option>
           <option value="spiral-stairs">螺旋楼梯</option>
           <option value="elevator">普通电梯</option>

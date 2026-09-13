@@ -12,6 +12,8 @@ export function ConceptConfigurationInspector() {
   const generateConfiguration = useProjectStore((state) => state.generateConfiguration);
   const applyConfigurationCandidate = useProjectStore((state) => state.applyConfigurationCandidate);
   const openModuleById = useProjectStore((state) => state.openModuleById);
+  const generateAssembly = useProjectStore((state) => state.generateAssembly);
+  const assemblyResult = useProjectStore((state) => state.assemblyResult);
 
   const issues = useMemo(() => (configuration ? validateConfiguration(topology, configuration) : []), [configuration, topology]);
   const errors = issues.filter((issue) => issue.severity === "error").length;
@@ -78,6 +80,39 @@ export function ConceptConfigurationInspector() {
           <p className="field-help">已有绑定的模块会被整体替换积木并递增修订；这是一次可撤销事务。</p>
         </div>
       ) : null}
+
+      <section className="inspector-section">
+        <h3>组装到阶段二</h3>
+        <p className="field-help" style={{ marginTop: 0 }}>
+          把每个模块落成一个实例，放在概念给的相对位置上；跨模块链路落成连接，间距取概念里的实际值。
+        </p>
+        <button
+          type="button"
+          className="primary-command"
+          style={{ width: "100%" }}
+          disabled={!topology.modules.some((module) => module.moduleDefinitionId)}
+          onClick={generateAssembly}
+        >
+          生成组装
+        </button>
+        {!topology.modules.some((module) => module.moduleDefinitionId) ? (
+          <p className="field-help">先生成并套用基础构型，模块才有几何可以摆放。</p>
+        ) : null}
+        {assemblyResult ? (
+          <dl className="summary-list" style={{ marginTop: 8 }}>
+            <div><dt>新建实例</dt><dd>{assemblyResult.instancesCreated}</dd></div>
+            <div><dt>移动实例</dt><dd>{assemblyResult.instancesMoved}</dd></div>
+            <div><dt>新建连接</dt><dd>{assemblyResult.connectionsCreated}</dd></div>
+            <div><dt>更新连接</dt><dd>{assemblyResult.connectionsUpdated}</dd></div>
+          </dl>
+        ) : null}
+        {assemblyResult?.unplacedModules.length ? (
+          <div className="logic-issue is-warning"><CircleAlert size={13} /><span>这些模块没有相对位置，实例放在原点：{assemblyResult.unplacedModules.join("、")}</span></div>
+        ) : null}
+        {assemblyResult?.missingPorts.length ? (
+          <div className="logic-issue is-error"><CircleAlert size={13} /><span>这些链路缺少端口，没有连线：{assemblyResult.missingPorts.join("、")}</span></div>
+        ) : null}
+      </section>
     </div>
   );
 }

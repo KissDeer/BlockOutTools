@@ -4,6 +4,7 @@ import { addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode, a
 import { pruneCandidate, type CandidateNode, type RecognitionCandidate } from "../domain/concept-candidate";
 import type { DecompositionCandidate } from "../domain/concept-decomposition";
 import { generateConfiguration as generateConfigurationCommand, type ConfigurationCandidate } from "../domain/concept-configuration";
+import { generateAssembly as generateAssemblyCommand, type AssemblyGenerationResult } from "../domain/concept-assembly";
 import { createEmptyTopology } from "../domain/concept";
 import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
 import type { LogicKey, LogicKind, LogicLink, LogicModule, LogicNode, LogicTopology } from "../domain/concept";
@@ -57,6 +58,9 @@ interface ProjectStore {
   setConfiguration: (candidate: ConfigurationCandidate | null) => void;
   generateConfiguration: () => void;
   applyConfigurationCandidate: () => void;
+  /** 概念 → 阶段二组装的结果摘要 */
+  assemblyResult: AssemblyGenerationResult | null;
+  generateAssembly: () => void;
   transformMode: TransformMode;
   connectionType: ConnectionType;
   logicKind: LogicKind;
@@ -196,6 +200,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     candidateExcluded: [],
     decomposition: null,
     configuration: null,
+    assemblyResult: null,
     transformMode: "move",
     connectionType: "stairs",
     logicKind: "normal",
@@ -272,6 +277,11 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const result = applyConfigurationCommand(get().project, candidate);
       commit(result.project);
       set({ configuration: null });
+    },
+    generateAssembly: () => {
+      const result = generateAssemblyCommand(get().project);
+      commit(result.project);
+      set({ assemblyResult: result.result });
     },
     setTransformMode: (transformMode) => set({ transformMode }),
     setConnectionType: (connectionType) => set({ connectionType }),

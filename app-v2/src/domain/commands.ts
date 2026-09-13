@@ -210,6 +210,8 @@ export function applyConfiguration(project: BlockoutProject, candidate: Configur
       block.role = area?.role === "floor" ? "floor" : "solid";
       block.elevationReference = "bottom";
       block.parameters.BoxSize = [box.size[0], box.size[1], box.size[2]];
+      // 出处：源 = 拆解模块，特征 = 逻辑区域。组装与回溯都靠它，不靠名字
+      block.provenance = { sourceId: logicModule.id, featureId: box.nodeId, status: "confirmed", note: area?.note ?? "" };
       blocks.push(block);
     }
 
@@ -222,6 +224,8 @@ export function applyConfiguration(project: BlockoutProject, candidate: Configur
       block.name = `${node.name} · ${port.note || "出入口"}`;
       block.transform.rotation = port.rotation;
       block.parameters.width = port.width;
+      // 特征 = 拓扑链路 id：组装时据此把链路接到端口上
+      block.provenance = { sourceId: logicModule.id, featureId: port.linkId, status: "confirmed", note: port.note };
       blocks.push(block);
     }
     blockCount += blocks.length;

@@ -96,6 +96,8 @@ export interface ModuleInstance {
 export type ConnectionType =
   | "door"
   | "one-way-door"
+  | "locked-door"
+  | "shortcut"
   | "stairs"
   | "spiral-stairs"
   | "elevator"
