@@ -3,6 +3,7 @@ import { join, resolve } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Plugin } from "vite";
 import { recognitionCandidateSchema } from "../src/domain/concept-candidate";
+import { decompositionCandidateSchema } from "../src/domain/concept-decomposition";
 
 /**
  * 阶段一的本地桥：让 DSH 里的 agent 能读到输入材料（图片落盘，可直接看图），
@@ -32,7 +33,9 @@ async function readBody(request: IncomingMessage): Promise<Record<string, unknow
 export function conceptBridgePlugin(): Plugin {
   const root = resolve(process.env.BLOCKOUT_V2_CONCEPT_DIR || "../data/concept");
   let inputs: InputsBundle | null = null;
+  let state: { state: unknown; receivedAt: string } | null = null;
   let received: { candidate: unknown; receivedAt: string } | null = null;
+  let decomposition: { candidate: unknown; receivedAt: string } | null = null;
 
   /** 输入同步：图片写到磁盘，agent 可以直接看图；base64 不回传，避免响应过大 */
   async function saveInputs(body: Record<string, unknown>) {
@@ -91,6 +94,26 @@ export function conceptBridgePlugin(): Plugin {
         result = received ?? { candidate: null, receivedAt: "" };
       } else if (request.method === "DELETE" && path === "/api/concept/candidate") {
         received = null;
+        result = { ok: true };
+      } else if (request.method === "POST" && path === "/api/concept/state") {
+        state = { state: await readBody(request), receivedAt: new Date().toISOString() };
+        result = { ok: true };
+      } else if (request.method === "GET" && path === "/api/concept/state") {
+        result = state ?? { state: null, receivedAt: "" };
+      } else if (request.method === "POST" && path === "/api/concept/decomposition") {
+        const body = await readBody(request);
+        const parsed = decompositionCandidateSchema.safeParse(body);
+        if (!parsed.success) {
+          response.statusCode = 422;
+          response.end(JSON.stringify({ error: "拆解提案格式不合法", issues: parsed.error.issues.slice(0, 8).map((issue) => `${issue.path.join(".")}: ${issue.message}`) }));
+          return;
+        }
+        decomposition = { candidate: parsed.data, receivedAt: new Date().toISOString() };
+        result = { ok: true, modules: parsed.data.modules.length };
+      } else if (request.method === "GET" && path === "/api/concept/decomposition") {
+        result = decomposition ?? { candidate: null, receivedAt: "" };
+      } else if (request.method === "DELETE" && path === "/api/concept/decomposition") {
+        decomposition = null;
         result = { ok: true };
       } else {
         throw Object.assign(new Error("接口不存在"), { statusCode: 404 });

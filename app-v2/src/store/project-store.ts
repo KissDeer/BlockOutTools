@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { addBlock, addConnection, addModule, createModuleForNode, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, setConcept, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform, updateModule, updateProjectSettings } from "../domain/commands";
-import { addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode, applyCandidate as applyCandidateCommand, autoLayoutTopology, bindNodeModule, nextNodePosition, recordProposal as recordProposalCommand, removeInput as removeInputCommand, removeLogicKey, removeLogicLink, removeLogicNode, setStartNode, updateInput as updateInputCommand, updateLogicKey, updateLogicLink, updateLogicNode, type InputDraft } from "../domain/concept-commands";
+import { addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode, applyCandidate as applyCandidateCommand, applyDecomposition as applyDecompositionCommand, autoLayoutTopology, bindNodeModule, createLogicModule as createLogicModuleCommand, nextNodePosition, recordProposal as recordProposalCommand, removeInput as removeInputCommand, removeLogicKey, removeLogicLink, removeLogicModule as removeLogicModuleCommand, removeLogicNode, seedModulesFromNodes, setNodeModule as setNodeModuleCommand, setStartNode, updateInput as updateInputCommand, updateLogicKey, updateLogicLink, updateLogicModule as updateLogicModuleCommand, updateLogicNode, type InputDraft } from "../domain/concept-commands";
 import { pruneCandidate, type CandidateNode, type RecognitionCandidate } from "../domain/concept-candidate";
+import type { DecompositionCandidate } from "../domain/concept-decomposition";
 import { createEmptyTopology } from "../domain/concept";
 import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
-import type { LogicKey, LogicKind, LogicLink, LogicNode, LogicTopology } from "../domain/concept";
+import type { LogicKey, LogicKind, LogicLink, LogicModule, LogicNode, LogicTopology } from "../domain/concept";
 import { createDemoProject } from "../domain/demo-project";
 import { createId } from "../domain/ids";
 import { loadDraft, saveDraft } from "../domain/persistence";
@@ -12,8 +13,8 @@ import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, Mod
 
 /** concept = 阶段一 构想工作台；build = 阶段二 拼接与转化 */
 export type AppStage = "concept" | "build";
-/** 阶段一里的三个工作面：逻辑拓扑 / 输入上下文 / 识别 */
-export type ConceptPane = "topology" | "inputs" | "recognition";
+/** 阶段一里的四个工作面：逻辑拓扑 / 输入上下文 / 识别 / 横向拆解 */
+export type ConceptPane = "topology" | "inputs" | "recognition" | "decomposition";
 export type AppView = "assembly" | "module";
 export type TransformMode = "move" | "rotate" | "scale";
 export type SaveStatus = "saved" | "saving" | "error";
@@ -41,6 +42,15 @@ interface ProjectStore {
   updateCandidateNode: (tempId: string, patch: Partial<CandidateNode>) => void;
   toggleCandidateItem: (tempId: string) => void;
   applyRecognitionCandidate: () => void;
+  /** 拆解提案：同样只存在于会话内 */
+  decomposition: DecompositionCandidate | null;
+  setDecomposition: (candidate: DecompositionCandidate | null) => void;
+  applyDecompositionCandidate: () => void;
+  setNodeModule: (nodeId: string, moduleId: string | null) => void;
+  addLogicModule: (name: string, nodeIds?: string[]) => void;
+  updateLogicModule: (moduleId: string, patch: Partial<Pick<LogicModule, "name" | "note">>) => void;
+  removeLogicModule: (moduleId: string) => void;
+  seedModules: () => void;
   transformMode: TransformMode;
   connectionType: ConnectionType;
   logicKind: LogicKind;
@@ -178,6 +188,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     candidate: null,
     selectedCandidateNodeId: null,
     candidateExcluded: [],
+    decomposition: null,
     transformMode: "move",
     connectionType: "stairs",
     logicKind: "normal",
@@ -229,6 +240,23 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       commitTopology(recorded.topology);
       set({ candidate: null, selectedCandidateNodeId: null, candidateExcluded: [], conceptPane: "topology" });
     },
+    setDecomposition: (decomposition) => set({ decomposition }),
+    applyDecompositionCandidate: () => {
+      const candidate = get().decomposition;
+      if (!candidate) return;
+      const applied = applyDecompositionCommand(currentTopology(), candidate);
+      const recorded = recordProposalCommand(applied.topology, `套用拆解：${candidate.name}`);
+      commitTopology(recorded.topology);
+      set({ decomposition: null });
+    },
+    setNodeModule: (nodeId, moduleId) => commitTopology(setNodeModuleCommand(currentTopology(), nodeId, moduleId)),
+    addLogicModule: (name, nodeIds) => {
+      const result = createLogicModuleCommand(currentTopology(), name, nodeIds ?? []);
+      commitTopology(result.topology);
+    },
+    updateLogicModule: (moduleId, patch) => commitTopology(updateLogicModuleCommand(currentTopology(), moduleId, patch)),
+    removeLogicModule: (moduleId) => commitTopology(removeLogicModuleCommand(currentTopology(), moduleId)),
+    seedModules: () => commitTopology(seedModulesFromNodes(currentTopology())),
     setTransformMode: (transformMode) => set({ transformMode }),
     setConnectionType: (connectionType) => set({ connectionType }),
     togglePreview: () => set((state) => ({ previewOpen: !state.previewOpen })),

@@ -11,17 +11,23 @@ export interface LogicNodeData extends Record<string, unknown> {
   incoming: number;
   outgoing: number;
   showPreview: boolean;
+  /** 所属拆解模块（若有） */
+  group: { name: string; color: string } | null;
 }
 
 export function LogicNodeView({ data, selected }: NodeProps) {
-  const { node, module, isStart, incoming, outgoing, showPreview } = data as LogicNodeData;
+  const { node, module, isStart, incoming, outgoing, showPreview, group } = data as LogicNodeData;
 
   return (
-    <div className={`logic-node role-${node.role} ${selected ? "is-selected" : ""} ${isStart ? "is-start" : ""}`}>
+    <div
+      className={`logic-node role-${node.role} ${selected ? "is-selected" : ""} ${isStart ? "is-start" : ""}`}
+      style={group ? { borderTopColor: group.color, borderTopWidth: 3 } : undefined}
+    >
       <Handle type="target" position={Position.Left} className="logic-handle" />
       <div className="logic-node-head">
         <span className={`logic-role role-${node.role}`}>{NODE_ROLES[node.role]}</span>
         <span className="logic-floor">F{node.floor}</span>
+        {group ? <span className="logic-module-badge" style={{ color: group.color, borderColor: group.color }} title={`所属模块：${group.name}`}>{group.name}</span> : null}
         {isStart ? <span className="logic-start"><Flag size={11} />起点</span> : null}
       </div>
       <div className="logic-node-name" title={node.name}>{node.name}</div>

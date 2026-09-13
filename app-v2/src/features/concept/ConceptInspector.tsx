@@ -32,6 +32,8 @@ export function ConceptInspector() {
   const removeLink = useProjectStore((state) => state.removeLogicLink);
   const addLogicKey = useProjectStore((state) => state.addLogicKey);
   const setStartNode = useProjectStore((state) => state.setLogicStartNode);
+  const setNodeModule = useProjectStore((state) => state.setNodeModule);
+  const addLogicModule = useProjectStore((state) => state.addLogicModule);
   const bindNodeModule = useProjectStore((state) => state.bindNodeModule);
   const createModuleForNode = useProjectStore((state) => state.createModuleForNode);
   const openModuleById = useProjectStore((state) => state.openModuleById);
@@ -116,6 +118,7 @@ export function ConceptInspector() {
   /* ---------------- 选中区域 ---------------- */
   if (node) {
     const module = project.modules.find((item) => item.id === node.moduleId) ?? null;
+    const ownerModule = topology.modules.find((item) => item.nodeIds.includes(node.id)) ?? null;
     const isStart = topology.startNodeId === node.id;
     const relatedLinks = topology.links.filter((item) => item.from === node.id || item.to === node.id);
     const relatedIssues = issues.filter((issue) => issue.nodeIds.includes(node.id));
@@ -138,6 +141,28 @@ export function ConceptInspector() {
           </div>
           <button type="button" className={isStart ? "primary-command" : "secondary-command"} style={{ marginTop: 8 }} onClick={() => setStartNode(isStart ? null : node.id)}>
             <Flag size={14} />{isStart ? "当前起点" : "设为起点"}
+          </button>
+        </section>
+
+        <section className="inspector-section">
+          <h3>所属模块（横向拆解）</h3>
+          <label className="select-field">
+            <span>模块</span>
+            <select
+              value={ownerModule?.id ?? ""}
+              onChange={(event) => setNodeModule(node.id, event.target.value || null)}
+            >
+              <option value="">未分配</option>
+              {topology.modules.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+            </select>
+          </label>
+          {ownerModule ? (
+            <p className="field-help">当前属于“{ownerModule.name}”，该模块共 {ownerModule.nodeIds.length} 个区域。</p>
+          ) : (
+            <p className="field-help">还没有分到模块；未分配的区域会拦住拆解交付。</p>
+          )}
+          <button type="button" className="secondary-command" style={{ marginTop: 6 }} onClick={() => addLogicModule(`${node.name} 模块`, [node.id])}>
+            <Plus size={14} />新建模块并放入
           </button>
         </section>
 

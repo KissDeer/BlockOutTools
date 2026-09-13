@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Vec2 } from "./types";
+import { fingerprint } from "./fingerprint";
 import {
   createEmptyInputs,
   decompositionProposalSchema,
@@ -69,6 +70,15 @@ export interface LogicKey {
   note: string;
 }
 
+/** 拆解出的模块：一组逻辑节点的集合。模块间连接由拓扑链路推导，不另存一份。 */
+export interface LogicModule {
+  id: string;
+  name: string;
+  /** 属于这个模块的节点（LogicNode.id） */
+  nodeIds: string[];
+  note: string;
+}
+
 export interface LogicTopology {
   nodes: LogicNode[];
   links: LogicLink[];
@@ -78,10 +88,26 @@ export interface LogicTopology {
   inputs: LogicInputs;
   /** 拆解结果登记；每条都绑定它依据的输入 digest */
   proposals: DecompositionProposal[];
+  /** 横向拆解：节点到模块的划分 */
+  modules: LogicModule[];
 }
 
 export function createEmptyTopology(): LogicTopology {
-  return { nodes: [], links: [], keys: [], startNodeId: null, inputs: createEmptyInputs(), proposals: [] };
+  return { nodes: [], links: [], keys: [], startNodeId: null, inputs: createEmptyInputs(), proposals: [], modules: [] };
+}
+
+/**
+ * 拓扑内容指纹：只包含会改变"拆解含义"的字段。
+ * 用于发现"提案给出之后，拓扑已经被改过"。
+ */
+export function computeTopologyDigest(topology: LogicTopology): string {
+  const nodes = [...topology.nodes].sort((a, b) => a.id.localeCompare(b.id))
+    .map((node) => [node.id, node.name, node.role, node.floor].join("\u0001"));
+  const links = [...topology.links].sort((a, b) => a.id.localeCompare(b.id))
+    .map((link) => [link.id, link.from, link.to, link.logic, link.traversal, link.requires ?? ""].join("\u0001"));
+  const keys = [...topology.keys].sort((a, b) => a.id.localeCompare(b.id))
+    .map((key) => [key.id, key.name, key.foundAt, [...key.unlocks].sort().join(",")].join("\u0001"));
+  return fingerprint([nodes.join("\u0002"), links.join("\u0002"), keys.join("\u0002")].join("\u0003"));
 }
 
 export interface LogicKindMeta {
@@ -167,14 +193,22 @@ export const logicKeySchema = z.object({
   note: z.string(),
 });
 
+export const logicModuleSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  nodeIds: z.array(z.string().min(1)),
+  note: z.string(),
+});
+
 export const logicTopologySchema = z.object({
   nodes: z.array(logicNodeSchema),
   links: z.array(logicLinkSchema),
   keys: z.array(logicKeySchema),
   startNodeId: z.string().min(1).nullable(),
-  // 旧草稿没有这两个字段，用 default 兜底
+  // 旧草稿没有这些字段，用 default 兜底
   inputs: logicInputsSchema,
   proposals: z.array(decompositionProposalSchema).default([]),
+  modules: z.array(logicModuleSchema).default([]),
 }).superRefine((topology, context) => {
   const fail = (message: string) => context.addIssue({ code: "custom", message });
   const nodeIds = new Set(topology.nodes.map((node) => node.id));
@@ -192,4 +226,13 @@ export const logicTopologySchema = z.object({
     for (const unlock of key.unlocks) if (!linkIds.has(unlock)) fail(`钥匙“${key.name}”解锁了不存在的链路`);
   }
   if (topology.startNodeId && !nodeIds.has(topology.startNodeId)) fail("起点节点不存在");
+  if (new Set(topology.modules.map((module) => module.id)).size !== topology.modules.length) fail("模块身份重复");
+  const assigned = new Set<string>();
+  for (const module of topology.modules) {
+    for (const nodeId of module.nodeIds) {
+      if (!nodeIds.has(nodeId)) fail(`模块“${module.name}”引用了不存在的节点`);
+      if (assigned.has(nodeId)) fail(`节点被分到了多个模块`);
+      assigned.add(nodeId);
+    }
+  }
 });

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Vec2 } from "./types";
+import { fingerprint } from "./fingerprint";
 
 /**
  * 输入上下文包：拆解前必须看全的材料。
@@ -76,31 +77,18 @@ export function createEmptyInputs(): LogicInputs {
 
 /* ---------------- 指纹 ---------------- */
 
-/**
- * FNV-1a：同步、确定、跨浏览器与 Node 一致。
- * 这是"内容有没有变"的指纹，不是安全哈希，所以不需要异步的 SubtleCrypto。
- */
-function fnv1a(text: string): string {
-  let hash = 0x811c9dc5;
-  for (let index = 0; index < text.length; index += 1) {
-    hash ^= text.charCodeAt(index);
-    hash = Math.imul(hash, 0x01000193) >>> 0;
-  }
-  return hash.toString(16).padStart(8, "0");
-}
-
 function itemSignature(item: LogicInputItem): string {
   const calibration = item.calibration
     ? `${item.calibration.cmPerPixel}:${item.calibration.origin.join(",")}:${item.calibration.rotation}:${item.calibration.confirmed}`
     : "";
-  const content = item.imageData ? `${item.imageData.length}:${fnv1a(item.imageData)}` : item.text;
+  const content = item.imageData ? `${item.imageData.length}:${fingerprint(item.imageData)}` : item.text;
   return [item.id, item.kind, item.name, item.ref, item.note, calibration, content].join("\u0001");
 }
 
 /** 只对内容取指纹，不含 revision：内容没变就不该判为过期 */
 export function computeInputsDigest(items: LogicInputItem[]): string {
   const signature = [...items].sort((a, b) => a.id.localeCompare(b.id)).map(itemSignature).join("\u0002");
-  return fnv1a(signature);
+  return fingerprint(signature);
 }
 
 /* ---------------- 完整性与状态 ---------------- */

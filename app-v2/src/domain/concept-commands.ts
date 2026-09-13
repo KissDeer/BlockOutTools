@@ -5,12 +5,14 @@ import {
   type LogicKey,
   type LogicKind,
   type LogicLink,
+  type LogicModule,
   type LogicNode,
   type LogicNodeRole,
   type LogicTopology,
 } from "./concept";
 import { createId } from "./ids";
 import { toRelativePosition, type RecognitionCandidate } from "./concept-candidate";
+import type { DecompositionCandidate } from "./concept-decomposition";
 import {
   computeInputsDigest,
   INPUT_KINDS,
@@ -319,6 +321,81 @@ export function dropProposals(topology: LogicTopology): LogicTopology {
   if (topology.proposals.length === 0) return topology;
   const next = clone(topology);
   next.proposals = [];
+  return next;
+}
+
+/* ---------------- 横向拆解 ---------------- */
+
+/**
+ * 套用拆解提案：整体替换模块划分。
+ * 这是有意为之 —— "用这份方案重新划分"本来就是一个整体决定，且整次提交可撤销。
+ */
+export function applyDecomposition(topology: LogicTopology, candidate: DecompositionCandidate): { topology: LogicTopology; moduleIds: string[] } {
+  const next = clone(topology);
+  const moduleIds: string[] = [];
+  next.modules = candidate.modules.map((module) => {
+    const id = createId("lmodule");
+    moduleIds.push(id);
+    return { id, name: module.name.trim() || `模块 ${moduleIds.length}`, nodeIds: [...module.nodeIds], note: module.note };
+  });
+  return { topology: next, moduleIds };
+}
+
+export function createLogicModule(topology: LogicTopology, name: string, nodeIds: string[] = []): { topology: LogicTopology; module: LogicModule } {
+  const next = clone(topology);
+  const module: LogicModule = {
+    id: createId("lmodule"),
+    name: name.trim() || `模块 ${next.modules.length + 1}`,
+    nodeIds: [],
+    note: "",
+  };
+  next.modules.push(module);
+  for (const nodeId of nodeIds) assign(next, nodeId, module.id);
+  return { topology: next, module };
+}
+
+/** 把一个节点划到某个模块；传 null 表示取消分配。节点只会属于一个模块。 */
+export function setNodeModule(topology: LogicTopology, nodeId: string, moduleId: string | null): LogicTopology {
+  if (!topology.nodes.some((node) => node.id === nodeId)) return topology;
+  if (moduleId && !topology.modules.some((module) => module.id === moduleId)) return topology;
+  const next = clone(topology);
+  assign(next, nodeId, moduleId);
+  return next;
+}
+
+function assign(topology: LogicTopology, nodeId: string, moduleId: string | null): void {
+  for (const module of topology.modules) {
+    module.nodeIds = module.nodeIds.filter((id) => id !== nodeId);
+  }
+  if (!moduleId) return;
+  topology.modules.find((module) => module.id === moduleId)?.nodeIds.push(nodeId);
+}
+
+export function updateLogicModule(topology: LogicTopology, moduleId: string, patch: Partial<Pick<LogicModule, "name" | "note">>): LogicTopology {
+  const next = clone(topology);
+  const module = next.modules.find((item) => item.id === moduleId);
+  if (!module) return topology;
+  Object.assign(module, structuredClone(patch));
+  return next;
+}
+
+/** 删除模块只解散分组，不删除区域本身 */
+export function removeLogicModule(topology: LogicTopology, moduleId: string): LogicTopology {
+  if (!topology.modules.some((module) => module.id === moduleId)) return topology;
+  const next = clone(topology);
+  next.modules = next.modules.filter((module) => module.id !== moduleId);
+  return next;
+}
+
+/** 确定性兜底：一个区域一个模块，得到一个合法但未合并的初始划分 */
+export function seedModulesFromNodes(topology: LogicTopology): LogicTopology {
+  const next = clone(topology);
+  next.modules = next.nodes.map((node, index) => ({
+    id: createId("lmodule"),
+    name: node.name || `模块 ${index + 1}`,
+    nodeIds: [node.id],
+    note: "",
+  }));
   return next;
 }
 

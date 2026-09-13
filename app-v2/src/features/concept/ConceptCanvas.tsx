@@ -17,6 +17,7 @@ import { createEmptyTopology, LOGIC_KINDS, TRAVERSALS } from "../../domain/conce
 import { useProjectStore } from "../../store/project-store";
 import { LogicEdgeView, type LogicEdgeData } from "./LogicEdgeView";
 import { LogicNodeView, type LogicNodeData } from "./LogicNodeView";
+import { moduleColor } from "./module-colors";
 
 const nodeTypes: NodeTypes = { logic: LogicNodeView };
 const edgeTypes: EdgeTypes = { logic: LogicEdgeView };
@@ -47,6 +48,11 @@ export function ConceptCanvas() {
       incoming.set(link.to, (incoming.get(link.to) ?? 0) + 1);
     }
     const modulesById = new Map(project.modules.map((module) => [module.id, module]));
+    // 模块归属：节点 → 拆解模块（含配色索引）
+    const groupOf = new Map<string, { name: string; color: string }>();
+    topology.modules.forEach((group, index) => {
+      for (const nodeId of group.nodeIds) groupOf.set(nodeId, { name: group.name, color: moduleColor(index) });
+    });
     return topology.nodes.map((node) => ({
       id: node.id,
       type: "logic",
@@ -59,6 +65,7 @@ export function ConceptCanvas() {
         incoming: incoming.get(node.id) ?? 0,
         outgoing: outgoing.get(node.id) ?? 0,
         showPreview,
+        group: groupOf.get(node.id) ?? null,
       } satisfies LogicNodeData,
     }));
   }, [project.modules, selectedNodeId, showPreview, topology]);

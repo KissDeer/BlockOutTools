@@ -448,3 +448,42 @@ button:disabled { opacity: 0.34; cursor: not-allowed; }
 .recognition-actions { display: grid; gap: 6px; margin-top: auto; padding-top: 10px; }
 
 .checkbox-field { display: flex; align-items: center; gap: 7px; margin: 8px 0; color: var(--muted); font-size: 11px; cursor: pointer; }
+
+/* ---- 阶段一：横向拆解 ---- */
+.logic-module-badge { max-width: 72px; overflow: hidden; padding: 1px 5px; border: 1px solid; border-radius: 3px; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+
+.decomposition-board { position: absolute; inset: 0; display: grid; grid-template-rows: 44px minmax(0, 1fr); }
+.decomposition-body { display: grid; grid-template-columns: minmax(0, 1fr) 292px; min-height: 0; }
+.decomposition-main { min-width: 0; min-height: 0; padding: 14px 16px 24px; overflow: auto; }
+.decomposition-summary { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
+.decomposition-summary > div { display: flex; align-items: baseline; gap: 6px; padding-right: 12px; border-right: 1px solid var(--border-soft); }
+.decomposition-summary > div:last-child { border-right: 0; }
+.decomposition-summary span { color: var(--muted); font-size: 10.5px; }
+.decomposition-summary strong { font-size: 15px; }
+.decomposition-summary .is-warn strong { color: var(--warning); }
+.decomposition-issues { display: grid; gap: 4px; margin-top: 10px; }
+.decomposition-issues .logic-issue { width: auto; }
+
+.module-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(266px, 1fr)); gap: 10px; margin-top: 14px; }
+.module-card { display: flex; flex-direction: column; gap: 8px; padding: 10px 11px 9px; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 6px; }
+.module-card > header { display: flex; align-items: center; gap: 7px; }
+.module-card > header i { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.module-card > header strong { flex: 1; min-width: 0; overflow: hidden; font-size: 12.5px; text-overflow: ellipsis; white-space: nowrap; }
+.module-card > header span { color: var(--faint); font-size: 10px; }
+.module-card-nodes { display: flex; flex-wrap: wrap; gap: 4px; }
+.module-card-nodes button { padding: 3px 8px; color: var(--tx2); color: var(--muted); background: var(--surface-2); border: 1px solid var(--border-soft); border-radius: 10px; font-size: 10.5px; cursor: pointer; }
+.module-card-nodes button:hover { color: var(--text); border-color: var(--border); }
+.module-card-nodes em { color: var(--faint); font-size: 10.5px; font-style: normal; }
+.module-card > footer { color: var(--faint); font-size: 9.5px; line-height: 1.5; }
+
+.unassigned-pool { margin-top: 14px; padding: 10px 12px; background: rgba(216,168,78,.06); border: 1px solid rgba(216,168,78,.28); border-radius: 6px; }
+.unassigned-pool h4 { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; color: var(--warning); font-size: 11px; }
+.unassigned-chip { display: flex; align-items: center; gap: 5px; padding: 3px 4px 3px 9px; background: var(--surface-2); border: 1px solid var(--border-soft); border-radius: 10px; font-size: 10.5px; }
+.unassigned-chip select { height: 20px; padding: 0 4px; color: var(--muted); background: #181b19; border: 1px solid var(--border); border-radius: 3px; font-size: 9.5px; }
+
+.module-row { display: grid; grid-template-columns: 9px 1fr auto auto; align-items: center; gap: 6px; padding: 4px 0; }
+.module-row i { width: 9px; height: 9px; border-radius: 50%; }
+.module-row input { min-width: 0; height: 24px; padding: 0 6px; color: var(--text); background: #181b19; border: 1px solid var(--border); border-radius: 3px; font-size: 11.5px; }
+.module-row small { color: var(--faint); font-size: 9.5px; white-space: nowrap; }
+.module-row button { display: grid; place-items: center; width: 22px; height: 22px; padding: 0; color: var(--faint); background: transparent; border: 1px solid transparent; border-radius: 3px; cursor: pointer; }
+.module-row button:hover { color: var(--danger); border-color: rgba(223,112,98,.3); }

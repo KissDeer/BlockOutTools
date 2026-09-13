@@ -5,24 +5,30 @@
 
 ## 实施状态（2026-09-13）
 
-`S1-A 逻辑拓扑 MVP`、`S1-B 输入上下文包`、`S1-C 识别（读图给候选 + 按范围图定位）` 已实现并接入 app-v2，不再是纯提案：
+`S1-A 逻辑拓扑 MVP`、`S1-B 输入上下文包`、`S1-C 识别（读图给候选 + 按范围图定位）`、`S1-D 横向拆解确认` 已实现并接入 app-v2，不再是纯提案：
 
 | 已做 | 位置 | 说明 |
 | --- | --- | --- |
-| 逻辑拓扑领域模型 | `app-v2/src/domain/concept.ts` | 10 种链路类型、节点/链路/锁钥、相对位置与标高、zod schema |
-| 拓扑命令 | `app-v2/src/domain/concept-commands.ts` | 增删改、锁钥联动、自动排版、空位选址 |
+| 逻辑拓扑领域模型 | `app-v2/src/domain/concept.ts` | 10 种链路类型、节点/链路/锁钥、相对位置与标高、模块划分、拓扑指纹 |
+| 拓扑命令 | `app-v2/src/domain/concept-commands.ts` | 增删改、锁钥联动、自动排版、空位选址；拆解模块的增删与归属调整 |
 | 拓扑校验 | `app-v2/src/domain/concept-validation.ts` | 连通性、锁钥可得性（含死锁）、单向、环路、孤立、并行链路、未定位提示 |
 | 输入上下文包 | `app-v2/src/domain/concept-inputs.ts` | 四类输入、内容指纹 digest、完整性核对、拆解结果登记与过期判定 |
-| **识别候选** | `app-v2/src/domain/concept-candidate.ts` | 候选模型与 zod schema、套用前校验（digest 必须一致）、人工排除裁剪、像素→厘米换算 |
-| **候选套用** | `concept-commands.ts` | 一次可撤销事务；只新增不删除；画布坐标与相对位置分开；链路标签保持唯一 |
-| **本地桥** | `app-v2/server/concept-bridge.ts` | `/api/concept/inputs`（图片落盘供 agent 读图）与 `/api/concept/candidate`（agent 回写候选） |
-| 阶段切换 | `app-v2/src/App.tsx` | ① 构想工作台（逻辑拓扑 / 输入上下文 / 识别）⇄ ② 拼接与转化 |
-| 拓扑画布 | `app-v2/src/features/concept/` | React Flow 画布、逻辑节点/链路视图、侧栏、检视器（含定位编辑） |
+| 识别候选 | `app-v2/src/domain/concept-candidate.ts` | 候选模型、套用前校验（digest 必须一致）、人工排除裁剪、像素→厘米换算 |
+| **横向拆解** | `app-v2/src/domain/concept-decomposition.ts` | 模块划分模型、模块间连接推导、**规则兜底校验**、拆解提案校验 |
+| 候选套用 | `concept-commands.ts` | 一次可撤销事务；只新增不删除；画布坐标与相对位置分开；链路标签保持唯一 |
+| 本地桥 | `app-v2/server/concept-bridge.ts` | `/api/concept/inputs`（图片落盘供 agent 读图）、`/state`（拓扑快照）、`/candidate`、`/decomposition` |
+| 阶段切换 | `app-v2/src/App.tsx` | ① 构想工作台（逻辑拓扑 / 输入上下文 / 识别 / 拆解）⇄ ② 拼接与转化 |
+| 拓扑画布 | `app-v2/src/features/concept/` | React Flow 画布、逻辑节点/链路视图、**模块徽标与配色**、侧栏、检视器（含定位与所属模块） |
 | 输入工作面 | `ConceptInputsBoard.tsx` / `ConceptInputInspector.tsx` | 材料卡片与预览、比例标定、文案编辑、完整性与过期状态 |
-| **识别工作面** | `ConceptRecognitionBoard.tsx` / `ConceptCandidateInspector.tsx` | 范围图叠加视图（标记可拖拽改位）、逐条勾选、警告与检查、套用 |
+| 识别工作面 | `ConceptRecognitionBoard.tsx` / `ConceptCandidateInspector.tsx` | 范围图叠加视图（标记可拖拽改位）、逐条勾选、警告与检查、套用 |
+| **拆解工作面** | `ConceptDecompositionBoard.tsx` / `ConceptDecompositionInspector.tsx` | 模块卡片与对外连接、未分配池、规则问题、提案审阅与套用、模块改名与解散 |
 | 模块结合 | 同上 | 节点可绑定模块，节点上直接显示模块内部体块缩略图；可一键进入模块编辑或打开 3D 预览 |
 
 **识别采用「agent 读图 + 人工确认」而不是内置 CV**：`同步输入给本地服务`把图片写到 `data/concept/inputs/`，DSH 里的 agent 直接看图后把候选 POST 回来，网页负责核对、修位、逐条取舍与套用。识别只产出候选，不产出结论。
+
+**拆解同样采用「AI 提案 + 规则校准 + 人工确认」**：`同步拓扑给本地服务`把拓扑快照（节点/链路/钥匙/相对位置/楼层 + 两个 digest）交给 agent，agent 给出模块划分提案；网页展示提案，**规则兜底检查**未分配、重复分配、跨层、孤岛、模块图不连通、拆得过碎/过粗；两者都通过才允许套用。模块间连接由拓扑链路推导，不另存一份，避免划分与连接对不上。
+
+**交付门**：`error` 级问题为 0 才允许交付；实测中规则确实抓到了"两段互不相连的区域导致模块图不连通"这一真实数据问题，而不是静默放行。
 
 **S1-B 的硬约定已落地并实测**：必需输入缺失时「登记拆解结果」按钮禁用；登记后补充任何输入，登记结果立刻显示为过期（登记 rev 与当前 rev 并列展示），不会被静默沿用。
 
@@ -32,8 +38,9 @@
 - `ModuleEditor` / `BlockInspector` 原先只能通过实例解析当前模块，导致"从拓扑节点进入模块"打不开；已改为优先按 `activeModuleId` 解析。
 - 输入完整性警告原先用文案当 React key，同名文件的同类问题会撞 key；已改为结构化警告（`{ id, message }`）。
 - 套用候选时曾把"相对位置（厘米）"直接当画布坐标用，两套坐标系混用会把画布上的已有节点挤成看不见的小点；已改为按范围图像素等比映射，相对位置单独存放。
+- 套用候选时曾用图纸上的标注覆盖链路标签，造成同一张图上出现两条 A；已改为保留唯一标签、把图上标注记进备注。
 
-**下一步**：`S1-D 横向拆解确认`（R2/R4 提案 + 确认 + 交付门），见 §7。
+**下一步**：`S1-E 基础构型与展示`（按角色/风格生成体块+端口、多模板展示），见 §7。
 
 ---
 
