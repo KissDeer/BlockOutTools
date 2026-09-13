@@ -76,6 +76,10 @@ export interface LogicModule {
   name: string;
   /** 属于这个模块的节点（LogicNode.id） */
   nodeIds: string[];
+  /** 基础构型落成的阶段二模块定义（体块 + 端口） */
+  moduleDefinitionId?: string;
+  /** 该模块局部坐标系原点在父级里的位置（厘米）—— 阶段二拼装时需要 */
+  relativeOrigin?: Vec2;
   note: string;
 }
 
@@ -197,6 +201,8 @@ export const logicModuleSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   nodeIds: z.array(z.string().min(1)),
+  moduleDefinitionId: z.string().min(1).optional(),
+  relativeOrigin: vec2.optional(),
   note: z.string(),
 });
 

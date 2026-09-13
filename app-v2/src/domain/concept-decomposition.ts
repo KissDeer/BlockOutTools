@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { computeTopologyDigest } from "./concept";
+import { fingerprint } from "./fingerprint";
 import type { LogicKind, LogicModule, LogicTopology, LogicTraversal } from "./concept";
 
 /**
@@ -10,6 +11,9 @@ import type { LogicKind, LogicModule, LogicTopology, LogicTraversal } from "./co
 export interface ModuleLink {
   linkId: string;
   label: string;
+  /** 两端所在的区域（LogicNode.id）—— 生成端口时要知道是哪两个区域相连 */
+  from: string;
+  to: string;
   fromModuleId: string;
   toModuleId: string;
   logic: LogicKind;
@@ -68,6 +72,8 @@ export function deriveModuleLinks(topology: LogicTopology): ModuleLink[] {
     result.push({
       linkId: link.id,
       label: link.label,
+      from: link.from,
+      to: link.to,
       fromModuleId: from,
       toModuleId: to,
       logic: link.logic,
@@ -82,6 +88,14 @@ export function internalLinkCount(topology: LogicTopology): number {
   const owner = new Map<string, string>();
   for (const module of topology.modules) for (const nodeId of module.nodeIds) owner.set(nodeId, module.id);
   return topology.links.filter((link) => owner.get(link.from) && owner.get(link.from) === owner.get(link.to)).length;
+}
+
+/** 划分指纹：模块归属变了，基于它的基础构型提案就必须重新核对 */
+export function computeDecompositionDigest(topology: LogicTopology): string {
+  const modules = [...topology.modules]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((module) => [module.id, module.name, [...module.nodeIds].sort().join(",")].join("\u0001"));
+  return fingerprint(modules.join("\u0002"));
 }
 
 /* ---------------- 规则兜底校验（B） ---------------- */

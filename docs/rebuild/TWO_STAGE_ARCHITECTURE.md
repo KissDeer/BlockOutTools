@@ -5,7 +5,7 @@
 
 ## 实施状态（2026-09-13）
 
-`S1-A 逻辑拓扑 MVP`、`S1-B 输入上下文包`、`S1-C 识别（读图给候选 + 按范围图定位）`、`S1-D 横向拆解确认` 已实现并接入 app-v2，不再是纯提案：
+`S1-A 逻辑拓扑 MVP`、`S1-B 输入上下文包`、`S1-C 识别（读图给候选 + 按范围图定位）`、`S1-D 横向拆解确认`、`S1-E 基础构型与展示` 已实现并接入 app-v2，不再是纯提案：
 
 | 已做 | 位置 | 说明 |
 | --- | --- | --- |
@@ -14,14 +14,16 @@
 | 拓扑校验 | `app-v2/src/domain/concept-validation.ts` | 连通性、锁钥可得性（含死锁）、单向、环路、孤立、并行链路、未定位提示 |
 | 输入上下文包 | `app-v2/src/domain/concept-inputs.ts` | 四类输入、内容指纹 digest、完整性核对、拆解结果登记与过期判定 |
 | 识别候选 | `app-v2/src/domain/concept-candidate.ts` | 候选模型、套用前校验（digest 必须一致）、人工排除裁剪、像素→厘米换算 |
-| **横向拆解** | `app-v2/src/domain/concept-decomposition.ts` | 模块划分模型、模块间连接推导、**规则兜底校验**、拆解提案校验 |
-| 候选套用 | `concept-commands.ts` | 一次可撤销事务；只新增不删除；画布坐标与相对位置分开；链路标签保持唯一 |
-| 本地桥 | `app-v2/server/concept-bridge.ts` | `/api/concept/inputs`（图片落盘供 agent 读图）、`/state`（拓扑快照）、`/candidate`、`/decomposition` |
+| **横向拆解** | `app-v2/src/domain/concept-decomposition.ts` | 模块划分模型、模块间连接推导、**规则兜底校验**、拆解提案校验、划分指纹 |
+| **基础构型** | `app-v2/src/domain/concept-configuration.ts` | 构型模型与候选 schema、**角色模板确定性生成**、套用前规则校验（含端口覆盖）、像素/厘米坐标换算 |
+| 候选套用 | `concept-commands.ts` / `commands.ts` | 一次可撤销事务；识别与拆解只新增，构型整体替换已绑定的模块积木并递增修订 |
+| 本地桥 | `app-v2/server/concept-bridge.ts` | `/api/concept/inputs`（图片落盘供 agent 读图）、`/state`（拓扑快照）、`/candidate`、`/decomposition`、`/configuration` |
 | 阶段切换 | `app-v2/src/App.tsx` | ① 构想工作台（逻辑拓扑 / 输入上下文 / 识别 / 拆解）⇄ ② 拼接与转化 |
 | 拓扑画布 | `app-v2/src/features/concept/` | React Flow 画布、逻辑节点/链路视图、**模块徽标与配色**、侧栏、检视器（含定位与所属模块） |
 | 输入工作面 | `ConceptInputsBoard.tsx` / `ConceptInputInspector.tsx` | 材料卡片与预览、比例标定、文案编辑、完整性与过期状态 |
 | 识别工作面 | `ConceptRecognitionBoard.tsx` / `ConceptCandidateInspector.tsx` | 范围图叠加视图（标记可拖拽改位）、逐条勾选、警告与检查、套用 |
 | **拆解工作面** | `ConceptDecompositionBoard.tsx` / `ConceptDecompositionInspector.tsx` | 模块卡片与对外连接、未分配池、规则问题、提案审阅与套用、模块改名与解散 |
+| **构型工作面** | `ConceptConfigurationBoard.tsx` / `ConceptConfigurationInspector.tsx` | 模块与构型状态、**平面位置图**（读已落成的体块 + 模块原点）、模板生成、提案审阅与套用、进入模块编辑 |
 | 模块结合 | 同上 | 节点可绑定模块，节点上直接显示模块内部体块缩略图；可一键进入模块编辑或打开 3D 预览 |
 
 **识别采用「agent 读图 + 人工确认」而不是内置 CV**：`同步输入给本地服务`把图片写到 `data/concept/inputs/`，DSH 里的 agent 直接看图后把候选 POST 回来，网页负责核对、修位、逐条取舍与套用。识别只产出候选，不产出结论。
@@ -39,8 +41,11 @@
 - 输入完整性警告原先用文案当 React key，同名文件的同类问题会撞 key；已改为结构化警告（`{ id, message }`）。
 - 套用候选时曾把"相对位置（厘米）"直接当画布坐标用，两套坐标系混用会把画布上的已有节点挤成看不见的小点；已改为按范围图像素等比映射，相对位置单独存放。
 - 套用候选时曾用图纸上的标注覆盖链路标签，造成同一张图上出现两条 A；已改为保留唯一标签、把图上标注记进备注。
+- 端口定位原先用矩形**支撑函数**（`|ux|·w/2 + |uy|·d/2`），那是投影范围而不是射线与边界的交点距离，斜方向时端口会甩到体块外面；已改为两轴射线距离取小值，并补了斜方向的回归测试。
+- 拆解面板与构型面板各自维护一份"交给 agent 的拓扑快照"，构型那份漏了 `links`，导致 agent 看不到连接、生不出端口；已抽成共用的 `features/concept/concept-snapshot.ts`。
+- 平面位置图原先读"待确认的候选"，套用后候选被清空就只剩虚线点；已改为读**已落成**的模块定义，并让模块记录自己的 `relativeOrigin`（这也是阶段二拼装必需的数据）。
 
-**下一步**：`S1-E 基础构型与展示`（按角色/风格生成体块+端口、多模板展示），见 §7。
+**下一步**：`S2-A 导入与递归组装`（把概念包交给阶段二拼装），见 §7。
 
 ---
 

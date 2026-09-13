@@ -1,5 +1,6 @@
 import { createBlock } from "./catalog";
 import { createId } from "./ids";
+import { moduleLocalLayout, type ConfigurationCandidate } from "./concept-configuration";
 import type { LogicTopology } from "./concept";
 import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
 
@@ -180,4 +181,66 @@ export function createModuleForNode(project: BlockoutProject, nodeId: string, gr
     if (target) target.moduleId = module.id;
   }
   return { project: touch(next), module, instance };
+}
+
+/**
+ * 套用基础构型：把每个拆解模块落成一个阶段二模块定义（体块 + 端口）。
+ * 坐标在这里统一换算：区域相对位置（父级厘米）→ 模块局部厘米（以包围盒左下角为原点）。
+ * 已有绑定则整体替换该模块的积木，不新建重复定义。
+ */
+export function applyConfiguration(project: BlockoutProject, candidate: ConfigurationCandidate): { project: BlockoutProject; moduleIds: string[]; blockCount: number } {
+  if (!project.concept) return { project, moduleIds: [], blockCount: 0 };
+  const next = cloneProject(project);
+  const concept = next.concept as LogicTopology;
+  const nodeById = new Map(concept.nodes.map((node) => [node.id, node]));
+  const moduleIds: string[] = [];
+  let blockCount = 0;
+
+  for (const entry of candidate.modules) {
+    const logicModule = concept.modules.find((item) => item.id === entry.moduleId);
+    if (!logicModule) continue;
+    const layout = moduleLocalLayout(concept, entry);
+    const blocks: Block[] = [];
+
+    for (const box of layout.boxes) {
+      const block = createBlock("box", [box.center[0], box.center[1], box.base]);
+      if (block.type !== "box") continue;
+      const area = entry.areas.find((item) => item.nodeId === box.nodeId);
+      block.name = nodeById.get(box.nodeId)?.name ?? "区域";
+      block.role = area?.role === "floor" ? "floor" : "solid";
+      block.elevationReference = "bottom";
+      block.parameters.BoxSize = [box.size[0], box.size[1], box.size[2]];
+      blocks.push(block);
+    }
+
+    for (const port of entry.ports) {
+      const node = nodeById.get(port.nodeId);
+      const box = layout.boxes.find((item) => item.nodeId === port.nodeId);
+      if (!node || !box) continue;
+      const block = createBlock("port", [box.center[0] + port.offset[0], box.center[1] + port.offset[1], box.base]);
+      if (block.type !== "port") continue;
+      block.name = `${node.name} · ${port.note || "出入口"}`;
+      block.transform.rotation = port.rotation;
+      block.parameters.width = port.width;
+      blocks.push(block);
+    }
+    blockCount += blocks.length;
+    // 记下模块局部原点在父级里的位置：阶段二拼装与平面图都要用
+    logicModule.relativeOrigin = layout.origin;
+
+    const existing = logicModule.moduleDefinitionId ? next.modules.find((item) => item.id === logicModule.moduleDefinitionId) : null;
+    if (existing) {
+      existing.name = logicModule.name;
+      existing.blocks = blocks;
+      existing.revision += 1;
+      moduleIds.push(existing.id);
+    } else {
+      const module: ModuleDefinition = { id: createId("module"), name: logicModule.name, revision: 1, blocks };
+      next.modules.push(module);
+      logicModule.moduleDefinitionId = module.id;
+      moduleIds.push(module.id);
+    }
+  }
+
+  return { project: touch(next), moduleIds, blockCount };
 }

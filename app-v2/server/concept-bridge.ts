@@ -4,6 +4,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Plugin } from "vite";
 import { recognitionCandidateSchema } from "../src/domain/concept-candidate";
 import { decompositionCandidateSchema } from "../src/domain/concept-decomposition";
+import { configurationCandidateSchema } from "../src/domain/concept-configuration";
 
 /**
  * 阶段一的本地桥：让 DSH 里的 agent 能读到输入材料（图片落盘，可直接看图），
@@ -36,6 +37,7 @@ export function conceptBridgePlugin(): Plugin {
   let state: { state: unknown; receivedAt: string } | null = null;
   let received: { candidate: unknown; receivedAt: string } | null = null;
   let decomposition: { candidate: unknown; receivedAt: string } | null = null;
+  let configuration: { candidate: unknown; receivedAt: string } | null = null;
 
   /** 输入同步：图片写到磁盘，agent 可以直接看图；base64 不回传，避免响应过大 */
   async function saveInputs(body: Record<string, unknown>) {
@@ -114,6 +116,21 @@ export function conceptBridgePlugin(): Plugin {
         result = decomposition ?? { candidate: null, receivedAt: "" };
       } else if (request.method === "DELETE" && path === "/api/concept/decomposition") {
         decomposition = null;
+        result = { ok: true };
+      } else if (request.method === "POST" && path === "/api/concept/configuration") {
+        const body = await readBody(request);
+        const parsed = configurationCandidateSchema.safeParse(body);
+        if (!parsed.success) {
+          response.statusCode = 422;
+          response.end(JSON.stringify({ error: "基础构型格式不合法", issues: parsed.error.issues.slice(0, 8).map((issue) => `${issue.path.join(".")}: ${issue.message}`) }));
+          return;
+        }
+        configuration = { candidate: parsed.data, receivedAt: new Date().toISOString() };
+        result = { ok: true, modules: parsed.data.modules.length, areas: parsed.data.modules.reduce((total, entry) => total + entry.areas.length, 0) };
+      } else if (request.method === "GET" && path === "/api/concept/configuration") {
+        result = configuration ?? { candidate: null, receivedAt: "" };
+      } else if (request.method === "DELETE" && path === "/api/concept/configuration") {
+        configuration = null;
         result = { ok: true };
       } else {
         throw Object.assign(new Error("接口不存在"), { statusCode: 404 });

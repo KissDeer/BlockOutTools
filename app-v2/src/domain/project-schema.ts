@@ -94,4 +94,7 @@ export const projectSchema = z.object({
   for (const node of project.concept?.nodes ?? []) {
     if (node.moduleId && !project.modules.some((module) => module.id === node.moduleId)) fail(`逻辑节点“${node.name}”引用了不存在的模块`);
   }
+  for (const group of project.concept?.modules ?? []) {
+    if (group.moduleDefinitionId && !project.modules.some((module) => module.id === group.moduleDefinitionId)) fail(`拆解模块“${group.name}”引用了不存在的模块定义`);
+  }
 });

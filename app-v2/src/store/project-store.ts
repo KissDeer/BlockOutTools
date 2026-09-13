@@ -1,8 +1,9 @@
 import { create } from "zustand";
-import { addBlock, addConnection, addModule, createModuleForNode, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, setConcept, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform, updateModule, updateProjectSettings } from "../domain/commands";
+import { addBlock, addConnection, addModule, applyConfiguration as applyConfigurationCommand, createModuleForNode, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, setConcept, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform, updateModule, updateProjectSettings } from "../domain/commands";
 import { addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode, applyCandidate as applyCandidateCommand, applyDecomposition as applyDecompositionCommand, autoLayoutTopology, bindNodeModule, createLogicModule as createLogicModuleCommand, nextNodePosition, recordProposal as recordProposalCommand, removeInput as removeInputCommand, removeLogicKey, removeLogicLink, removeLogicModule as removeLogicModuleCommand, removeLogicNode, seedModulesFromNodes, setNodeModule as setNodeModuleCommand, setStartNode, updateInput as updateInputCommand, updateLogicKey, updateLogicLink, updateLogicModule as updateLogicModuleCommand, updateLogicNode, type InputDraft } from "../domain/concept-commands";
 import { pruneCandidate, type CandidateNode, type RecognitionCandidate } from "../domain/concept-candidate";
 import type { DecompositionCandidate } from "../domain/concept-decomposition";
+import { generateConfiguration as generateConfigurationCommand, type ConfigurationCandidate } from "../domain/concept-configuration";
 import { createEmptyTopology } from "../domain/concept";
 import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
 import type { LogicKey, LogicKind, LogicLink, LogicModule, LogicNode, LogicTopology } from "../domain/concept";
@@ -13,8 +14,8 @@ import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, Mod
 
 /** concept = 阶段一 构想工作台；build = 阶段二 拼接与转化 */
 export type AppStage = "concept" | "build";
-/** 阶段一里的四个工作面：逻辑拓扑 / 输入上下文 / 识别 / 横向拆解 */
-export type ConceptPane = "topology" | "inputs" | "recognition" | "decomposition";
+/** 阶段一里的五个工作面：逻辑拓扑 / 输入上下文 / 识别 / 横向拆解 / 基础构型 */
+export type ConceptPane = "topology" | "inputs" | "recognition" | "decomposition" | "configuration";
 export type AppView = "assembly" | "module";
 export type TransformMode = "move" | "rotate" | "scale";
 export type SaveStatus = "saved" | "saving" | "error";
@@ -51,6 +52,11 @@ interface ProjectStore {
   updateLogicModule: (moduleId: string, patch: Partial<Pick<LogicModule, "name" | "note">>) => void;
   removeLogicModule: (moduleId: string) => void;
   seedModules: () => void;
+  /** 基础构型：同样只存在于会话内 */
+  configuration: ConfigurationCandidate | null;
+  setConfiguration: (candidate: ConfigurationCandidate | null) => void;
+  generateConfiguration: () => void;
+  applyConfigurationCandidate: () => void;
   transformMode: TransformMode;
   connectionType: ConnectionType;
   logicKind: LogicKind;
@@ -189,6 +195,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     selectedCandidateNodeId: null,
     candidateExcluded: [],
     decomposition: null,
+    configuration: null,
     transformMode: "move",
     connectionType: "stairs",
     logicKind: "normal",
@@ -257,6 +264,15 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     updateLogicModule: (moduleId, patch) => commitTopology(updateLogicModuleCommand(currentTopology(), moduleId, patch)),
     removeLogicModule: (moduleId) => commitTopology(removeLogicModuleCommand(currentTopology(), moduleId)),
     seedModules: () => commitTopology(seedModulesFromNodes(currentTopology())),
+    setConfiguration: (configuration) => set({ configuration }),
+    generateConfiguration: () => set({ configuration: generateConfigurationCommand(currentTopology()) }),
+    applyConfigurationCandidate: () => {
+      const candidate = get().configuration;
+      if (!candidate) return;
+      const result = applyConfigurationCommand(get().project, candidate);
+      commit(result.project);
+      set({ configuration: null });
+    },
     setTransformMode: (transformMode) => set({ transformMode }),
     setConnectionType: (connectionType) => set({ connectionType }),
     togglePreview: () => set((state) => ({ previewOpen: !state.previewOpen })),

@@ -11,6 +11,8 @@ import { UEDryRunPanel } from "./features/ue/UEDryRunPanel";
 import { IssueIndicator } from "./features/validation/IssueIndicator";
 import { ConceptCanvas } from "./features/concept/ConceptCanvas";
 import { ConceptCandidateInspector } from "./features/concept/ConceptCandidateInspector";
+import { ConceptConfigurationBoard } from "./features/concept/ConceptConfigurationBoard";
+import { ConceptConfigurationInspector } from "./features/concept/ConceptConfigurationInspector";
 import { ConceptDecompositionBoard } from "./features/concept/ConceptDecompositionBoard";
 import { ConceptDecompositionInspector } from "./features/concept/ConceptDecompositionInspector";
 import { ConceptInspector } from "./features/concept/ConceptInspector";
@@ -47,6 +49,7 @@ export function App() {
   const candidate = useProjectStore((state) => state.candidate);
   const candidateExcluded = useProjectStore((state) => state.candidateExcluded);
   const decomposition = useProjectStore((state) => state.decomposition);
+  const configuration = useProjectStore((state) => state.configuration);
   const removeLogicNode = useProjectStore((state) => state.removeLogicNode);
   const removeLogicLink = useProjectStore((state) => state.removeLogicLink);
   const previewOpen = useProjectStore((state) => state.previewOpen);
@@ -153,6 +156,10 @@ export function App() {
               拆解
               {decomposition ? <i className="is-ready" /> : null}
             </button>
+            <button type="button" className={conceptPane === "configuration" ? "is-active" : ""} onClick={() => setConceptPane("configuration")}>
+              构型
+              {configuration ? <i className="is-ready" /> : null}
+            </button>
           </div>
         ) : null}
         {!conceptStage && view === "module" ? (
@@ -188,7 +195,8 @@ export function App() {
           conceptPane === "topology" ? <ConceptCanvas />
             : conceptPane === "inputs" ? <ConceptInputsBoard />
               : conceptPane === "recognition" ? <ConceptRecognitionBoard />
-                : <ConceptDecompositionBoard />
+                : conceptPane === "decomposition" ? <ConceptDecompositionBoard />
+                  : <ConceptConfigurationBoard />
         ) : (
           <Suspense fallback={<div className="workspace-loading">正在载入编辑工作面…</div>}>
             {view === "assembly" ? <AssemblyCanvas /> : <ModuleEditor />}
@@ -199,7 +207,8 @@ export function App() {
         ? (conceptPane === "topology" ? <ConceptInspector />
           : conceptPane === "inputs" ? <ConceptInputInspector />
             : conceptPane === "recognition" ? <ConceptCandidateInspector />
-              : <ConceptDecompositionInspector />)
+              : conceptPane === "decomposition" ? <ConceptDecompositionInspector />
+                : <ConceptConfigurationInspector />)
         : view === "assembly" ? (selectedConnectionId ? <ConnectionInspector /> : <InstanceInspector />) : <BlockInspector />}</aside>
 
       {previewOpen ? (

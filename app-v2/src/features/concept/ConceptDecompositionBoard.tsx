@@ -1,8 +1,9 @@
 import { useMemo, useRef, useState } from "react";
 import { CircleAlert, Download, Info, Layers, RefreshCw, TriangleAlert, Upload, Wand2 } from "lucide-react";
-import { computeTopologyDigest, createEmptyTopology } from "../../domain/concept";
+import { createEmptyTopology } from "../../domain/concept";
 import { decompositionCandidateSchema, deriveModuleLinks, summarizeDecomposition, validateDecomposition, validateDecompositionCandidate, type DecompositionIssue } from "../../domain/concept-decomposition";
 import { useProjectStore } from "../../store/project-store";
+import { conceptSnapshot } from "./concept-snapshot";
 import { moduleColor } from "./module-colors";
 
 const SEVERITY_ICON = { error: <CircleAlert size={13} />, warning: <TriangleAlert size={13} />, info: <Info size={13} /> } as const;
@@ -25,25 +26,10 @@ export function ConceptDecompositionBoard() {
   const candidateIssues = useMemo(() => (decomposition ? validateDecompositionCandidate(decomposition, topology) : []), [decomposition, topology]);
   const candidateBlocked = candidateIssues.some((issue) => issue.severity === "error");
 
-  function snapshot() {
-    const keyName = (id: string | null) => (id ? topology.keys.find((key) => key.id === id)?.name ?? null : null);
-    return {
-      inputsDigest: topology.inputs.digest,
-      topologyDigest: computeTopologyDigest(topology),
-      startNodeId: topology.startNodeId,
-      nodes: topology.nodes.map((node) => ({ id: node.id, name: node.name, role: node.role, floor: node.floor, relativePosition: node.relativePosition, elevation: node.elevation, moduleId: node.moduleId ?? null })),
-      links: topology.links.map((link) => ({ id: link.id, label: link.label, from: link.from, to: link.to, logic: link.logic, traversal: link.traversal, requiresKeyName: keyName(link.requires), note: link.note })),
-      keys: topology.keys.map((key) => ({ id: key.id, name: key.name, foundAt: key.foundAt, unlocks: key.unlocks })),
-      modules: topology.modules.map((module, index) => ({ id: module.id, name: module.name, nodeIds: module.nodeIds, note: module.note, color: moduleColor(index) })),
-      moduleLinks: moduleLinks.map((link) => ({ label: link.label, fromModuleId: link.fromModuleId, toModuleId: link.toModuleId, logic: link.logic, traversal: link.traversal, requiresKeyName: link.requiresKeyName })),
-      unassigned: topology.nodes.filter((node) => !topology.modules.some((module) => module.nodeIds.includes(node.id))).map((node) => node.id),
-    };
-  }
-
   async function syncState() {
     setStatus("正在同步拓扑到本地服务…");
     try {
-      const response = await fetch("/api/concept/state", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(snapshot()) });
+      const response = await fetch("/api/concept/state", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(conceptSnapshot(topology)) });
       const data = (await response.json()) as { error?: string };
       setStatus(data.error ? `同步失败：${data.error}` : "已同步拓扑，可以在 DSH 里让我给拆解提案");
     } catch {
