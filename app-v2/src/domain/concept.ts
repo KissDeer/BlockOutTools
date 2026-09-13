@@ -35,7 +35,12 @@ export interface LogicNode {
   name: string;
   role: LogicNodeRole;
   floor: number;
+  /** 画布排版坐标，无世界含义 */
   graphPosition: Vec2;
+  /** 依范围图标定换算出的相对位置（厘米，父级局部坐标）；未定位为 null */
+  relativePosition: Vec2 | null;
+  /** 相对标高范围（厘米，父级局部坐标） */
+  elevation: { base: number; top: number } | null;
   /** 绑定到模块定义后，可直接查看该模块内部体块与 3D 预览 */
   moduleId?: string;
   note: string;
@@ -136,6 +141,9 @@ export const logicNodeSchema = z.object({
   role: z.enum(["start", "hub", "combat", "reward", "boss", "transition", "secret"]),
   floor: z.number().int(),
   graphPosition: vec2,
+  // 旧草稿没有这两个字段
+  relativePosition: vec2.nullable().default(null),
+  elevation: z.object({ base: finiteNumber, top: finiteNumber }).nullable().default(null),
   moduleId: z.string().min(1).optional(),
   note: z.string(),
 });

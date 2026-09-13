@@ -142,6 +142,39 @@ export function ConceptInspector() {
         </section>
 
         <section className="inspector-section">
+          <h3>定位（相对父级，与真实世界位置无关）</h3>
+          {node.relativePosition ? (
+            <>
+              <dl className="summary-list">
+                <div><dt>相对位置</dt><dd>({Math.round(node.relativePosition[0])}, {Math.round(node.relativePosition[1])}) cm</dd></div>
+                <div><dt>标高</dt><dd>{node.elevation ? `${node.elevation.base} ~ ${node.elevation.top} cm` : "未给出"}</dd></div>
+              </dl>
+              <p className="field-help">来自范围图标定换算。世界位置仍然只在阶段二组装时产生。</p>
+            </>
+          ) : (
+            <p className="field-help" style={{ marginTop: 0 }}>还没有相对位置。可以在「识别」里按范围图定位，或在这里手填。</p>
+          )}
+          <div className="field-grid two-columns">
+            <NumberField label="相对 X" value={node.relativePosition?.[0] ?? 0} onCommit={(x) => updateNode(node.id, { relativePosition: [x, node.relativePosition?.[1] ?? 0] })} />
+            <NumberField label="相对 Y" value={node.relativePosition?.[1] ?? 0} onCommit={(y) => updateNode(node.id, { relativePosition: [node.relativePosition?.[0] ?? 0, y] })} />
+          </div>
+          <label className="checkbox-field">
+            <input
+              type="checkbox"
+              checked={Boolean(node.elevation)}
+              onChange={(event) => updateNode(node.id, { elevation: event.target.checked ? { base: 0, top: 400 } : null })}
+            />
+            给出标高
+          </label>
+          {node.elevation ? (
+            <div className="field-grid two-columns">
+              <NumberField label="底面标高" value={node.elevation.base} onCommit={(base) => updateNode(node.id, { elevation: { base, top: node.elevation?.top ?? base } })} />
+              <NumberField label="顶面标高" value={node.elevation.top} onCommit={(top) => updateNode(node.id, { elevation: { base: node.elevation?.base ?? 0, top } })} />
+            </div>
+          ) : null}
+        </section>
+
+        <section className="inspector-section">
           <h3>模块</h3>
           {module ? (
             <>

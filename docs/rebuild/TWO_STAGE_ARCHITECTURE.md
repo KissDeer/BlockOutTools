@@ -5,27 +5,35 @@
 
 ## 实施状态（2026-09-13）
 
-`S1-A 逻辑拓扑 MVP` 与 `S1-B 输入上下文包` 已实现并接入 app-v2，不再是纯提案：
+`S1-A 逻辑拓扑 MVP`、`S1-B 输入上下文包`、`S1-C 识别（读图给候选 + 按范围图定位）` 已实现并接入 app-v2，不再是纯提案：
 
 | 已做 | 位置 | 说明 |
 | --- | --- | --- |
-| 逻辑拓扑领域模型 | `app-v2/src/domain/concept.ts` | 10 种链路类型、节点/链路/锁钥、zod schema |
+| 逻辑拓扑领域模型 | `app-v2/src/domain/concept.ts` | 10 种链路类型、节点/链路/锁钥、相对位置与标高、zod schema |
 | 拓扑命令 | `app-v2/src/domain/concept-commands.ts` | 增删改、锁钥联动、自动排版、空位选址 |
-| 拓扑校验 | `app-v2/src/domain/concept-validation.ts` | 连通性、锁钥可得性（含死锁）、单向、环路、孤立、并行链路 |
-| **输入上下文包** | `app-v2/src/domain/concept-inputs.ts` | 四类输入、内容指纹 digest、完整性核对、拆解结果登记与过期判定 |
-| **输入命令** | `concept-commands.ts` | 增删改输入（自动重算 digest 并递增 revision）、`recordProposal` |
-| 阶段切换 | `app-v2/src/App.tsx` | ① 构想工作台 ⇄ ② 拼接与转化；阶段一内再分「逻辑拓扑 / 输入上下文」 |
-| 拓扑画布 | `app-v2/src/features/concept/` | React Flow 画布、逻辑节点/链路视图、侧栏、检视器 |
-| **输入工作面** | `ConceptInputsBoard.tsx` / `ConceptInputInspector.tsx` | 材料卡片与预览、比例标定、文案编辑、完整性与过期状态 |
+| 拓扑校验 | `app-v2/src/domain/concept-validation.ts` | 连通性、锁钥可得性（含死锁）、单向、环路、孤立、并行链路、未定位提示 |
+| 输入上下文包 | `app-v2/src/domain/concept-inputs.ts` | 四类输入、内容指纹 digest、完整性核对、拆解结果登记与过期判定 |
+| **识别候选** | `app-v2/src/domain/concept-candidate.ts` | 候选模型与 zod schema、套用前校验（digest 必须一致）、人工排除裁剪、像素→厘米换算 |
+| **候选套用** | `concept-commands.ts` | 一次可撤销事务；只新增不删除；画布坐标与相对位置分开；链路标签保持唯一 |
+| **本地桥** | `app-v2/server/concept-bridge.ts` | `/api/concept/inputs`（图片落盘供 agent 读图）与 `/api/concept/candidate`（agent 回写候选） |
+| 阶段切换 | `app-v2/src/App.tsx` | ① 构想工作台（逻辑拓扑 / 输入上下文 / 识别）⇄ ② 拼接与转化 |
+| 拓扑画布 | `app-v2/src/features/concept/` | React Flow 画布、逻辑节点/链路视图、侧栏、检视器（含定位编辑） |
+| 输入工作面 | `ConceptInputsBoard.tsx` / `ConceptInputInspector.tsx` | 材料卡片与预览、比例标定、文案编辑、完整性与过期状态 |
+| **识别工作面** | `ConceptRecognitionBoard.tsx` / `ConceptCandidateInspector.tsx` | 范围图叠加视图（标记可拖拽改位）、逐条勾选、警告与检查、套用 |
 | 模块结合 | 同上 | 节点可绑定模块，节点上直接显示模块内部体块缩略图；可一键进入模块编辑或打开 3D 预览 |
 
+**识别采用「agent 读图 + 人工确认」而不是内置 CV**：`同步输入给本地服务`把图片写到 `data/concept/inputs/`，DSH 里的 agent 直接看图后把候选 POST 回来，网页负责核对、修位、逐条取舍与套用。识别只产出候选，不产出结论。
+
 **S1-B 的硬约定已落地并实测**：必需输入缺失时「登记拆解结果」按钮禁用；登记后补充任何输入，登记结果立刻显示为过期（登记 rev 与当前 rev 并列展示），不会被静默沿用。
+
+**S1-C 的硬约定已落地并实测**：候选带 `basedOnInputsDigest`，与当前输入不一致时套用被拦下并提示重新识别；范围图未标定时只给警告（节点标记为"尚未定位"），不假装有位置。
 
 **顺带完成的既有缺陷修复**：
 - `ModuleEditor` / `BlockInspector` 原先只能通过实例解析当前模块，导致"从拓扑节点进入模块"打不开；已改为优先按 `activeModuleId` 解析。
 - 输入完整性警告原先用文案当 React key，同名文件的同类问题会撞 key；已改为结构化警告（`{ id, message }`）。
+- 套用候选时曾把"相对位置（厘米）"直接当画布坐标用，两套坐标系混用会把画布上的已有节点挤成看不见的小点；已改为按范围图像素等比映射，相对位置单独存放。
 
-**下一步**：`S1-C 识别`（逻辑拓扑图 + 范围图 → 结构化候选），见 §7。
+**下一步**：`S1-D 横向拆解确认`（R2/R4 提案 + 确认 + 交付门），见 §7。
 
 ---
 

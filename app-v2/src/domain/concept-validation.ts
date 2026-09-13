@@ -129,6 +129,16 @@ export function validateTopology(topology: LogicTopology): ConceptIssue[] {
     });
   }
 
+  /* ---- 定位：相对位置来自范围图拆解 ---- */
+  const unplaced = nodes.filter((node) => !node.relativePosition);
+  if (unplaced.length > 0) {
+    issues.push({
+      id: "topo:unplaced", severity: "info", rule: "TOPO_UNPLACED",
+      message: `有 ${unplaced.length} 个区域还没有相对位置（尚未按范围图定位）`,
+      nodeIds: unplaced.map((node) => node.id), linkIds: [],
+    });
+  }
+
   /* ---- 同一对区域之间的多条链路 ---- */
   const pairs = new Map<string, typeof links>();
   for (const link of links) {
