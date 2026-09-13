@@ -30,6 +30,7 @@ export function ModuleEditor() {
   const size = useElementSize(containerRef);
   const project = useProjectStore((state) => state.project);
   const activeInstanceId = useProjectStore((state) => state.activeInstanceId);
+  const activeModuleId = useProjectStore((state) => state.activeModuleId);
   const selectedIds = useProjectStore((state) => state.selectedBlockIds);
   const mode = useProjectStore((state) => state.transformMode);
   const setMode = useProjectStore((state) => state.setTransformMode);
@@ -39,7 +40,8 @@ export function ModuleEditor() {
   const [grid, setGrid] = useState(GRID_SIZE);
   const [stageTransform, setStageTransform] = useState({ x: size.width / 2, y: size.height / 2, scale: 0.24 });
   const instance = project.instances.find((item) => item.id === activeInstanceId);
-  const module = project.modules.find((item) => item.id === instance?.definitionId);
+  // 从阶段一的逻辑节点进入模块时没有实例，直接按 activeModuleId 解析
+  const module = project.modules.find((item) => item.id === activeModuleId) ?? project.modules.find((item) => item.id === instance?.definitionId);
 
   useEffect(() => setStageTransform((current) => ({ ...current, x: size.width / 2, y: size.height / 2 })), [size.height, size.width]);
   useEffect(() => {

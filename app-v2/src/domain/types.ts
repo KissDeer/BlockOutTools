@@ -1,3 +1,5 @@
+import type { LogicTopology } from "./concept";
+
 export type Vec2 = [number, number];
 export type Vec3 = [number, number, number];
 export type Rgba = [number, number, number, number];
@@ -134,6 +136,8 @@ export interface BlockoutProject {
   blockoutProfile: BlockoutProfile;
   updatedAt: string;
   assemblyAnchorInstanceId?: string;
+  /** 阶段一：逻辑拓扑（只表达连通逻辑，不含真实位置） */
+  concept?: LogicTopology;
 }
 
 export interface ValidationIssue {

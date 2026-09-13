@@ -9,6 +9,11 @@ import { ModulePalette } from "./features/module-editor/ModulePalette";
 import { BlockInspector } from "./features/module-editor/BlockInspector";
 import { UEDryRunPanel } from "./features/ue/UEDryRunPanel";
 import { IssueIndicator } from "./features/validation/IssueIndicator";
+import { ConceptCanvas } from "./features/concept/ConceptCanvas";
+import { ConceptInspector } from "./features/concept/ConceptInspector";
+import { ConceptSidebar } from "./features/concept/ConceptSidebar";
+import { createEmptyTopology } from "./domain/concept";
+import { summarizeIssues, validateTopology } from "./domain/concept-validation";
 import { useProjectStore } from "./store/project-store";
 
 const PreviewPanel = lazy(() => import("./features/preview/PreviewPanel"));
@@ -21,9 +26,16 @@ function isTypingTarget(target: EventTarget | null): boolean {
 
 export function App() {
   const project = useProjectStore((state) => state.project);
+  const stage = useProjectStore((state) => state.stage);
+  const setStage = useProjectStore((state) => state.setStage);
   const view = useProjectStore((state) => state.view);
   const activeInstanceId = useProjectStore((state) => state.activeInstanceId);
+  const activeModuleId = useProjectStore((state) => state.activeModuleId);
   const selectedConnectionId = useProjectStore((state) => state.selectedConnectionId);
+  const selectedLogicNodeId = useProjectStore((state) => state.selectedLogicNodeId);
+  const selectedLogicLinkId = useProjectStore((state) => state.selectedLogicLinkId);
+  const removeLogicNode = useProjectStore((state) => state.removeLogicNode);
+  const removeLogicLink = useProjectStore((state) => state.removeLogicLink);
   const previewOpen = useProjectStore((state) => state.previewOpen);
   const previewDirty = useProjectStore((state) => state.previewDirty);
   const saveStatus = useProjectStore((state) => state.saveStatus);
@@ -58,6 +70,15 @@ export function App() {
         event.shiftKey ? redo() : undo();
         return;
       }
+      // 概念阶段：只处理撤销/重做与删除，不套用组装阶段的复制、实例与变换快捷键
+      if (stage === "concept") {
+        if (event.key === "Delete" || event.key === "Backspace") {
+          event.preventDefault();
+          if (selectedLogicLinkId) removeLogicLink(selectedLogicLinkId);
+          else if (selectedLogicNodeId) removeLogicNode(selectedLogicNodeId);
+        }
+        return;
+      }
       if (modifier && event.key.toLowerCase() === "c") {
         event.preventDefault();
         view === "assembly" ? copyInstance() : copyBlocks();
@@ -84,20 +105,27 @@ export function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [copyBlocks, copyInstance, deleteBlocks, deleteConnection, deleteInstance, duplicateBlocks, duplicateInstance, pasteBlocks, pasteInstance, redo, selectedConnectionId, setTransformMode, undo, view, previewOpen, uePlanOpen]);
+  }, [copyBlocks, copyInstance, deleteBlocks, deleteConnection, deleteInstance, duplicateBlocks, duplicateInstance, pasteBlocks, pasteInstance, redo, removeLogicLink, removeLogicNode, selectedConnectionId, selectedLogicLinkId, selectedLogicNodeId, setTransformMode, stage, undo, view, previewOpen, uePlanOpen]);
 
   const activeInstance = project.instances.find((item) => item.id === activeInstanceId);
-  const activeModule = project.modules.find((item) => item.id === activeInstance?.definitionId);
+  const activeModule = project.modules.find((item) => item.id === activeModuleId) ?? project.modules.find((item) => item.id === activeInstance?.definitionId);
+  const topology = project.concept ?? createEmptyTopology();
+  const topologyIssues = summarizeIssues(validateTopology(topology));
+  const conceptStage = stage === "concept";
 
   return (
     <main className={`app-shell view-${view} ${previewOpen ? "preview-open" : ""}`}>
       <header className="topbar">
         <div className="brand-lockup"><Cuboid size={19} /><strong>BlockOutTools</strong><span>V2</span></div>
-        {view === "module" ? (
+        <div className="stage-switch" role="group" aria-label="工作阶段">
+          <button type="button" className={conceptStage ? "is-active" : ""} onClick={() => setStage("concept")}>① 构想工作台</button>
+          <button type="button" className={conceptStage ? "" : "is-active"} onClick={() => setStage("build")}>② 拼接与转化</button>
+        </div>
+        {!conceptStage && view === "module" ? (
           <button type="button" className="back-button" onClick={() => setView("assembly")}><ChevronLeft size={16} />返回组装</button>
         ) : null}
         <div className="project-title">
-          <span>{view === "assembly" ? "组装" : activeModule?.name ?? "模块内部"}</span>
+          <span>{conceptStage ? "逻辑拓扑" : view === "assembly" ? "组装" : activeModule?.name ?? "模块内部"}</span>
           <input
             value={nameDraft}
             aria-label="项目名称"
@@ -116,17 +144,19 @@ export function App() {
           <IssueIndicator />
           <button type="button" className={`text-command ${previewOpen ? "is-active" : ""}`} onClick={togglePreview}><Box size={16} />3D 预览{previewDirty ? <i /> : null}</button>
           <IconButton label="刷新 3D 预览" onClick={refreshPreview}><RefreshCw size={17} /></IconButton>
-          <button type="button" className={`text-command ${uePlanOpen ? "is-active" : ""}`} onClick={() => setUePlanOpen((open) => !open)}><Cuboid size={16} />UE 计划</button>
+          {conceptStage ? null : <button type="button" className={`text-command ${uePlanOpen ? "is-active" : ""}`} onClick={() => setUePlanOpen((open) => !open)}><Cuboid size={16} />UE 计划</button>}
         </div>
       </header>
 
-      <aside className="left-sidebar">{view === "assembly" ? <AssemblySidebar /> : <ModulePalette />}</aside>
+      <aside className="left-sidebar">{conceptStage ? <ConceptSidebar /> : view === "assembly" ? <AssemblySidebar /> : <ModulePalette />}</aside>
       <section className="workspace">
-        <Suspense fallback={<div className="workspace-loading">正在载入编辑工作面…</div>}>
-          {view === "assembly" ? <AssemblyCanvas /> : <ModuleEditor />}
-        </Suspense>
+        {conceptStage ? <ConceptCanvas /> : (
+          <Suspense fallback={<div className="workspace-loading">正在载入编辑工作面…</div>}>
+            {view === "assembly" ? <AssemblyCanvas /> : <ModuleEditor />}
+          </Suspense>
+        )}
       </section>
-      <aside className="inspector">{view === "assembly" ? (selectedConnectionId ? <ConnectionInspector /> : <InstanceInspector />) : <BlockInspector />}</aside>
+      <aside className="inspector">{conceptStage ? <ConceptInspector /> : view === "assembly" ? (selectedConnectionId ? <ConnectionInspector /> : <InstanceInspector />) : <BlockInspector />}</aside>
 
       {previewOpen ? (
         <Suspense fallback={<aside className="preview-panel loading-panel">正在载入 3D 预览…</aside>}>
@@ -136,9 +166,15 @@ export function App() {
       {uePlanOpen ? <UEDryRunPanel onClose={() => setUePlanOpen(false)} /> : null}
 
       <footer className="statusbar">
-        <span>{view === "assembly" ? `${project.instances.length} 个实例 · ${project.connections.length} 条连接` : `${activeModule?.blocks.length ?? 0} 个积木 · ${activeModule?.blocks.filter((block) => block.type === "port").length ?? 0} 个出入口`}</span>
-        <span>厘米 · 画布轴</span>
-        <span className={previewDirty ? "status-warning" : ""}>{previewDirty ? "3D 需要刷新" : "3D 已同步"}</span>
+        <span>{conceptStage
+          ? `${topology.nodes.length} 个逻辑区域 · ${topology.links.length} 条链路 · ${topology.keys.length} 把钥匙`
+          : view === "assembly" ? `${project.instances.length} 个实例 · ${project.connections.length} 条连接` : `${activeModule?.blocks.length ?? 0} 个积木 · ${activeModule?.blocks.filter((block) => block.type === "port").length ?? 0} 个出入口`}</span>
+        <span>{conceptStage ? "逻辑位置仅用于排版" : "厘米 · 画布轴"}</span>
+        <span className={conceptStage ? (topologyIssues.error ? "status-warning" : "") : previewDirty ? "status-warning" : ""}>
+          {conceptStage
+            ? topologyIssues.error ? `${topologyIssues.error} 个逻辑错误` : topologyIssues.warning ? `${topologyIssues.warning} 项待确认` : "逻辑校验通过"
+            : previewDirty ? "3D 需要刷新" : "3D 已同步"}
+        </span>
       </footer>
     </main>
   );

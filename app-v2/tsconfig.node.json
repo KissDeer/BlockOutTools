@@ -10,5 +10,5 @@
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true
   },
-  "include": ["vite.config.ts", "server/project-library.ts", "src/domain/project-schema.ts"]
+  "include": ["vite.config.ts", "server/project-library.ts", "src/domain/project-schema.ts", "src/domain/concept.ts", "src/domain/types.ts"]
 }

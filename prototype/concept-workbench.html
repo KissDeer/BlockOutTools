@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>构想工作台 · 界面原型</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#0f1215; --panel:#171b20; --panel2:#1c2128; --line:#262c33; --line2:#333b44;
+    --tx:#dfe5ec; --tx2:#8b96a3; --tx3:#5d6673;
+    --ac:#4ea1ff; --ac2:#1f6feb;
+    --normal:#7a8794; --oneway:#ffb454; --locked:#e05c6e; --shortcut:#4ec9b0;
+    --drop:#b07cff; --stairs:#4ea1ff; --elevator:#6fcf97;
+    --ok:#4ec9b0; --warn:#ffb454; --err:#e05c6e;
+  }
+  html,body { height:100%; }
+  body {
+    background:var(--bg); color:var(--tx); font:13px/1.5 "Segoe UI","Microsoft YaHei",system-ui,sans-serif;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  /* ---------- 顶栏 ---------- */
+  .topbar {
+    height:46px; flex:0 0 46px; display:flex; align-items:center; gap:16px;
+    padding:0 14px; background:var(--panel); border-bottom:1px solid var(--line);
+  }
+  .logo { font-weight:600; letter-spacing:.3px; display:flex; align-items:center; gap:8px; }
+  .logo i { width:16px;height:16px;border-radius:4px;background:linear-gradient(135deg,var(--ac),var(--shortcut)); display:block; }
+  .stages { display:flex; gap:2px; background:var(--bg); padding:3px; border-radius:8px; border:1px solid var(--line); }
+  .stage { padding:5px 14px; border-radius:6px; color:var(--tx2); cursor:pointer; font-size:12.5px; white-space:nowrap; }
+  .stage.on { background:var(--ac2); color:#fff; font-weight:500; }
+  .stage.dim { opacity:.45; cursor:not-allowed; }
+  .spacer { flex:1; }
+  .pill { font-size:11.5px; color:var(--tx2); border:1px solid var(--line2); border-radius:20px; padding:3px 10px; }
+  /* ---------- 三栏 ---------- */
+  .main { flex:1; display:flex; min-height:0; }
+  .side { width:236px; flex:0 0 236px; background:var(--panel); border-right:1px solid var(--line); display:flex; flex-direction:column; min-height:0; }
+  .side.right { border-right:none; border-left:1px solid var(--line); width:288px; flex:0 0 288px; }
+  .center { flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; }
+  .sec { padding:10px 12px 4px; font-size:11px; letter-spacing:.6px; color:var(--tx3); text-transform:uppercase; }
+  .scroll { overflow:auto; min-height:0; }
+  .scroll::-webkit-scrollbar { width:9px; height:9px; }
+  .scroll::-webkit-scrollbar-thumb { background:#2c343d; border-radius:5px; }
+  /* ---------- 面包屑 / 树 ---------- */
+  .crumb { padding:10px 12px; border-bottom:1px solid var(--line); font-size:12px; display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+  .crumb b { color:var(--ac); cursor:pointer; font-weight:500; }
+  .crumb b:hover { text-decoration:underline; }
+  .crumb span { color:var(--tx3); }
+  .tree { padding:6px; }
+  .tnode { display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px; cursor:pointer; color:var(--tx2); font-size:12.5px; }
+  .tnode:hover { background:var(--panel2); color:var(--tx); }
+  .tnode.on { background:#14304f; color:#cfe4ff; }
+  .tnode .ic { width:13px; text-align:center; opacity:.75; }
+  .tnode .cnt { margin-left:auto; font-size:10.5px; color:var(--tx3); }
+  .tchild { margin-left:14px; border-left:1px solid var(--line); padding-left:2px; }
+  /* ---------- 输入上下文包 ---------- */
+  .inputs { margin:6px 8px 12px; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--panel2); }
+  .inputs .hd { padding:8px 10px; display:flex; align-items:center; gap:6px; border-bottom:1px solid var(--line); font-size:12px; white-space:nowrap; }
+  .rev { font-size:10.5px; background:#1d3a5c; color:#9ccbff; border-radius:4px; padding:1px 6px; }
+  .digest { font-family:Consolas,monospace; font-size:10.5px; color:var(--tx3); padding:6px 10px 2px; }
+  .initem { display:flex; align-items:center; gap:7px; padding:5px 10px; font-size:12px; color:var(--tx2); }
+  .initem .dot { width:6px;height:6px;border-radius:50%; background:var(--ok); flex:0 0 6px; }
+  .initem.stale .dot { background:var(--warn); }
+  .initem .nm { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .initem .tag { margin-left:auto; font-size:10px; color:var(--tx3); }
+  .btnadd { margin:8px 10px 10px; width:calc(100% - 20px); }
+  /* ---------- 按钮 ---------- */
+  .btn { background:var(--panel2); border:1px solid var(--line2); color:var(--tx); border-radius:6px; padding:5px 11px; font-size:12px; cursor:pointer; font-family:inherit; }
+  .btn:hover { border-color:#48525d; background:#222932; }
+  .btn.pri { background:var(--ac2); border-color:var(--ac2); color:#fff; }
+  .btn.pri:hover { background:#2b7ff5; }
+  .btn.ok { background:#1b4a41; border-color:#2b6b5e; color:#a9f0e0; }
+  .btn.sm { padding:3px 8px; font-size:11.5px; }
+  /* ---------- 中央 ---------- */
+  .ctabs { height:42px; flex:0 0 42px; display:flex; align-items:center; gap:2px; padding:0 12px; border-bottom:1px solid var(--line); background:var(--panel); }
+  .ctab { padding:6px 13px; border-radius:6px; color:var(--tx2); cursor:pointer; font-size:12.5px; }
+  .ctab:hover { color:var(--tx); }
+  .ctab.on { background:var(--panel2); color:var(--tx); border:1px solid var(--line2); }
+  .ctab .badge { display:inline-block; margin-left:6px; font-size:10px; background:var(--warn); color:#241a00; border-radius:8px; padding:0 5px; font-weight:600; }
+  .canvas { flex:1; position:relative; min-height:0; overflow:hidden; }
+  svg { display:block; width:100%; height:100%; }
+  .legend { position:absolute; left:12px; bottom:12px; background:rgba(23,27,32,.93); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:11.5px; backdrop-filter:blur(4px); }
+  .legend div { display:flex; align-items:center; gap:7px; padding:2px 0; color:var(--tx2); }
+  .legend i { width:16px; height:0; border-top-width:2.5px; border-top-style:solid; display:block; }
+  .legend i.dash { border-top-style:dashed; }
+  .hint { position:absolute; right:12px; top:12px; color:var(--tx3); font-size:11.5px; background:rgba(23,27,32,.9); border:1px solid var(--line); border-radius:6px; padding:5px 10px; }
+  /* ---------- 右栏 inspector ---------- */
+  .insp { padding:12px; }
+  .fld { margin-bottom:11px; }
+  .fld label { display:block; font-size:10.5px; color:var(--tx3); text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+  .fld .val { font-size:12.5px; color:var(--tx); }
+  .fld .val.mono { font-family:Consolas,monospace; font-size:11.5px; }
+  .chips { display:flex; flex-wrap:wrap; gap:5px; }
+  .chip { font-size:11px; background:var(--panel2); border:1px solid var(--line2); border-radius:12px; padding:2px 9px; color:var(--tx2); }
+  .chip.ac { border-color:#2c5a8f; color:#9ccbff; background:#12263c; }
+  .box { border:1px solid var(--line); border-radius:8px; background:var(--panel2); padding:10px; margin-bottom:11px; }
+  .box h4 { font-size:11px; color:var(--tx3); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; font-weight:600; }
+  .kv { display:flex; justify-content:space-between; font-size:12px; padding:3px 0; }
+  .kv span:first-child { color:var(--tx2); }
+  .kv span:last-child { font-family:Consolas,monospace; }
+  .empty { color:var(--tx3); font-size:12px; text-align:center; padding:36px 12px; }
+  /* ---------- 提案卡片 ---------- */
+  .rounds { padding:14px; overflow:auto; height:100%; }
+  .round { border:1px solid var(--line); border-radius:10px; background:var(--panel); margin-bottom:11px; overflow:hidden; }
+  .round .rh { display:flex; align-items:center; gap:9px; padding:10px 13px; border-bottom:1px solid var(--line); }
+  .round .rn { font-family:Consolas,monospace; font-size:11px; background:var(--panel2); border:1px solid var(--line2); border-radius:5px; padding:2px 7px; color:var(--tx2); }
+  .round .rt { font-size:13px; font-weight:500; }
+  .round .rs { margin-left:auto; font-size:11px; }
+  .round .rb { padding:11px 13px; }
+  .prop { display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px dashed #232a32; }
+  .prop:last-child { border-bottom:none; }
+  .prop .pn { flex:1; }
+  .prop .pt { font-size:12.5px; margin-bottom:3px; }
+  .prop .pd { font-size:11.5px; color:var(--tx3); }
+  .prop .pa { margin-left:auto; display:flex; gap:6px; align-items:center; flex:0 0 auto; }
+  .tagok { font-size:11px; color:var(--ok); }
+  .tagai { font-size:10px; background:#2a2140; color:#c9a9ff; border-radius:4px; padding:1px 6px; }
+  .tagrule { font-size:10px; background:#12303a; color:#8fd8cf; border-radius:4px; padding:1px 6px; }
+  .tagstale { font-size:10px; background:#3d2c10; color:var(--warn); border-radius:4px; padding:1px 6px; }
+  .tagfresh { font-size:10px; background:#12303a; color:#8fd8cf; border-radius:4px; padding:1px 6px; }
+  /* ---------- 展示模板 ---------- */
+  .tmplbar { position:absolute; left:12px; top:12px; display:flex; gap:2px; background:rgba(23,27,32,.93); border:1px solid var(--line); border-radius:8px; padding:3px; z-index:5; }
+  .tmpl { padding:5px 12px; border-radius:6px; font-size:12px; color:var(--tx2); cursor:pointer; }
+  .tmpl.on { background:var(--ac2); color:#fff; }
+  .nodelabel { font-size:11.5px; fill:#dfe5ec; pointer-events:none; }
+  .nodecnt { font-size:10px; fill:#5d6673; pointer-events:none; }
+  .lk { font-size:10.5px; font-weight:600; }
+  .dashline { stroke-dasharray:7 5; }
+  .toast { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#1d3a5c; border:1px solid #2c5a8f; color:#cfe4ff;
+           padding:9px 18px; border-radius:9px; font-size:12.5px; opacity:0; transition:.25s; pointer-events:none; z-index:99; }
+  .toast.on { opacity:1; }
+  .stage2 { display:flex; align-items:center; justify-content:center; height:100%; flex-direction:column; gap:12px; color:var(--tx3); }
+  .stage2 h3 { color:var(--tx2); font-size:15px; font-weight:500; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><i></i>BlockOutTools</div>
+  <div class="stages">
+    <div class="stage on" id="st1">① 构想工作台</div>
+    <div class="stage dim" id="st2">② 拼接与转化</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="pill" id="projname">游乐园区 · 概念设计</div>
+</div>
+
+<div class="main">
+  <!-- ================= 左栏 ================= -->
+  <div class="side">
+    <div class="crumb" id="crumb"></div>
+    <div class="scroll" style="flex:1">
+      <div class="sec">作用域</div>
+      <div class="tree" id="tree"></div>
+      <div class="sec">输入上下文包</div>
+      <div class="inputs" id="inputs"></div>
+    </div>
+  </div>
+
+  <!-- ================= 中央 ================= -->
+  <div class="center">
+    <div class="ctabs" id="ctabs">
+      <div class="ctab on" data-tab="topo">逻辑拓扑</div>
+      <div class="ctab" data-tab="decomp">拆解提案<span class="badge" id="decbadge">4</span></div>
+      <div class="ctab" data-tab="show">展示</div>
+    </div>
+    <div class="canvas" id="canvas"></div>
+  </div>
+
+  <!-- ================= 右栏 ================= -->
+  <div class="side right">
+    <div class="scroll" style="flex:1"><div class="insp" id="insp"></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   假数据：用"游乐园"例子，演示递归嵌套
+   大地图 → 游乐园 → 鬼屋 三层
+   ============================================================ */
+const LOGIC = {
+  'normal':       { name:'普通连通', color:'var(--normal)',   dash:false },
+  'one-way-door': { name:'单向门',   color:'var(--oneway)',   dash:false },
+  'locked-door':  { name:'锁钥门',   color:'var(--locked)',   dash:false },
+  'shortcut':     { name:'捷径',     color:'var(--shortcut)', dash:true  },
+  'drop':         { name:'掉落',     color:'var(--drop)',     dash:false },
+  'stairs':       { name:'楼梯',     color:'var(--stairs)',   dash:false },
+  'elevator':     { name:'电梯',     color:'var(--elevator)', dash:false },
+};
+
+const SCOPES = {
+  sc_map: {
+    id:'sc_map', name:'大地图', parent:null, children:['sc_park','sc_manor'],
+    inputs:{ revision:3, digest:'a3f9c14e7b2d…', items:[
+      {id:'i1', kind:'logic-topology', name:'逻辑拓扑图 topo-01.png', tag:'图片'},
+      {id:'i2', kind:'scope-map',      name:'范围图 extent-01.png',   tag:'图片 · 已标定'},
+      {id:'i3', kind:'mood',           name:'氛围图 mood-01.png',     tag:'图片'},
+      {id:'i4', kind:'rules',          name:'拆分规范 v3.md',         tag:'规则'},
+    ]},
+    atmosphere:{ mood:'衰败的边境地带，黄昏与风沙', keywords:['黄昏','荒芜','风声'], style:'边境 · 破败', height:'—' },
+    topology:{
+      nodes:[
+        {id:'n_village', name:'小村',   role:'start',     expand:'leaf',      floor:1, pos:[190,300], size:'medium', h:0},
+        {id:'n_park',    name:'游乐园', role:'hub',       expand:'composite', floor:1, pos:[470,170], size:'large',  h:0, child:'sc_park'},
+        {id:'n_manor',   name:'山庄',   role:'boss',      expand:'composite', floor:1, pos:[790,310], size:'medium', h:0, child:'sc_manor'},
+      ],
+      links:[
+        {id:'lk_A', label:'A', from:'n_village', to:'n_park',  logic:'normal',      traversal:'both'},
+        {id:'lk_B', label:'B', from:'n_park',    to:'n_manor', logic:'locked-door', traversal:'both', requires:'k_iron'},
+        {id:'lk_C', label:'C', from:'n_manor',   to:'n_park',  logic:'shortcut',    traversal:'forward'},
+      ],
+      keys:[{id:'k_iron', name:'铁钥匙', foundAt:'n_park', unlocks:['lk_B']}],
+    },
+  },
+
+  sc_park: {
+    id:'sc_park', name:'游乐园', parent:'sc_map', children:['sc_house'],
+    inputs:{ revision:2, digest:'77b1e0aa93c5…', items:[
+      {id:'j1', kind:'logic-topology', name:'游乐园内部拓扑.png', tag:'图片'},
+      {id:'j2', kind:'scope-map',      name:'游乐园范围图.png',   tag:'图片 · 已标定'},
+      {id:'j3', kind:'note',           name:'鬼屋要独立成模块',   tag:'说明'},
+    ]},
+    atmosphere:{ mood:'热闹散场后的空旷，彩灯还亮着', keywords:['彩灯','空旷','铁锈'], style:'游乐场 · 废弃', height:'0 ~ 400' },
+    topology:{
+      nodes:[
+        {id:'p_circus', name:'马戏团',   role:'combat',  expand:'leaf',      floor:1, pos:[240,180], size:'large', h:0},
+        {id:'p_gather', name:'聚集处',   role:'hub',     expand:'leaf',      floor:1, pos:[470,300], size:'medium', h:0},
+        {id:'p_queue',  name:'排队处',   role:'transition', expand:'leaf',   floor:1, pos:[640,170], size:'small', h:0},
+        {id:'p_house',  name:'鬼屋',     role:'reward',  expand:'composite', floor:1, pos:[400,470], size:'medium', h:0, child:'sc_house'},
+      ],
+      links:[
+        {id:'pk_D', label:'D', from:'p_gather', to:'p_circus', logic:'normal',      traversal:'both'},
+        {id:'pk_E', label:'E', from:'p_circus', to:'p_queue',  logic:'one-way-door',traversal:'forward'},
+        {id:'pk_F', label:'F', from:'p_queue',  to:'p_house',  logic:'normal',      traversal:'both'},
+        {id:'pk_G', label:'G', from:'p_house',  to:'p_gather', logic:'shortcut',    traversal:'forward'},
+        {id:'pk_H', label:'H', from:'p_gather', to:'p_house',  logic:'locked-door', traversal:'both', requires:'k_mask'},
+      ],
+      keys:[{id:'k_mask', name:'面具', foundAt:'p_circus', unlocks:['pk_H']}],
+    },
+    // 拆解结果：相对位置（父级局部坐标）+ 高度 + 体块
+    decomposition:{
+      bounds:[[0,0],[900,640]],
+      units:[
+        {node:'p_circus', pos:[220,170], h:[0,400],  size:[320,260,400], role:'combat'},
+        {node:'p_gather', pos:[470,320], h:[0,60],   size:[240,200,60],  role:'hub'},
+        {node:'p_queue',  pos:[660,160], h:[0,120],  size:[130,90,120],  role:'transition'},
+        {node:'p_house',  pos:[410,480], h:[0,300],  size:[260,240,300], role:'reward'},
+      ],
+    },
+  },
+
+  sc_house: {
+    id:'sc_house', name:'鬼屋', parent:'sc_park', children:[],
+    inputs:{ revision:1, digest:'1c88d2f04ab7…', items:[
+      {id:'h1', kind:'logic-topology', name:'鬼屋内部拓扑.png', tag:'图片'},
+      {id:'h2', kind:'scope-map',      name:'鬼屋范围图.png',   tag:'图片 · 已标定'},
+      {id:'h3', kind:'mood',           name:'鬼屋氛围.png',     tag:'图片'},
+    ]},
+    atmosphere:{ mood:'狭窄、滴水声、脚步回响', keywords:['阴森','狭窄','滴水'], style:'鬼屋 · 哥特木质', height:'0 ~ 300' },
+    topology:{
+      nodes:[
+        {id:'h_hall',  name:'门厅', role:'transition', expand:'leaf', floor:1, pos:[180,300], size:'small',  h:0},
+        {id:'h_corr',  name:'走廊', role:'combat',     expand:'leaf', floor:1, pos:[420,190], size:'small',  h:0},
+        {id:'h_show',  name:'展厅', role:'reward',     expand:'leaf', floor:1, pos:[400,440], size:'medium', h:0},
+      ],
+      links:[
+        {id:'hk_J', label:'J', from:'h_hall', to:'h_corr', logic:'one-way-door', traversal:'forward'},
+        {id:'hk_K', label:'K', from:'h_corr', to:'h_show', logic:'normal',       traversal:'both'},
+        {id:'hk_L', label:'L', from:'h_show', to:'h_hall', logic:'shortcut',     traversal:'forward'},
+      ],
+      keys:[],
+    },
+    decomposition:{
+      bounds:[[0,0],[620,560]],
+      units:[
+        {node:'h_hall', pos:[170,300], h:[0,180], size:[180,160,180], role:'transition'},
+        {node:'h_corr', pos:[420,180], h:[0,180], size:[300,110,180], role:'combat'},
+        {node:'h_show', pos:[400,430], h:[0,300], size:[280,230,300], role:'reward'},
+      ],
+    },
+  },
+
+  sc_manor: {
+    id:'sc_manor', name:'山庄', parent:'sc_map', children:[],
+    inputs:{ revision:1, digest:'9e44b7c1d0f2…', items:[
+      {id:'m1', kind:'logic-topology', name:'山庄内部拓扑.png', tag:'图片'},
+      {id:'m2', kind:'scope-map',      name:'山庄范围图.png',   tag:'图片 · 未标定'},
+    ]},
+    atmosphere:{ mood:'高处、风声、俯瞰全景', keywords:['高耸','冷','俯瞰'], style:'庄园 · 石砌', height:'0 ~ 600' },
+    topology:{
+      nodes:[
+        {id:'m_gate', name:'山门', role:'transition', expand:'leaf', floor:1, pos:[170,280], size:'small', h:0},
+        {id:'m_hall', name:'正厅', role:'boss',       expand:'leaf', floor:1, pos:[450,300], size:'large', h:0},
+      ],
+      links:[
+        {id:'mk_M', label:'M', from:'m_gate', to:'m_hall', logic:'locked-door', traversal:'both', requires:'k_sigil'},
+      ],
+      keys:[{id:'k_sigil', name:'纹章', foundAt:'m_hall', unlocks:['mk_M']}],
+    },
+  },
+};
+
+/* 拆解确认轮次（演示用，per scope 生成） */
+const ROUND_DEF = [
+  {id:'R0', title:'上下文完整性', kind:'rule', items:[
+    {t:'输入包完整性核对', d:'逻辑拓扑图 / 范围图 / 规则 均已读取 · digest a3f9c14e7b2d…', rule:true},
+  ]},
+  {id:'R1', title:'识别结果', kind:'ai', use:'recognition'},
+  {id:'R2', title:'横向拆解 · 哪些节点合成一个模块', kind:'ai', use:'horizontal'},
+  {id:'R3', title:'纵向拆解 · 哪些节点展开成子 Scope', kind:'ai', use:'vertical'},
+  {id:'R4', title:'模块间连接 · 高度 · 相对位置', kind:'ai', use:'links'},
+  {id:'R5', title:'基础构型 · 体块 + 端口', kind:'ai', use:'massing'},
+  {id:'R6', title:'交付总检', kind:'rule', use:'gate'},
+];
+
+/* ============================================================
+   状态
+   ============================================================ */
+const S = {
+  scope:'sc_map',
+  tab:'topo',
+  sel:null,
+  template:'plan',
+  accepted:{},          // key: scopeId:roundId:itemIndex
+  stage:1,
+};
+
+const $ = (id) => document.getElementById(id);
+const sc = () => SCOPES[S.scope];
+const nodeById = (id) => sc().topology.nodes.find(n => n.id === id);
+const isAccepted = (r, i) => !!S.accepted[`${S.scope}:${r}:${i}`];
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(t._x); t._x=setTimeout(()=>t.classList.remove('on'),1900); }
+
+/* ============================================================
+   生成提案内容（按 scope 现算，演示 AI 提案的形态）
+   ============================================================ */
+function buildRounds() {
+  const s = sc(), T = s.topology;
+  const comp = T.nodes.filter(n => n.expand === 'composite');
+  const leaf = T.nodes.filter(n => n.expand === 'leaf');
+  const out = [];
+  for (const R of ROUND_DEF) {
+    let items = R.items ? [...R.items] : [];
+    if (R.use === 'recognition') items = [
+      {t:`识别到 ${T.nodes.length} 个逻辑节点`, d:T.nodes.map(n=>n.name).join(' · '), ai:true},
+      {t:`识别到 ${T.links.length} 条逻辑链路`, d:T.links.map(l=>`${l.label} ${LOGIC[l.logic].name}`).join(' · '), ai:true},
+      ...(T.keys.length?[{t:`识别到 ${T.keys.length} 组锁钥关系`, d:T.keys.map(k=>`${k.name} → 解锁 ${k.unlocks.join(',')}`).join(' · '), ai:true}]:[]),
+    ];
+    if (R.use === 'horizontal') items = [
+      {t:`拆成 ${T.nodes.length} 个模块（1 节点 = 1 模块）`, d:'当前规模下合并会降低复用性，建议先不合并', ai:true},
+      {t:`其中 ${leaf.length} 个为叶子模块`, d:leaf.map(n=>n.name).join(' · ') || '—', ai:true},
+      {t:`其中 ${comp.length} 个建议展开为子作用域`, d:comp.map(n=>n.name).join(' · ') || '—', ai:true},
+    ];
+    if (R.use === 'vertical') items = comp.length ? comp.map(n => ({
+      t:`「${n.name}」展开为子 Scope`, d:`内部另有拓扑，已存在输入包（rev ${SCOPES[n.child].inputs.revision}）`, ai:true
+    })) : [{t:'本层无节点需要展开', d:'所有节点均可直接落为体块', rule:true}];
+    if (R.use === 'links') items = T.links.map(l => ({
+      t:`${l.label} · ${nodeById(l.from).name} → ${nodeById(l.to).name}`,
+      d:`${LOGIC[l.logic].name}${l.traversal==='forward'?' · 单向':''}${l.requires?` · 需 ${T.keys.find(k=>k.id===l.requires)?.name||l.requires}`:''}`
+        + (s.decomposition ? ` · 相对位置已给出` : ''),
+      ai:true
+    }));
+    if (R.use === 'massing') items = (s.decomposition?.units||[]).map(u => ({
+      t:`「${nodeById(u.node).name}」基础构型`,
+      d:`体块 ${u.size.join(' × ')} cm · 相对位置 (${u.pos.join(', ')}) · 高度 ${u.h[0]}~${u.h[1]}`,
+      ai:true
+    }));
+    if (R.use === 'gate') {
+      const bad = comp.filter(n=>!SCOPES[n.child]?.decomposition).length;
+      items = [
+        {t:'全层 error 检查', d: bad? `${bad} 个子作用域尚未拆解` : '本层与所有子层无 error', rule:true},
+        {t:'estimated 确认', d:'范围图比例已标定，无遗留 estimated', rule:true},
+        {t:'交付门', d: bad? '不能交付：子层未完成' : '可交付到阶段二', rule:true},
+      ];
+    }
+    out.push({...R, items});
+  }
+  return out;
+}
+
+/* ============================================================
+   渲染：面包屑 / 树 / 输入包
+   ============================================================ */
+function renderCrumb() {
+  const chain = []; let cur = sc();
+  while (cur) { chain.unshift(cur); cur = cur.parent ? SCOPES[cur.parent] : null; }
+  $('crumb').innerHTML = chain.map((s,i) =>
+    (i? '<span>/</span>' : '') + `<b data-go="${s.id}">${s.name}</b>`
+  ).join('') + `<span style="margin-left:auto;color:var(--tx3)">${chain.length} 层</span>`;
+  $('crumb').querySelectorAll('b').forEach(b => b.onclick = () => { S.scope = b.dataset.go; S.sel = null; renderAll(); });
+}
+
+function renderTree() {
+  const walk = (id, depth) => {
+    const s = SCOPES[id];
+    const kids = (s.children||[]);
+    let html = `<div class="tnode ${S.scope===id?'on':''}" data-go="${id}">
+        <span class="ic">${kids.length?'▸':'·'}</span>${s.name}
+        <span class="cnt">${s.topology.nodes.length}节点</span></div>`;
+    if (kids.length) html += `<div class="tchild">${kids.map(k=>walk(k,depth+1)).join('')}</div>`;
+    return html;
+  };
+  $('tree').innerHTML = walk('sc_map', 0);
+  $('tree').querySelectorAll('[data-go]').forEach(el => el.onclick = (e) => {
+    S.scope = el.dataset.go; S.sel = null; renderAll(); e.stopPropagation();
+  });
+}
+
+function renderInputs() {
+  const s = sc();
+  const state = s.stale
+    ? '<span style="margin-left:auto" class="tagstale">待复核</span>'
+    : '<span style="margin-left:auto" class="tagfresh">已是最新</span>';
+  $('inputs').innerHTML = `
+    <div class="hd">📎 输入包 <span class="rev">rev ${s.inputs.revision}</span>${state}</div>
+    <div class="digest">digest ${s.inputs.digest}</div>
+    ${s.inputs.items.map(i => `<div class="initem">
+        <span class="dot"></span><span class="nm">${i.name}</span><span class="tag">${i.tag}</span></div>`).join('')}
+    <button class="btn btnadd" onclick="addInput()">+ 补充输入（模拟 → rev 递增）</button>`;
+}
+
+window.addInput = function () {
+  const s = sc();
+  s.inputs.revision++;
+  s.inputs.items.push({id:'x'+Date.now(), kind:'rules', name:'补充说明 ' + new Date().toLocaleTimeString('zh-CN'), tag:'说明'});
+  s.inputs.digest = Math.random().toString(16).slice(2,14) + '…';
+  s.stale = true;
+  toast('输入已补充 → rev 递增，已有提案标记为 stale');
+  renderAll();
+};
+
+/* ============================================================
+   渲染：中央
+   ============================================================ */
+function renderCanvas() {
+  if (S.stage === 2) {
+    $('canvas').innerHTML = `<div class="stage2">
+      <h3>② 拼接与转化</h3>
+      <div>把概念包的模块拼接起来 → 3D 预览 → 导出 UE</div>
+      <div style="font-size:12px">本原型先做阶段一。阶段二的既有能力见 app-v2。</div>
+      <button class="btn" onclick="setStage(1)">← 回到阶段一</button></div>`;
+    return;
+  }
+  if (S.tab === 'topo') renderTopo();
+  else if (S.tab === 'decomp') renderDecomp();
+  else renderShow();
+}
+
+/* ---------- 逻辑拓扑画布 ---------- */
+function renderTopo() {
+  const s = sc(), T = s.topology;
+  const cw = $('canvas').clientWidth || 900, ch = $('canvas').clientHeight || 640;
+  const cls = { small:52, medium:70, large:92 };
+  const nmap = Object.fromEntries(T.nodes.map(n => [n.id, n]));
+
+  /* ---- 自适应取景：按节点包围盒缩放并居中 ---- */
+  let x0=Infinity, y0=Infinity, x1=-Infinity, y1=-Infinity;
+  for (const n of T.nodes) {
+    const r = cls[n.size]||70;
+    x0=Math.min(x0,n.pos[0]-r);        x1=Math.max(x1,n.pos[0]+r);
+    y0=Math.min(y0,n.pos[1]-r*0.62);   y1=Math.max(y1,n.pos[1]+r*0.62);
+  }
+  const padX=130, padY=120;
+  const bw=(x1-x0)+padX*2, bh=(y1-y0)+padY*2;
+  const k = Math.min(cw/bw, ch/bh, 1.2);
+  const tx = (cw - bw*k)/2 - (x0-padX)*k;
+  const ty = (ch - bh*k)/2 - (y0-padY)*k;
+
+  /* ---- 同一对节点之间的多条链路要错开，否则标签重叠 ---- */
+  const pair = {};
+  for (const l of T.links) {
+    const key = [l.from, l.to].sort().join('|');
+    (pair[key] = pair[key] || []).push(l);
+  }
+
+  const colors = [...new Set(T.links.map(l => LOGIC[l.logic].color))];
+  const defs = `<defs>` + colors.map((c,i) => `<marker id="arw${i}" viewBox="0 0 10 10" refX="9" refY="5"
+      markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="${c}"/></marker>`).join('')
+    + `</defs>`;
+
+  let edges = '';
+  for (const key of Object.keys(pair)) {
+    const group = pair[key];
+    /* 垂直方向必须按"排序后的节点对"计算：若按链路自身方向算，
+       反向链路的垂直向量同时翻转，会把 lane 偏移抵消掉，导致标签完全重合。 */
+    const [ka, kb] = key.split('|');
+    const na = nmap[ka], nb = nmap[kb];
+    const gdx = nb.pos[0]-na.pos[0], gdy = nb.pos[1]-na.pos[1];
+    const glen = Math.hypot(gdx,gdy) || 1;
+    const px = -gdy/glen, py = gdx/glen;                   // 组内统一垂直单位向量
+    group.forEach((l, i) => {
+      const a = nmap[l.from], b = nmap[l.to], L = LOGIC[l.logic];
+      const lane = (i - (group.length-1)/2) * 88;          // 同组错开(需大于子标签宽度)
+      const cx = (a.pos[0]+b.pos[0])/2 + px*lane;
+      const cy = (a.pos[1]+b.pos[1])/2 + py*lane - 30;     // 统一向上拱
+      const mx = 0.25*a.pos[0] + 0.5*cx + 0.25*b.pos[0];   // 曲线 t=0.5 处
+      const my = 0.25*a.pos[1] + 0.5*cy + 0.25*b.pos[1];
+      const kn = l.requires ? (T.keys.find(x=>x.id===l.requires)?.name || '') : '';
+      const sub = L.name + (kn ? ' · 需'+kn : '') + (l.traversal==='forward' ? ' · 单向' : '');
+      const mi = colors.indexOf(L.color);
+      edges += `<path d="M${a.pos[0]},${a.pos[1]} Q${cx},${cy} ${b.pos[0]},${b.pos[1]}"
+          fill="none" stroke="${L.color}" stroke-width="2.5" ${L.dash?'class="dashline"':''}
+          ${l.traversal==='forward'?`marker-end="url(#arw${mi})"`:''} opacity=".92"/>
+        <text class="lk" x="${mx}" y="${my-7}" fill="${L.color}" text-anchor="middle"
+          stroke="#0f1215" stroke-width="4" paint-order="stroke">${l.label}</text>
+        <text class="nodecnt" x="${mx}" y="${my+8}" text-anchor="middle" fill="#98a3b0"
+          stroke="#0f1215" stroke-width="4" paint-order="stroke">${sub}</text>`;
+    });
+  }
+
+  let nodes = '';
+  for (const n of T.nodes) {
+    const r = cls[n.size]||70, sel = S.sel===n.id, comp = n.expand === 'composite';
+    nodes += `<g class="nd" data-id="${n.id}" style="cursor:pointer">
+      <rect x="${n.pos[0]-r}" y="${n.pos[1]-r*0.62}" width="${r*2}" height="${r*1.24}" rx="9"
+        fill="${comp?'#1b2a3d':'#1c2128'}" stroke="${sel?'var(--ac)':comp?'#3d6fa8':'var(--line2)'}"
+        stroke-width="${sel?2.5:1.5}" ${comp?'stroke-dasharray="6 4"':''}/>
+      <text class="nodelabel" x="${n.pos[0]}" y="${n.pos[1]-3}" text-anchor="middle">${n.name}</text>
+      <text class="nodecnt" x="${n.pos[0]}" y="${n.pos[1]+13}" text-anchor="middle">
+        ${comp?'复合 · 可展开':'叶子'} ｜ ${n.role}</text>
+      ${comp?`<text class="nodecnt" x="${n.pos[0]}" y="${n.pos[1]+27}" text-anchor="middle" fill="#4ea1ff">双击进入 ▸</text>`:''}
+    </g>`;
+  }
+
+  $('canvas').innerHTML = `<svg id="svg" data-k="${k}">${defs}
+      <g transform="translate(${tx},${ty}) scale(${k})">${edges}${nodes}</g></svg>`
+    + `<div class="legend">
+        ${Object.entries(LOGIC).map(([k2,v])=>`<div><i class="${v.dash?'dash':''}" style="border-color:${v.color}"></i>${v.name}</div>`).join('')}
+       </div>
+       <div class="hint">拖动节点排版 · 单击选中 · 双击虚线框进入子作用域</div>`;
+
+  bindDrag(k);
+}
+
+function bindDrag(scale) {
+  const svg = $('svg'); if (!svg) return;
+  const k = scale || 1;
+  let drag = null;
+  svg.querySelectorAll('.nd').forEach(g => {
+    const n = nodeById(g.dataset.id);
+    g.addEventListener('mousedown', (e) => {
+      drag = { n, ox:n.pos[0], oy:n.pos[1], sx:e.clientX, sy:e.clientY, moved:false };
+      e.preventDefault();
+    });
+    g.addEventListener('dblclick', () => {
+      if (n.expand === 'composite' && n.child) { S.scope = n.child; S.sel = null; renderAll(); toast('进入子作用域：' + SCOPES[n.child].name); }
+    });
+    g.addEventListener('click', (e) => { if (!drag?.moved) { S.sel = n.id; renderTopo(); renderInsp(); } e.stopPropagation(); });
+  });
+  window.onmousemove = (e) => {
+    if (!drag) return;
+    const dx = (e.clientX-drag.sx)/k, dy = (e.clientY-drag.sy)/k;   // 换算回图形坐标
+    if (Math.abs(dx)+Math.abs(dy) > 3) drag.moved = true;
+    drag.n.pos = [Math.round(drag.ox+dx), Math.round(drag.oy+dy)];
+    renderTopo();
+  };
+  window.onmouseup = () => { drag = null; window.onmousemove = null; };
+}
+
+/* ---------- 拆解提案 ---------- */
+function renderDecomp() {
+  const rounds = buildRounds();
+  let pending = 0;
+  const html = rounds.map(R => {
+    const body = R.items.map((it,i) => {
+      const ok = isAccepted(R.id, i);
+      if (!ok) pending++;
+      return `<div class="prop">
+        <div class="pn"><div class="pt">${it.t}</div><div class="pd">${it.d}</div></div>
+        <div class="pa">
+          ${it.ai?'<span class="tagai">AI 提案</span>':''}${it.rule?'<span class="tagrule">规则校准</span>':''}
+          ${ok?'<span class="tagok">✓ 已确认</span>'
+              :`<button class="btn sm ok" onclick="accept('${R.id}',${i})">确认</button>
+                <button class="btn sm" onclick="toast('已标记：需要调整（原型演示）')">调整</button>`}
+        </div></div>`;
+    }).join('');
+    return `<div class="round">
+      <div class="rh"><span class="rn">${R.id}</span><span class="rt">${R.title}</span>
+        <span class="rs">${R.kind==='rule'?'<span class="tagrule">规则</span>':'<span class="tagai">AI</span>'}</span></div>
+      <div class="rb">${body}</div></div>`;
+  }).join('');
+
+  $('canvas').innerHTML = `<div class="rounds">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="font-size:14px">拆解提案 · <b style="color:var(--ac)">${sc().name}</b></div>
+      <span class="tagai">AI 提案</span><span class="tagrule">规则校准</span>
+      <span style="margin-left:auto;color:var(--tx3);font-size:12px">基于 digest ${sc().inputs.digest}</span>
+      ${sc().stale?'<span class="tagstale">输入已更新 · 提案 stale</span>':''}
+    </div>
+    ${sc().stale?`<div class="box" style="border-color:#3d2c10;background:#241c0c">
+      <h4 style="color:var(--warn)">输入已补充（rev ${sc().inputs.revision}）</h4>
+      <div style="font-size:12px;color:var(--tx2)">以下提案基于旧 digest，需重新核对后才能交付。
+      <button class="btn sm" style="margin-left:8px" onclick="recheck()">重新核对</button></div></div>`:''}
+    ${html}
+    <div style="display:flex;gap:8px;margin:4px 0 30px">
+      <button class="btn pri" onclick="deliver()">交付到阶段二</button>
+      <button class="btn" onclick="toast('已导出独立展示页（原型演示）')">导出独立展示页</button>
+    </div></div>`;
+  $('decbadge').textContent = pending || '✓';
+  $('decbadge').style.background = pending ? 'var(--warn)' : 'var(--ok)';
+  $('decbadge').style.color = pending ? '#241a00' : '#04241d';
+}
+
+window.accept = (r,i) => { S.accepted[`${S.scope}:${r}:${i}`]=1; renderDecomp(); };
+window.recheck = () => { sc().stale=false; toast('已按最新输入重新核对，提案恢复有效'); renderAll(); };
+window.deliver = () => {
+  const rounds = buildRounds();
+  const total = rounds.reduce((a,R)=>a+R.items.length,0);
+  const done = rounds.reduce((a,R)=>a+R.items.filter((_,i)=>isAccepted(R.id,i)).length,0);
+  if (done < total) return toast(`还有 ${total-done} 项未确认，交付门拦住`);
+  toast('✓ 已交付到阶段二（原型演示）');
+};
+
+/* ---------- 展示：多模板 ---------- */
+function renderShow() {
+  const s = sc(), d = s.decomposition;
+  $('canvas').innerHTML = `
+    <div class="tmplbar">
+      <div class="tmpl ${S.template==='plan'?'on':''}" data-t="plan">平面位置图</div>
+      <div class="tmpl ${S.template==='sem'?'on':''}"  data-t="sem">拓扑语义图</div>
+      <div class="tmpl ${S.template==='iso'?'on':''}"  data-t="iso">3D 体块预览</div>
+    </div>
+    <div id="showbody" style="height:100%"></div>`;
+  $('canvas').querySelectorAll('.tmpl').forEach(t => t.onclick = () => { S.template=t.dataset.t; renderShow(); });
+  const body = $('showbody');
+  if (!d) { body.innerHTML = `<div class="empty">本作用域尚未拆解，先完成「拆解提案」</div>`; return; }
+  if (S.template === 'plan') body.innerHTML = svgPlan(s);
+  else if (S.template === 'sem') body.innerHTML = svgSemantic(s);
+  else body.innerHTML = svgIso(s);
+}
+
+function svgPlan(s) {
+  const d = s.decomposition, [[x0,y0],[x1,y1]] = d.bounds;
+  const cw = $('canvas').clientWidth || 900, ch = $('canvas').clientHeight || 700;
+  const bw = x1-x0, bh = y1-y0;
+  const k = Math.min((cw-170)/bw, (ch-170)/bh);
+  const tx = (cw - bw*k)/2 - x0*k, ty = (ch - bh*k)/2 - y0*k;
+  const X = v => v*k + tx, Y = v => v*k + ty;
+  const nmap = Object.fromEntries(s.topology.nodes.map(n => [n.id, n]));
+
+  const bg = `<rect x="${X(x0)}" y="${Y(y0)}" width="${bw*k}" height="${bh*k}"
+      fill="#141a20" stroke="var(--line2)" stroke-dasharray="9 6" rx="6"/>
+    <text class="nodecnt" x="${X(x0)+4}" y="${Y(y0)-10}">范围图边界 ${bw} × ${bh} cm</text>`;
+
+  /* 连线先画（会被节点框盖住，视觉上从盒子背后穿过） */
+  let lines = '', labels = '';
+  for (const l of s.topology.links) {
+    const ua = d.units.find(u=>u.node===l.from), ub = d.units.find(u=>u.node===l.to);
+    if (!ua||!ub) continue;
+    const L = LOGIC[l.logic];
+    const x1 = X(ua.pos[0]), y1 = Y(ua.pos[1]), x2 = X(ub.pos[0]), y2 = Y(ub.pos[1]);
+    lines += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${L.color}"
+      stroke-width="2.5" opacity=".7" ${L.dash?'class="dashline"':''}/>`;
+    labels += `<text class="lk" x="${(x1+x2)/2}" y="${(y1+y2)/2-6}" fill="${L.color}" text-anchor="middle"
+      stroke="#0f1215" stroke-width="4" paint-order="stroke">${l.label}</text>`;
+  }
+
+  let boxes = '';
+  for (const u of d.units) {
+    const n = nmap[u.node], [cx,cy] = u.pos, [w,h] = u.size;
+    const comp = n.expand === 'composite';
+    boxes += `<g><rect x="${X(cx-w/2)}" y="${Y(cy-h/2)}" width="${w*k}" height="${h*k}" rx="5"
+        fill="${comp?'#1b2a3d':'#222932'}" stroke="${comp?'#3d6fa8':'var(--line2)'}"
+        stroke-width="1.5" ${comp?'stroke-dasharray="6 4"':''}/>
+      <text class="nodelabel" x="${X(cx)}" y="${Y(cy)-2}" text-anchor="middle">${n.name}</text>
+      <text class="nodecnt" x="${X(cx)}" y="${Y(cy)+12}" text-anchor="middle">体块 ${w}×${h}</text>
+      ${comp?`<text class="nodecnt" x="${X(cx)}" y="${Y(cy)+26}" text-anchor="middle" fill="#4ea1ff">复合 ▸ 可展开</text>`:''}</g>`;
+  }
+  return `<svg>${bg}${lines}${boxes}${labels}</svg>
+    <div class="hint">节点框 = 基础构型体块 · 位置为父级局部坐标</div>`;
+}
+
+function svgSemantic(s) {
+  const T = s.topology, nm = Object.fromEntries(T.nodes.map(n=>[n.id,n]));
+  const cw = $('canvas').clientWidth || 900, ch = $('canvas').clientHeight || 700;
+
+  /* 自适应取景（与拓扑画布同一套） */
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  for (const n of T.nodes) {
+    x0=Math.min(x0,n.pos[0]-70); x1=Math.max(x1,n.pos[0]+70);
+    y0=Math.min(y0,n.pos[1]-34); y1=Math.max(y1,n.pos[1]+34);
+  }
+  const padX=150, padY=140;
+  const bw=(x1-x0)+padX*2, bh=(y1-y0)+padY*2;
+  const k = Math.min(cw/bw, ch/bh, 1.15);
+  const tx = (cw-bw*k)/2 - (x0-padX)*k;
+  const ty = (ch-bh*k)/2 - (y0-padY)*k;
+
+  /* 同一对节点之间的多条链路错开（与拓扑画布同一规则，含反向链路） */
+  const pair = {};
+  for (const l of T.links) { const key=[l.from,l.to].sort().join('|'); (pair[key]=pair[key]||[]).push(l); }
+
+  const colors = [...new Set(T.links.map(l=>LOGIC[l.logic].color))];
+  const defs = `<defs>` + colors.map((c,i)=>`<marker id="sarw${i}" viewBox="0 0 10 10" refX="9" refY="5"
+      markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="${c}"/></marker>`).join('') + `</defs>`;
+
+  let edges = '';
+  for (const key of Object.keys(pair)) {
+    const group = pair[key];
+    const [ka,kb] = key.split('|'), na = nm[ka], nb = nm[kb];
+    const gdx = nb.pos[0]-na.pos[0], gdy = nb.pos[1]-na.pos[1];
+    const glen = Math.hypot(gdx,gdy) || 1;
+    const px = -gdy/glen, py = gdx/glen;
+    group.forEach((l,i) => {
+      const a = nm[l.from], b = nm[l.to], L = LOGIC[l.logic];
+      const lane = (i-(group.length-1)/2)*96;
+      const cx = (a.pos[0]+b.pos[0])/2 + px*lane;
+      const cy = (a.pos[1]+b.pos[1])/2 + py*lane - 32;
+      const mx = 0.25*a.pos[0]+0.5*cx+0.25*b.pos[0];
+      const my = 0.25*a.pos[1]+0.5*cy+0.25*b.pos[1];
+      const kn = l.requires ? (T.keys.find(x=>x.id===l.requires)?.name||'') : '';
+      const mi = colors.indexOf(L.color);
+      edges += `<path d="M${a.pos[0]},${a.pos[1]} Q${cx},${cy} ${b.pos[0]},${b.pos[1]}" fill="none"
+          stroke="${L.color}" stroke-width="3" ${L.dash?'class="dashline"':''}
+          ${l.traversal==='forward'?`marker-end="url(#sarw${mi})"`:''}/>
+        <text class="lk" x="${mx}" y="${my-6}" fill="${L.color}" text-anchor="middle"
+          stroke="#0f1215" stroke-width="4" paint-order="stroke">${l.label} · ${L.name}${l.traversal==='forward'?' · 单向':''}</text>
+        ${kn?`<text class="lk" x="${mx}" y="${my+9}" fill="${L.color}" text-anchor="middle" font-size="10"
+          stroke="#0f1215" stroke-width="4" paint-order="stroke">🔑 ${kn}</text>`:''}`;
+    });
+  }
+
+  let nodes = '';
+  for (const n of T.nodes) {
+    const comp = n.expand==='composite';
+    nodes += `<g><rect x="${n.pos[0]-70}" y="${n.pos[1]-34}" width="140" height="68" rx="9"
+        fill="${comp?'#1b2a3d':'#1c2128'}" stroke="${comp?'#3d6fa8':'var(--line2)'}" stroke-width="1.5" ${comp?'stroke-dasharray="6 4"':''}/>
+      <text class="nodelabel" x="${n.pos[0]}" y="${n.pos[1]-4}" text-anchor="middle">${n.name}</text>
+      <text class="nodecnt" x="${n.pos[0]}" y="${n.pos[1]+12}" text-anchor="middle">${n.role}</text></g>`;
+  }
+
+  const keylist = T.keys.length ? `<div class="legend" style="left:auto;right:12px;bottom:12px">
+      ${T.keys.map(k=>`<div>🔑 ${k.name} → 解锁 ${k.unlocks.map(u=>T.links.find(l=>l.id===u)?.label).join(',')}</div>`).join('')}</div>` : '';
+  return `<svg>${defs}<g transform="translate(${tx},${ty}) scale(${k})">${edges}${nodes}</g></svg>${keylist}
+    <div class="hint">只看逻辑语义：单向 / 锁钥 / 捷径 · 与真实位置无关</div>`;
+}
+
+function svgIso(s) {
+  const d = s.decomposition;
+  const cw = $('canvas').clientWidth || 900, ch = $('canvas').clientHeight || 700;
+  const k = 0.42, zk = 0.5;
+  const raw = (x,y,z) => [(x-y)*k, (x+y)*k*0.5 - z*zk];      // 未平移的等轴投影
+
+  /* 先求整体投影包围盒，再整体居中（否则内容会挤在角落） */
+  const corners = [[-1,-1],[1,-1],[1,1],[-1,1]];
+  let bx0=Infinity, by0=Infinity, bx1=-Infinity, by1=-Infinity;
+  for (const u of d.units) {
+    const [cx,cy]=u.pos, [w,dp]=u.size;
+    for (const z of [u.h[0], u.h[1]]) for (const [sx,sy] of corners) {
+      const [px,py] = raw(cx+sx*w/2, cy+sy*dp/2, z);
+      bx0=Math.min(bx0,px); bx1=Math.max(bx1,px);
+      by0=Math.min(by0,py); by1=Math.max(by1,py);
+    }
+  }
+  const ox = (cw-(bx1-bx0))/2 - bx0;
+  const oy = (ch-(by1-by0))/2 - by0;
+  const P = (x,y,z) => { const [px,py] = raw(x,y,z); return [px+ox, py+oy]; };
+
+  /* 地平面：给空间一个参照 */
+  const [[gx0,gy0],[gx1,gy1]] = d.bounds;
+  const ground = `<polygon points="${[P(gx0,gy0,0),P(gx1,gy0,0),P(gx1,gy1,0),P(gx0,gy1,0)]
+      .map(p=>p.join(',')).join(' ')}" fill="#141a20" stroke="var(--line2)"
+      stroke-dasharray="8 6" stroke-width="1"/>`;
+
+  const sorted = [...d.units].sort((a,b)=>(a.pos[0]+a.pos[1])-(b.pos[0]+b.pos[1]));
+  let g = ground;
+  for (const u of sorted) {
+    const n = nodeById(u.node), [cx,cy] = u.pos, [w,dp] = u.size, z0 = u.h[0], z1 = u.h[1];
+    const x0=cx-w/2, x1=cx+w/2, y0=cy-dp/2, y1=cy+dp/2;
+    const top   = [P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)];
+    const right = [P(x1,y0,z1),P(x1,y1,z1),P(x1,y1,z0),P(x1,y0,z0)];
+    const front = [P(x0,y1,z1),P(x1,y1,z1),P(x1,y1,z0),P(x0,y1,z0)];
+    const poly = (pts,f,st)=>`<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="${f}" stroke="${st}" stroke-width="1"/>`;
+    const comp = n.expand==='composite';
+    const c1 = comp?'#2b4a6b':'#39424c', c2 = comp?'#223a54':'#2c343d', c3 = comp?'#1a2c40':'#222932';
+    const [tx,ty] = P(cx,cy,z1);
+    const label = z1 - z0 > 150;                                // 太扁的体块不放标签，避免压线
+    g += `<g><title>${n.name} · 体块 ${w}×${dp} × 高 ${z0}~${z1}</title>
+      ${poly(right,c2,'#0f1215')}${poly(front,c3,'#0f1215')}${poly(top,c1,comp?'#4e88c9':'#4a545f')}
+      ${label?`<text class="nodelabel" x="${tx}" y="${ty-7}" text-anchor="middle"
+          stroke="#0f1215" stroke-width="4" paint-order="stroke">${n.name}</text>
+        <text class="nodecnt" x="${tx}" y="${ty+7}" text-anchor="middle" fill="#98a3b0"
+          stroke="#0f1215" stroke-width="4" paint-order="stroke">h ${z0}~${z1}</text>`:''}</g>`;
+  }
+  return `<svg>${g}</svg>
+    <div class="hint">体块 + 高度（父级局部坐标）· 检查层高与搭接</div>`;
+}
+
+/* ============================================================
+   渲染：右栏 inspector
+   ============================================================ */
+function renderInsp() {
+  const s = sc();
+  const n = S.sel ? nodeById(S.sel) : null;
+  let h = `<div class="box"><h4>作用域</h4>
+    <div class="kv"><span>名称</span><span>${s.name}</span></div>
+    <div class="kv"><span>层级</span><span>${s.parent?SCOPES[s.parent].name+' ▸ '+s.name:'根'}</span></div>
+    <div class="kv"><span>子作用域</span><span>${(s.children||[]).map(c=>SCOPES[c].name).join(', ')||'—'}</span></div>
+    <div class="kv"><span>输入 rev</span><span>${s.inputs.revision}</span></div>
+  </div>`;
+
+  h += `<div class="box"><h4>有效氛围（继承 + 覆盖）</h4>
+    <div class="fld"><label>氛围</label><div class="val">${s.atmosphere.mood}</div></div>
+    <div class="fld"><label>风格</label><div class="val">${s.atmosphere.style}</div></div>
+    <div class="fld"><label>关键词</label><div class="chips">${s.atmosphere.keywords.map(k=>`<span class="chip">${k}</span>`).join('')}</div></div>
+    <div class="fld" style="margin-bottom:0"><label>高度范围</label><div class="val mono">${s.atmosphere.height}</div></div>
+  </div>`;
+
+  if (n) {
+    const comp = n.expand==='composite';
+    const u = s.decomposition?.units.find(x=>x.node===n.id);
+    h += `<div class="box" style="border-color:${comp?'#3d6fa8':'var(--line2)'}">
+      <h4>选中节点</h4>
+      <div class="kv"><span>名称</span><span>${n.name}</span></div>
+      <div class="kv"><span>角色</span><span>${n.role}</span></div>
+      <div class="kv"><span>命运</span><span style="color:${comp?'#9ccbff':'var(--tx2)'}">${comp?'复合 · 展开':'叶子 · 到底'}</span></div>
+      <div class="kv"><span>逻辑层</span><span>${n.floor}F</span></div>
+      ${u?`<div style="border-top:1px solid var(--line);margin:9px 0 7px"></div>
+        <div class="kv"><span>体块</span><span>${u.size.join(' × ')}</span></div>
+        <div class="kv"><span>相对位置</span><span>(${u.pos.join(', ')})</span></div>
+        <div class="kv"><span>高度</span><span>${u.h[0]} ~ ${u.h[1]}</span></div>`:''}
+      ${comp?`<button class="btn pri" style="width:100%;margin-top:10px"
+          onclick="S.scope='${n.child}';S.sel=null;renderAll();toast('进入子作用域：${SCOPES[n.child]?.name||''}')">
+          进入子作用域 ▸ ${SCOPES[n.child]?.name||''}</button>`
+        :`<div style="margin-top:9px;font-size:11.5px;color:var(--tx3)">叶子节点 → 生成基础构型（体块 + 端口）</div>`}
+    </div>`;
+  } else {
+    h += `<div class="empty">单击画布中的节点查看详情<br><span style="font-size:11.5px">复合节点可双击进入下一层</span></div>`;
+  }
+
+  // 锁钥
+  if (s.topology.keys.length) {
+    h += `<div class="box"><h4>锁钥关系</h4>
+      ${s.topology.keys.map(k=>`<div style="font-size:12px;padding:3px 0">
+        🔑 <b>${k.name}</b> <span style="color:var(--tx3)">在 ${nodeById(k.foundAt)?.name||k.foundAt} 取得</span>
+        <div style="color:var(--tx3);font-size:11.5px;margin-left:16px">
+          → 解锁 ${k.unlocks.map(u=>{const l=s.topology.links.find(x=>x.id===u);return l?`${l.label} ${LOGIC[l.logic].name}`:u;}).join(', ')}</div>
+      </div>`).join('')}</div>`;
+  }
+  $('insp').innerHTML = h;
+}
+
+/* ============================================================
+   主渲染
+   ============================================================ */
+function renderAll() { renderCrumb(); renderTree(); renderInputs(); renderCanvas(); renderInsp(); }
+
+window.setStage = function (n) {
+  S.stage = n;
+  $('st1').className = 'stage' + (n===1?' on':'');
+  $('st2').className = 'stage' + (n===2?' on':'');
+  renderCanvas();
+};
+$('st1').onclick = () => setStage(1);
+$('st2').onclick = () => setStage(2);
+document.querySelectorAll('.ctab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); S.tab = t.dataset.tab; renderCanvas();
+});
+
+renderAll();
+</script>
+</body>
+</html>

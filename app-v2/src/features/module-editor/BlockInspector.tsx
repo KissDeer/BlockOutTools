@@ -24,11 +24,13 @@ function hexToRgba(hex: string): Rgba {
 export function BlockInspector() {
   const project = useProjectStore((state) => state.project);
   const activeInstanceId = useProjectStore((state) => state.activeInstanceId);
+  const activeModuleId = useProjectStore((state) => state.activeModuleId);
   const selectedIds = useProjectStore((state) => state.selectedBlockIds);
   const updateBlock = useProjectStore((state) => state.updateBlock);
   const remove = useProjectStore((state) => state.deleteSelectedBlocks);
   const instance = project.instances.find((item) => item.id === activeInstanceId);
-  const module = project.modules.find((item) => item.id === instance?.definitionId);
+  // 从阶段一的逻辑节点进入模块时没有实例，直接按 activeModuleId 解析
+  const module = project.modules.find((item) => item.id === activeModuleId) ?? project.modules.find((item) => item.id === instance?.definitionId);
   const block = selectedIds.length === 1 ? module?.blocks.find((item) => item.id === selectedIds[0]) : null;
 
   if (!block) return <div className="empty-inspector"><span>{selectedIds.length > 1 ? `已选择 ${selectedIds.length} 个积木` : "未选择积木"}</span><small>选择一个积木编辑 Transform 和关键参数</small></div>;

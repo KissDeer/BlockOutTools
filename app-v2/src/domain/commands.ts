@@ -1,5 +1,6 @@
 import { createBlock } from "./catalog";
 import { createId } from "./ids";
+import type { LogicTopology } from "./concept";
 import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
 
 function cloneProject(project: BlockoutProject): BlockoutProject {
@@ -153,4 +154,30 @@ export function removeConnection(project: BlockoutProject, connectionId: string)
   const next = cloneProject(project);
   next.connections = next.connections.filter((item) => item.id !== connectionId);
   return touch(next);
+}
+
+/** 阶段一：写回逻辑拓扑。只影响 concept 字段，不触碰模块、实例与连接。 */
+export function setConcept(project: BlockoutProject, topology: LogicTopology): BlockoutProject {
+  const next = cloneProject(project);
+  next.concept = structuredClone(topology);
+  return touch(next);
+}
+
+/** 为逻辑节点新建一个空模块并绑定，便于立刻进入模块内部搭建体块 */
+export function createModuleForNode(project: BlockoutProject, nodeId: string, graphPosition: Vec2): { project: BlockoutProject; module: ModuleDefinition; instance: ModuleInstance } | null {
+  const node = project.concept?.nodes.find((item) => item.id === nodeId);
+  if (!node) return null;
+  const created = addModule(project, graphPosition);
+  created.module.name = node.name;
+  created.instance.name = node.name;
+  const next = cloneProject(created.project);
+  const module = next.modules.find((item) => item.id === created.module.id) as ModuleDefinition;
+  module.name = node.name;
+  const instance = next.instances.find((item) => item.id === created.instance.id) as ModuleInstance;
+  instance.name = node.name;
+  if (next.concept) {
+    const target = next.concept.nodes.find((item) => item.id === nodeId);
+    if (target) target.moduleId = module.id;
+  }
+  return { project: touch(next), module, instance };
 }

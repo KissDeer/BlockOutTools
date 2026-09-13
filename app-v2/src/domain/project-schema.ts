@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { logicTopologySchema } from "./concept";
 
 const finiteNumber = z.number().finite();
 const positiveNumber = finiteNumber.positive();
@@ -68,6 +69,7 @@ export const projectSchema = z.object({
     minStairTread: positiveNumber,
   }),
   updatedAt: z.string().datetime(),
+  concept: logicTopologySchema.optional(),
 }).superRefine((project, context) => {
   const fail = (message: string) => context.addIssue({ code: "custom", message });
   const unique = (ids: string[], label: string) => { if (new Set(ids).size !== ids.length) fail(`${label}身份重复`); };
@@ -88,5 +90,8 @@ export const projectSchema = z.object({
       if (occupied.has(key)) fail(`出入口 ${portId} 被重复连接`);
       occupied.add(key);
     }
+  }
+  for (const node of project.concept?.nodes ?? []) {
+    if (node.moduleId && !project.modules.some((module) => module.id === node.moduleId)) fail(`逻辑节点“${node.name}”引用了不存在的模块`);
   }
 });
