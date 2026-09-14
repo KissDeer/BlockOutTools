@@ -1,0 +1,173 @@
+{
+  "id": "module_courtyard",
+  "name": "城墙庭院",
+  "revision": 1,
+  "blocks": [
+    {
+      "id": "block_demo_floor",
+      "name": "主楼板",
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": 0
+      },
+      "type": "box",
+      "parameters": {
+        "BoxSize": [
+          900,
+          650,
+          40
+        ],
+        "blockout_material_color": [
+          0.2,
+          0.48,
+          0.4,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.64,
+          0.8,
+          0.72,
+          1
+        ]
+      }
+    },
+    {
+      "id": "block_demo_wall",
+      "name": "北侧墙体",
+      "transform": {
+        "position": [
+          0,
+          -305,
+          40
+        ],
+        "rotation": 0
+      },
+      "type": "box",
+      "parameters": {
+        "BoxSize": [
+          900,
+          40,
+          300
+        ],
+        "blockout_material_color": [
+          0.21,
+          0.23,
+          0.22,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.45,
+          0.49,
+          0.46,
+          1
+        ]
+      }
+    },
+    {
+      "id": "block_demo_doorway",
+      "name": "庭院门洞",
+      "transform": {
+        "position": [
+          430,
+          0,
+          40
+        ],
+        "rotation": 90
+      },
+      "type": "doorway",
+      "parameters": {
+        "DoorwaySize": [
+          40,
+          140,
+          240
+        ],
+        "TopThickness": 40,
+        "SideThickness": 40,
+        "blockout_material_color": [
+          0.23,
+          0.25,
+          0.24,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.54,
+          0.58,
+          0.55,
+          1
+        ]
+      }
+    },
+    {
+      "id": "block_demo_stairs",
+      "name": "平台直梯",
+      "transform": {
+        "position": [
+          -260,
+          80,
+          40
+        ],
+        "rotation": 0
+      },
+      "type": "stairs-linear",
+      "parameters": {
+        "StairsSize": [
+          180,
+          360,
+          180
+        ],
+        "NumberOfSteps": 10,
+        "StairsType": "BOX",
+        "blockout_material_color": [
+          0.52,
+          0.39,
+          0.2,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.78,
+          0.63,
+          0.35,
+          1
+        ]
+      }
+    },
+    {
+      "id": "port_demo_east",
+      "name": "东侧门",
+      "transform": {
+        "position": [
+          470,
+          0,
+          40
+        ],
+        "rotation": 0
+      },
+      "type": "port",
+      "parameters": {
+        "width": 140,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_demo_west",
+      "name": "西侧楼梯",
+      "transform": {
+        "position": [
+          -470,
+          80,
+          40
+        ],
+        "rotation": 180
+      },
+      "type": "port",
+      "parameters": {
+        "width": 180,
+        "depth": 80
+      }
+    }
+  ]
+}

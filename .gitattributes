@@ -1,0 +1,2 @@
+# Module filenames are SHA-256 hashes of the serialized UTF-8 content.
+data/projects-v2/**/modules/*.blockout-module.json text eol=lf

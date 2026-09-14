@@ -1,0 +1,107 @@
+{
+  "id": "module_tower",
+  "name": "边塔平台",
+  "revision": 1,
+  "blocks": [
+    {
+      "id": "block_tower_floor",
+      "name": "塔楼楼板",
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": 0
+      },
+      "type": "box",
+      "parameters": {
+        "BoxSize": [
+          650,
+          650,
+          50
+        ],
+        "blockout_material_color": [
+          0.2,
+          0.48,
+          0.4,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.64,
+          0.8,
+          0.72,
+          1
+        ]
+      }
+    },
+    {
+      "id": "block_tower_stairs",
+      "name": "塔楼直梯",
+      "transform": {
+        "position": [
+          0,
+          40,
+          50
+        ],
+        "rotation": 90
+      },
+      "type": "stairs-linear",
+      "parameters": {
+        "StairsSize": [
+          180,
+          360,
+          180
+        ],
+        "NumberOfSteps": 10,
+        "StairsType": "BOX",
+        "blockout_material_color": [
+          0.52,
+          0.39,
+          0.2,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.78,
+          0.63,
+          0.35,
+          1
+        ]
+      }
+    },
+    {
+      "id": "port_tower_east",
+      "name": "塔楼东口",
+      "transform": {
+        "position": [
+          350,
+          0,
+          50
+        ],
+        "rotation": 0
+      },
+      "type": "port",
+      "parameters": {
+        "width": 140,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_tower_west",
+      "name": "塔楼西口",
+      "transform": {
+        "position": [
+          -350,
+          0,
+          50
+        ],
+        "rotation": 180
+      },
+      "type": "port",
+      "parameters": {
+        "width": 180,
+        "depth": 80
+      }
+    }
+  ]
+}
