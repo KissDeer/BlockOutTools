@@ -3,7 +3,9 @@ name: layout-tools-workflow
 description: Use, extend and verify BlockOutTools V2 in D:\GameDesgin\BlockOutTools, including module editing, port assembly, local project files and calibrated diagram ingestion.
 ---
 
-# BlockOutTools V2 workflow
+# 已停用：BlockOutTools V2 workflow
+
+2026-09-14：用户指出此技能已过时，撤下 SKILL.md 入口。以下内容仅作历史记录，不作为当前操作要求。
 
 Work in `D:\GameDesgin\BlockOutTools`. Current product code is `app-v2/`, served on 4174. Requirements live in `docs/rebuild/`. Legacy host instructions are historical, not current capabilities.
 
