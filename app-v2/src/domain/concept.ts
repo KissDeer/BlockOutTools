@@ -29,6 +29,9 @@ export type LogicKind =
 /** both=双向；forward=只能按 from→to 走；one-time=一次性，走过不再可回 */
 export type LogicTraversal = "both" | "forward" | "one-time";
 
+/** 连线在画布上的连接点方向，不影响通行与空间语义。 */
+export type LogicHandleSide = "top" | "right" | "bottom" | "left";
+
 export type LogicNodeRole = "start" | "hub" | "combat" | "reward" | "boss" | "transition" | "secret";
 
 export interface LogicNode {
@@ -53,6 +56,8 @@ export interface LogicLink {
   label: string;
   from: string;
   to: string;
+  sourceHandle?: LogicHandleSide;
+  targetHandle?: LogicHandleSide;
   logic: LogicKind;
   traversal: LogicTraversal;
   /** 锁钥门指向 LogicKey.id */
@@ -206,6 +211,8 @@ export const logicLinkSchema = z.object({
   label: z.string().min(1),
   from: z.string().min(1),
   to: z.string().min(1),
+  sourceHandle: z.enum(["top", "right", "bottom", "left"]).optional(),
+  targetHandle: z.enum(["top", "right", "bottom", "left"]).optional(),
   logic: z.enum(["normal", "one-way-door", "locked-door", "shortcut", "drop", "stairs", "spiral-stairs", "elevator", "one-way-elevator", "road"]),
   traversal: z.enum(["both", "forward", "one-time"]),
   requires: z.string().min(1).nullable(),
@@ -243,26 +250,21 @@ const logicScopeFields = {
   note: z.string().default(""),
 };
 
-export const logicScopeSchema = z.object(logicScopeFields);
-
-export const logicTopologySchema = z.object({
-  ...logicScopeFields,
-  // 旧草稿的根作用域没有 id/name（子作用域才需要显式给），给默认值兜底
-  id: z.string().min(1).default("scope_root"),
-  name: z.string().min(1).default("根作用域"),
-  // 旧草稿没有子作用域
-  scopes: z.array(logicScopeSchema).default([]),
-}).superRefine((topology, context) => {
-  const fail = (message: string) => context.addIssue({ code: "custom", message });
+/** 每层使用同一套局部身份与引用规则；不同作用域的本地身份可以重复。 */
+export function collectLocalScopeIssues(topology: LogicScope): string[] {
+  const issues: string[] = [];
+  const fail = (message: string) => issues.push(message);
   const nodeIds = new Set(topology.nodes.map((node) => node.id));
   const linkIds = new Set(topology.links.map((link) => link.id));
   if (nodeIds.size !== topology.nodes.length) fail("逻辑节点身份重复");
   if (linkIds.size !== topology.links.length) fail("逻辑链路身份重复");
   if (new Set(topology.keys.map((key) => key.id)).size !== topology.keys.length) fail("锁钥身份重复");
+  const keyIds = new Set(topology.keys.map((key) => key.id));
   for (const link of topology.links) {
     if (link.from === link.to) fail(`链路 ${link.label} 的两端是同一个节点`);
     if (!nodeIds.has(link.from) || !nodeIds.has(link.to)) fail(`链路 ${link.label} 引用了不存在的节点`);
     if (link.logic === "locked-door" && !link.requires) fail(`锁钥门 ${link.label} 没有指定钥匙`);
+    if (link.requires && !keyIds.has(link.requires)) fail(`链路 ${link.label} 引用了不存在的钥匙`);
   }
   for (const key of topology.keys) {
     if (!nodeIds.has(key.foundAt)) fail(`钥匙“${key.name}”的取得位置不存在`);
@@ -278,7 +280,27 @@ export const logicTopologySchema = z.object({
       assigned.add(nodeId);
     }
   }
-  for (const issue of collectScopeIssues(topology)) fail(issue);
+  return issues;
+}
+
+function validateScopeReferences(scope: LogicScope, context: z.RefinementCtx): void {
+  for (const message of collectLocalScopeIssues(scope)) {
+    context.addIssue({ code: "custom", message: `作用域“${scope.name}”（${scope.id}）：${message}` });
+  }
+}
+
+export const logicScopeSchema = z.object(logicScopeFields).superRefine(validateScopeReferences);
+
+export const logicTopologySchema = z.object({
+  ...logicScopeFields,
+  // 旧草稿的根作用域没有 id/name（子作用域才需要显式给），给默认值兜底
+  id: z.string().min(1).default("scope_root"),
+  name: z.string().min(1).default("根作用域"),
+  // 旧草稿没有子作用域
+  scopes: z.array(logicScopeSchema).default([]),
+}).superRefine((topology, context) => {
+  validateScopeReferences(topology, context);
+  for (const message of collectScopeIssues(topology)) context.addIssue({ code: "custom", message });
 });
 
 /**

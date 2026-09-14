@@ -6,6 +6,7 @@ import { summarizeIssues, validateTopology, type ConceptIssue } from "../../doma
 import { useProjectStore } from "../../store/project-store";
 import { scopeCrumbs } from "../../domain/concept-scopes";
 import { useCurrentTopology, useRootTopology } from "./use-current-topology";
+import { useDecompositionUI } from "./decomposition-ui-store";
 
 const SEVERITY_ICON = {
   error: <CircleAlert size={13} />,
@@ -15,6 +16,11 @@ const SEVERITY_ICON = {
 
 export function ConceptSidebar() {
   const project = useProjectStore((state) => state.project);
+  const conceptPane = useProjectStore((state) => state.conceptPane);
+  const isDecomposition = conceptPane === "decomposition";
+  const decompositionSelection = useDecompositionUI((state) => state.selectedNodeIds);
+  const setDecompositionSelection = useDecompositionUI((state) => state.setSelection);
+  const focusNodes = useDecompositionUI((state) => state.focusNodes);
   const topology = useCurrentTopology();
   const logicKind = useProjectStore((state) => state.logicKind);
   const setLogicKind = useProjectStore((state) => state.setLogicKind);
@@ -50,20 +56,20 @@ export function ConceptSidebar() {
         {scopeId ? <em>{stats.nodes} 区域 · {topology.modules.length} 模块</em> : null}
       </div>
       <div className="sidebar-heading">
-        <div><span>逻辑拓扑</span><strong>{stats.nodes}</strong></div>
+        <div><span>{isDecomposition ? "模块划分 · 区域" : "逻辑拓扑"}</span><strong>{stats.nodes}</strong></div>
         <Link2 size={16} />
       </div>
-      <div className="sidebar-actions">
+      {!isDecomposition ? <div className="sidebar-actions">
         <button type="button" className="primary-command" onClick={() => addLogicNode()}>
           <Plus size={15} />新增区域
         </button>
         <button type="button" className="secondary-command" disabled={!topology.nodes.length} onClick={autoLayout}>
           <LayoutGrid size={15} />自动排版
         </button>
-      </div>
+      </div> : null}
 
       <div className="concept-sidebar-scroll">
-        <div className="concept-section-title">新建链路类型</div>
+        {!isDecomposition ? <><div className="concept-section-title">新建链路类型</div>
         <div className="logic-kind-grid">
           {(Object.keys(LOGIC_KINDS) as LogicKind[]).map((kind) => {
             const meta = LOGIC_KINDS[kind];
@@ -80,20 +86,26 @@ export function ConceptSidebar() {
               </button>
             );
           })}
-        </div>
+        </div></> : null}
 
         <div className="concept-section-title">区域 <em>{stats.nodes}</em></div>
         <div className="module-definition-list" style={{ overflow: "visible" }}>
           {topology.nodes.length === 0 ? <div className="sidebar-footnote" style={{ borderTop: 0 }}>还没有区域</div> : null}
           {topology.nodes.map((node) => {
             const module = project.modules.find((item) => item.id === node.moduleId);
+            const group = topology.modules.find((item) => item.nodeIds.includes(node.id));
             const isStart = topology.startNodeId === node.id;
             return (
               <button
                 type="button"
                 key={node.id}
-                className={selectedNodeId === node.id ? "is-selected" : ""}
-                onClick={() => selectNode(node.id)}
+                className={(isDecomposition ? decompositionSelection.includes(node.id) : selectedNodeId === node.id) ? "is-selected" : ""}
+                onClick={(event) => {
+                  if (!isDecomposition) { selectNode(node.id); return; }
+                  const ids = event.ctrlKey || event.metaKey ? decompositionSelection.includes(node.id) ? decompositionSelection.filter((id) => id !== node.id) : [...decompositionSelection, node.id] : [node.id];
+                  setDecompositionSelection(ids);
+                  focusNodes(ids);
+                }}
               >
                 <span>
                   <strong>{node.name}</strong>
@@ -101,14 +113,14 @@ export function ConceptSidebar() {
                 </span>
                 <em>
                   {isStart ? "起点 · " : ""}
-                  {module ? `已绑定 · ${module.blocks.length} 积木` : "未绑定模块"}
+                  {isDecomposition ? group?.name ?? "未分配" : module ? `已绑定 · ${module.blocks.length} 积木` : "未绑定模块"}
                 </em>
               </button>
             );
           })}
         </div>
 
-        {topology.keys.length > 0 ? (
+        {!isDecomposition && topology.keys.length > 0 ? (
           <>
             <div className="concept-section-title">锁钥 <em>{stats.keys}</em></div>
             <div className="logic-key-list">
@@ -127,7 +139,7 @@ export function ConceptSidebar() {
           </>
         ) : null}
 
-        <div className="concept-section-title">
+        {!isDecomposition ? <><div className="concept-section-title">
           校验
           {summary.error ? <b className="is-error">{summary.error} 错误</b> : null}
           {summary.warning ? <b className="is-warning">{summary.warning} 待定</b> : null}
@@ -140,7 +152,7 @@ export function ConceptSidebar() {
               <span>{issue.message}</span>
             </button>
           ))}
-        </div>
+        </div></> : null}
       </div>
 
       <div className="sidebar-footnote"><Flag size={11} /> 逻辑图位置只用于排版，不参与 3D、UE 或任何几何计算。</div>

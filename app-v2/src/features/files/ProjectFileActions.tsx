@@ -1,20 +1,15 @@
 import { useRef } from "react";
-import { Download, FolderOpen } from "lucide-react";
-import { archiveDraft, downloadProject, parseProjectFile } from "../../domain/persistence";
+import { archiveDraft, parseProjectFile } from "../../domain/persistence";
 import { useProjectStore } from "../../store/project-store";
-import { IconButton } from "../../components/IconButton";
 import { DiskLibraryActions } from "./DiskLibraryActions";
 
 export function ProjectFileActions() {
-  const project = useProjectStore((state) => state.project);
   const replaceProject = useProjectStore((state) => state.replaceProject);
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="toolbar-group">
-      <DiskLibraryActions />
-      <IconButton label="打开 V2 项目" onClick={() => inputRef.current?.click()}><FolderOpen size={17} /></IconButton>
-      <IconButton label="导出 V2 项目" onClick={() => downloadProject(project)}><Download size={17} /></IconButton>
+    <div className="toolbar-group project-file-actions">
+      <DiskLibraryActions onImport={() => inputRef.current?.click()} />
       <input
         ref={inputRef}
         className="sr-only"

@@ -63,7 +63,7 @@ export function generateAssembly(project: BlockoutProject): { project: BlockoutP
   if (!project.concept) return { project, result: { ...EMPTY_RESULT } };
   const next = structuredClone(project);
   const concept = next.concept as LogicTopology;
-  const result: AssemblyGenerationResult = { ...EMPTY_RESULT, unplacedModules: [], missingPorts: [] };
+  const result: AssemblyGenerationResult = { ...EMPTY_RESULT, unplacedModules: [], missingPorts: [], skippedLinks: [] };
 
   /* 1) 实例：递归展平后，每个产出几何的模块在**每条路径上**各得一个实例。
         共享的作用域会被多条路径实例化，所以身份必须带路径，不能只按模块记。 */

@@ -1,7 +1,7 @@
 import { createBlock } from "./catalog";
 import { createId } from "./ids";
 import { moduleLocalLayout, type ConfigurationCandidate } from "./concept-configuration";
-import { allModules, nodesOfScope, findModule } from "./concept-scopes";
+import { nodesOfScope, findModule } from "./concept-scopes";
 import type { LogicTopology } from "./concept";
 import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
 
@@ -187,7 +187,7 @@ export function createModuleForNode(project: BlockoutProject, nodeId: string, gr
 /**
  * 套用基础构型：把每个拆解模块落成一个阶段二模块定义（体块 + 端口）。
  * 坐标在这里统一换算：区域相对位置（父级厘米）→ 模块局部厘米（以包围盒左下角为原点）。
- * 已有绑定则整体替换该模块的积木，不新建重复定义。
+ * 已有绑定则更新该模块的积木，同源积木保留身份；移除端口时解除其关联连接。
  */
 export function applyConfiguration(project: BlockoutProject, candidate: ConfigurationCandidate): { project: BlockoutProject; moduleIds: string[]; blockCount: number } {
   if (!project.concept) return { project, moduleIds: [], blockCount: 0 };
@@ -195,14 +195,13 @@ export function applyConfiguration(project: BlockoutProject, candidate: Configur
   const concept = next.concept as LogicTopology;
   const moduleIds: string[] = [];
   let blockCount = 0;
-  // 节点散落在各层作用域里，按模块所在作用域取
-  const nodeById = new Map(allModules(concept).flatMap(({ scopeId }) => nodesOfScope(concept, scopeId)).map((node) => [node.id, node]));
-
   for (const entry of candidate.modules) {
     // 模块可能在任何一层作用域里
     const found = findModule(concept, entry.moduleId);
     if (!found || found.module.childScopeId) continue;
     const logicModule = found.module;
+    const nodeById = new Map(nodesOfScope(concept, found.scopeId).map((node) => [node.id, node]));
+    const existing = logicModule.moduleDefinitionId ? next.modules.find((item) => item.id === logicModule.moduleDefinitionId) : null;
     const layout = moduleLocalLayout(concept, entry);
     const blocks: Block[] = [];
 
@@ -236,8 +235,23 @@ export function applyConfiguration(project: BlockoutProject, candidate: Configur
     // 记下模块局部原点在父级里的位置：阶段二拼装与平面图都要用
     logicModule.relativeOrigin = layout.origin;
 
-    const existing = logicModule.moduleDefinitionId ? next.modules.find((item) => item.id === logicModule.moduleDefinitionId) : null;
     if (existing) {
+      // 特征身份只在本模块与积木类型内匹配，不按名称、顺序或位置猜测。
+      const previousByFeature = new Map(existing.blocks.filter((block) => block.provenance).map((block) => [
+        JSON.stringify([block.type, block.provenance!.sourceId, block.provenance!.featureId]), block.id,
+      ]));
+      for (const block of blocks) {
+        const key = JSON.stringify([block.type, block.provenance!.sourceId, block.provenance!.featureId]);
+        const previousId = previousByFeature.get(key);
+        if (previousId) block.id = previousId;
+        previousByFeature.delete(key);
+      }
+      const retainedPorts = new Set(blocks.filter((block) => block.type === "port").map((block) => block.id));
+      const removedPorts = new Set(existing.blocks.filter((block) => block.type === "port" && !retainedPorts.has(block.id)).map((block) => block.id));
+      const instanceIds = new Set(next.instances.filter((instance) => instance.definitionId === existing.id).map((instance) => instance.id));
+      next.connections = next.connections.filter((connection) =>
+        !(instanceIds.has(connection.sourceInstanceId) && removedPorts.has(connection.sourcePortId))
+        && !(instanceIds.has(connection.targetInstanceId) && removedPorts.has(connection.targetPortId)));
       existing.name = logicModule.name;
       existing.blocks = blocks;
       existing.revision += 1;

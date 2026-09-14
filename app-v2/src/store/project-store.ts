@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { addBlock, addConnection, addModule, applyConfiguration as applyConfigurationCommand, createModuleForNode, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, setConcept, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform, updateModule, updateProjectSettings } from "../domain/commands";
 import { addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode, applyCandidate as applyCandidateCommand, applyDecomposition as applyDecompositionCommand, autoLayoutTopology, bindNodeModule, createLogicModule as createLogicModuleCommand, nextNodePosition, recordProposal as recordProposalCommand, removeInput as removeInputCommand, removeLogicKey, removeLogicLink, removeLogicModule as removeLogicModuleCommand, removeLogicNode, seedModulesFromNodes, setNodeModule as setNodeModuleCommand, setStartNode, updateInput as updateInputCommand, updateLogicKey, updateLogicLink, updateLogicModule as updateLogicModuleCommand, updateLogicNode, type InputDraft } from "../domain/concept-commands";
 import { pruneCandidate, type CandidateNode, type RecognitionCandidate } from "../domain/concept-candidate";
+import { editDecomposition as editDecompositionCommand, type DecompositionEdit } from "../domain/concept-commands";
 import type { DecompositionCandidate } from "../domain/concept-decomposition";
 import { generateConfiguration as generateConfigurationCommand, type ConfigurationCandidate } from "../domain/concept-configuration";
 import { generateAssembly as generateAssemblyCommand, type AssemblyGenerationResult } from "../domain/concept-assembly";
@@ -50,6 +51,7 @@ interface ProjectStore {
   setDecomposition: (candidate: DecompositionCandidate | null) => void;
   applyDecompositionCandidate: () => void;
   setNodeModule: (nodeId: string, moduleId: string | null) => void;
+  editDecomposition: (edit: DecompositionEdit) => void;
   addLogicModule: (name: string, nodeIds?: string[]) => void;
   updateLogicModule: (moduleId: string, patch: Partial<Pick<LogicModule, "name" | "note">>) => void;
   removeLogicModule: (moduleId: string) => void;
@@ -116,7 +118,7 @@ interface ProjectStore {
   addLogicNode: (position?: Vec2) => void;
   updateLogicNode: (nodeId: string, patch: Partial<Omit<LogicNode, "id">>) => void;
   removeLogicNode: (nodeId: string) => void;
-  addLogicLink: (from: string, to: string, logic: LogicKind) => void;
+  addLogicLink: (from: string, to: string, logic: LogicKind, handles?: Pick<LogicLink, "sourceHandle" | "targetHandle">) => void;
   updateLogicLink: (linkId: string, patch: Partial<Omit<LogicLink, "id">>) => void;
   removeLogicLink: (linkId: string) => void;
   addLogicKey: (foundAt: string, linkId: string, name?: string) => void;
@@ -287,6 +289,11 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       set({ decomposition: null });
     },
     setNodeModule: (nodeId, moduleId) => commitTopology(setNodeModuleCommand(currentTopology(), nodeId, moduleId)),
+    editDecomposition: (edit) => {
+      const current = currentTopology();
+      const next = editDecompositionCommand(current, edit);
+      if (next !== current) commitTopology(next);
+    },
     addLogicModule: (name, nodeIds) => {
       const result = createLogicModuleCommand(currentTopology(), name, nodeIds ?? []);
       commitTopology(result.topology);
@@ -326,8 +333,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       commitTopology(removeLogicNode(currentTopology(), nodeId));
       set((state) => (state.selectedLogicNodeId === nodeId ? { selectedLogicNodeId: null } : {}));
     },
-    addLogicLink: (from, to, logic) => {
-      const result = addLogicLink(currentTopology(), from, to, logic);
+    addLogicLink: (from, to, logic, handles) => {
+      const result = addLogicLink(currentTopology(), from, to, logic, handles);
       if (!result) return;
       commitTopology(result.topology);
       set({ selectedLogicLinkId: result.link.id, selectedLogicNodeId: null });
@@ -500,7 +507,14 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       scheduleSave(next, set);
     },
     replaceProject: (project) => {
-      set({ project, stage: "concept", view: "assembly", activeInstanceId: null, activeModuleId: null, selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [], selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, selectedInputId: null, conceptPane: "topology", past: [], future: [], previewDirty: true, previewProject: null, previewRevision: 0 });
+      set({
+        project, stage: "concept", view: "assembly", activeInstanceId: null, activeModuleId: null,
+        selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [],
+        selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, selectedInputId: null,
+        conceptPane: "topology", conceptScopeId: null, candidate: null, candidateExcluded: [], selectedCandidateNodeId: null,
+        decomposition: null, configuration: null, assemblyResult: null,
+        past: [], future: [], previewDirty: true, previewProject: null, previewRevision: 0,
+      });
       scheduleSave(project, set);
     },
   };

@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { createEmptyTopology, type LogicTopology } from "./concept";
-import { addLogicLink, addLogicNode, createLogicModule } from "./concept-commands";
+import { addLogicLink, addLogicNode, createLogicModule, removeLogicLink } from "./concept-commands";
 import { generateConfiguration } from "./concept-configuration";
 import { generateAssembly, LOGIC_TO_CONNECTION } from "./concept-assembly";
 import { applyConfiguration } from "./commands";
 import { resolveAssembly } from "./assembly-resolver";
 import { createDemoProject } from "./demo-project";
+import { projectSchema } from "./project-schema";
+import { buildLocalUEDryRun } from "./ue-plan";
 import type { BlockoutProject } from "./types";
 
 /** 三个区域排成一条链、分属三个模块，各自有相对位置与标高 */
@@ -102,6 +104,55 @@ describe("组装：概念 → 阶段二", () => {
     expect(again.result.connectionsCreated).toBe(0);
     expect(again.result.instancesMoved).toBe(0);
     expect(again.result.connectionsUpdated).toBe(2);
+  });
+
+  it("已组装后重新套用构型仍可保存，并保留积木、连线和 UE 同步身份", () => {
+    const { project, topology } = assembled();
+    project.connections[0].waypoints = [[100, 200]];
+    const original = structuredClone(project);
+    const blockIds = project.modules.flatMap((module) => module.blocks.map((block) => block.id));
+    const syncKeys = buildLocalUEDryRun(project).actors.map((actor) => actor.syncKey).sort();
+    const candidate = generateConfiguration(topology);
+    candidate.modules.reverse();
+    candidate.modules[0].areas[0].size[0] += 100;
+    const configured = applyConfiguration(project, candidate).project;
+
+    expect(projectSchema.safeParse(configured).success).toBe(true);
+    expect(configured.modules.flatMap((module) => module.blocks.map((block) => block.id))).toEqual(blockIds);
+    expect(configured.connections).toEqual(project.connections);
+    expect(project).toEqual(original);
+
+    const generated = generateAssembly(configured);
+    expect(projectSchema.safeParse(generated.project).success).toBe(true);
+    expect(generated.result.instancesCreated).toBe(0);
+    expect(generated.result.connectionsCreated).toBe(0);
+    expect(generated.project.instances.map((instance) => instance.id)).toEqual(project.instances.map((instance) => instance.id));
+    expect(generated.project.connections.map((connection) => connection.id)).toEqual(project.connections.map((connection) => connection.id));
+    expect(generated.project.connections[0].waypoints).toEqual([[100, 200]]);
+    expect(buildLocalUEDryRun(generated.project).actors.map((actor) => actor.syncKey).sort()).toEqual(syncKeys);
+  });
+
+  it("构型移除端口时解除所有复用实例的关联连线，保留其他连接", () => {
+    const { project, topology } = assembled();
+    const removed = project.connections[0];
+    const copies = [removed.sourceInstanceId, removed.targetInstanceId].map((id) => ({
+      ...structuredClone(project.instances.find((instance) => instance.id === id)!), id: `copy_${id}`,
+    }));
+    const copiedConnection = { ...structuredClone(removed), id: "copy_connection", sourceInstanceId: copies[0].id, targetInstanceId: copies[1].id };
+    const demo = createDemoProject();
+    const incoming = {
+      ...project,
+      concept: removeLogicLink(topology, topology.links[0].id),
+      modules: [...project.modules, ...demo.modules],
+      instances: [...project.instances, ...copies, ...demo.instances],
+      connections: [...project.connections, copiedConnection, ...demo.connections],
+    };
+    expect(projectSchema.safeParse(incoming).success).toBe(true);
+    const next = applyConfiguration(incoming, generateConfiguration(incoming.concept)).project;
+    expect(projectSchema.safeParse(next).success).toBe(true);
+    expect(next.connections).toEqual([project.connections[1], ...demo.connections]);
+    expect(next.modules.filter((module) => demo.modules.some((item) => item.id === module.id))).toEqual(demo.modules);
+    expect(incoming.connections).toHaveLength(3 + demo.connections.length);
   });
 
   it("没有相对位置的模块会被列出来并放在原点", () => {

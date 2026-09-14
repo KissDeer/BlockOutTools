@@ -92,6 +92,7 @@ export function addLogicLink(
   from: string,
   to: string,
   logic: LogicKind = "normal",
+  handles: Pick<LogicLink, "sourceHandle" | "targetHandle"> = {},
 ): { topology: LogicTopology; link: LogicLink } | null {
   if (from === to) return null;
   if (!topology.nodes.some((item) => item.id === from) || !topology.nodes.some((item) => item.id === to)) return null;
@@ -101,6 +102,7 @@ export function addLogicLink(
     label: nextLinkLabel(next),
     from,
     to,
+    ...handles,
     logic,
     traversal: defaultTraversal(logic),
     requires: null,
@@ -325,6 +327,43 @@ export function dropProposals(topology: LogicTopology): LogicTopology {
 }
 
 /* ---------------- 横向拆解 ---------------- */
+
+export type DecompositionEdit = {
+  positions?: { nodeId: string; position: [number, number] }[];
+  assignments?: { nodeId: string; moduleId: string | null }[];
+};
+
+/** 一次拖放同时提交排版与归属；任何无效引用都拒绝整次操作。 */
+export function editDecomposition(topology: LogicTopology, edit: DecompositionEdit): LogicTopology {
+  const nodes = new Map(topology.nodes.map((node) => [node.id, node]));
+  const moduleIds = new Set(topology.modules.map((module) => module.id));
+  const positions = new Map<string, [number, number]>();
+  const assignments = new Map<string, string | null>();
+  for (const { nodeId, position } of edit.positions ?? []) {
+    if (!nodes.has(nodeId) || !position.every(Number.isFinite)) return topology;
+    positions.set(nodeId, position);
+  }
+  for (const { nodeId, moduleId } of edit.assignments ?? []) {
+    if (!nodes.has(nodeId) || (moduleId !== null && !moduleIds.has(moduleId))) return topology;
+    assignments.set(nodeId, moduleId);
+  }
+  for (const [nodeId, position] of positions) {
+    const current = nodes.get(nodeId)!.graphPosition;
+    if (current[0] === position[0] && current[1] === position[1]) positions.delete(nodeId);
+  }
+  for (const [nodeId, moduleId] of assignments) {
+    const owners = topology.modules.flatMap((module) => module.nodeIds.filter((id) => id === nodeId).map(() => module.id));
+    if ((moduleId === null && owners.length === 0) || (owners.length === 1 && owners[0] === moduleId)) assignments.delete(nodeId);
+  }
+  if (positions.size === 0 && assignments.size === 0) return topology;
+  const next = clone(topology);
+  for (const node of next.nodes) {
+    const position = positions.get(node.id);
+    if (position) node.graphPosition = [...position];
+  }
+  for (const [nodeId, moduleId] of assignments) assign(next, nodeId, moduleId);
+  return next;
+}
 
 /**
  * 套用拆解提案：整体替换模块划分。

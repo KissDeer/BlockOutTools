@@ -23,7 +23,14 @@ export function LogicNodeView({ data, selected }: NodeProps) {
       className={`logic-node role-${node.role} ${selected ? "is-selected" : ""} ${isStart ? "is-start" : ""}`}
       style={group ? { borderTopColor: group.color, borderTopWidth: 3 } : undefined}
     >
-      <Handle type="target" position={Position.Left} className="logic-handle" />
+      {[
+        { side: Position.Top, label: "上" },
+        { side: Position.Right, label: "右" },
+        { side: Position.Bottom, label: "下" },
+        { side: Position.Left, label: "左" },
+      ].map(({ side, label }) => (
+        <Handle key={side} id={side} type="source" position={side} className="logic-handle" title={`${label}侧连接点：拖出或接入连线`} aria-label={`${label}侧连接点：拖出或接入连线`} />
+      ))}
       <div className="logic-node-head">
         <span className={`logic-role role-${node.role}`}>{NODE_ROLES[node.role]}</span>
         <span className="logic-floor">F{node.floor}</span>
@@ -39,7 +46,6 @@ export function LogicNodeView({ data, selected }: NodeProps) {
       ) : null}
       {!module ? <div className="logic-node-unbound">未绑定模块</div> : null}
       <div className="logic-node-foot"><span>进 {incoming}</span><span>出 {outgoing}</span></div>
-      <Handle type="source" position={Position.Right} className="logic-handle" />
     </div>
   );
 }

@@ -50,7 +50,7 @@ export function nodesOfScope(topology: LogicTopology, scopeId: string | null): L
 export function scopeViews(topology: LogicTopology): { scopeId: string | null; view: LogicTopology }[] {
   return [
     { scopeId: null, view: topology },
-    ...topology.scopes.map((scope) => ({ scopeId: scope.id as string | null, view: { ...scope, scopes: topology.scopes } })),
+    ...topology.scopes.filter((scope) => scope.id !== topology.id).map((scope) => ({ scopeId: scope.id as string | null, view: { ...scope, scopes: topology.scopes } })),
   ];
 }
 

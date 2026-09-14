@@ -214,6 +214,26 @@ describe("嵌套：构型与组装", () => {
     const assembled = generateAssembly(configured.project);
     // 小村 → 游乐园 这条链路的一端是展开的模块，没有单一实例可接
     expect(assembled.result.skippedLinks.some((entry) => entry.includes("游乐园"))).toBe(true);
+    const next = generateAssembly(assembled.project);
+    expect(next.result.skippedLinks).toEqual(assembled.result.skippedLinks);
+    expect(generateAssembly(base()).result.skippedLinks).toEqual([]);
+  });
+
+  it("不同作用域的同名本地节点按所属模块取数，不串用名称或端口", () => {
+    const { topology, villageNodeId } = park();
+    const child = topology.scopes[0];
+    const previousId = child.nodes[0].id;
+    child.nodes[0].id = villageNodeId;
+    child.startNodeId = villageNodeId;
+    child.modules[0].nodeIds = [villageNodeId];
+    child.links = child.links.map((link) => ({ ...link, from: link.from === previousId ? villageNodeId : link.from }));
+    const configured = applyConfiguration({ ...base(), concept: topology }, generateConfiguration(topology)).project;
+    const village = configured.modules.find((module) => module.name === "小村")!;
+    const circus = configured.modules.find((module) => module.name === "马戏团")!;
+    expect(village.blocks.find((block) => block.type === "box")?.name).toBe("小村");
+    expect(circus.blocks.find((block) => block.type === "box")?.name).toBe("马戏团");
+    expect(village.blocks.find((block) => block.type === "port")?.name).toContain("小村");
+    expect(circus.blocks.find((block) => block.type === "port")?.name).toContain("马戏团");
   });
 
   it("同步键带路径段，两个分支的同名积木不会撞键", () => {

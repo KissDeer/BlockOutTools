@@ -1,4 +1,11 @@
-import { EdgeLabelRenderer, type EdgeProps } from "@xyflow/react";
+import { EdgeLabelRenderer, Position, type EdgeProps } from "@xyflow/react";
+
+const outward: Record<Position, [number, number]> = {
+  [Position.Top]: [0, -1],
+  [Position.Right]: [1, 0],
+  [Position.Bottom]: [0, 1],
+  [Position.Left]: [-1, 0],
+};
 
 export interface LogicEdgeData extends Record<string, unknown> {
   color: string;
@@ -19,11 +26,15 @@ export function LogicEdgeView(props: EdgeProps) {
   const data = props.data as LogicEdgeData;
   const [ox, oy] = data.offset;
   const { sourceX: sx, sourceY: sy, targetX: tx, targetY: ty } = props;
-  const cx = (sx + tx) / 2 + ox;
-  const cy = (sy + ty) / 2 + oy;
-  const midX = 0.25 * sx + 0.5 * cx + 0.25 * tx;
-  const midY = 0.25 * sy + 0.5 * cy + 0.25 * ty;
-  const path = `M ${sx},${sy} Q ${cx},${cy} ${tx},${ty}`;
+  const midX = (sx + tx) / 2 + ox;
+  const midY = (sy + ty) / 2 + oy;
+  const lead = Math.max(36, Math.min(120, Math.hypot(tx - sx, ty - sy) / 3));
+  const [sourceDx, sourceDy] = outward[props.sourcePosition];
+  const [targetDx, targetDy] = outward[props.targetPosition];
+  const tangentX = (tx - sx) * 0.18;
+  const tangentY = (ty - sy) * 0.18;
+  // 两段曲线在标签处平滑相接，端点先沿所选方向离开节点。
+  const path = `M ${sx},${sy} C ${sx + sourceDx * lead},${sy + sourceDy * lead} ${midX - tangentX},${midY - tangentY} ${midX},${midY} S ${tx + targetDx * lead},${ty + targetDy * lead} ${tx},${ty}`;
 
   return (
     <>

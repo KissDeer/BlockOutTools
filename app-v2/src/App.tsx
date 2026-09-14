@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Box, ChevronLeft, Cuboid, Redo2, RefreshCw, Save, Undo2 } from "lucide-react";
+import { Box, ChevronLeft, Cuboid, Redo2, RefreshCw, Undo2 } from "lucide-react";
 import { IconButton } from "./components/IconButton";
 import { ProjectFileActions } from "./features/files/ProjectFileActions";
 import { AssemblySidebar } from "./features/assembly/AssemblySidebar";
@@ -23,7 +23,8 @@ import { ConceptSidebar } from "./features/concept/ConceptSidebar";
 import { createEmptyTopology } from "./domain/concept";
 import { checkInputsCompleteness, latestProposal, proposalState } from "./domain/concept-inputs";
 import { summarizeIssues, validateTopology } from "./domain/concept-validation";
-import { summarizeDecomposition } from "./domain/concept-decomposition";
+import { summarizeDecomposition, validateDecomposition } from "./domain/concept-decomposition";
+import { useCurrentTopology } from "./features/concept/use-current-topology";
 import { useProjectStore } from "./store/project-store";
 
 const PreviewPanel = lazy(() => import("./features/preview/PreviewPanel"));
@@ -54,7 +55,6 @@ export function App() {
   const removeLogicLink = useProjectStore((state) => state.removeLogicLink);
   const previewOpen = useProjectStore((state) => state.previewOpen);
   const previewDirty = useProjectStore((state) => state.previewDirty);
-  const saveStatus = useProjectStore((state) => state.saveStatus);
   const pastCount = useProjectStore((state) => state.past.length);
   const futureCount = useProjectStore((state) => state.future.length);
   const rename = useProjectStore((state) => state.renameProject);
@@ -130,7 +130,9 @@ export function App() {
   const inputsState = checkInputsCompleteness(topology.inputs);
   const proposal = latestProposal(topology.proposals);
   const proposalIsStale = proposalState(topology.inputs, proposal) === "stale";
-  const decompositionSummary = summarizeDecomposition(topology);
+  const currentTopology = useCurrentTopology();
+  const decompositionSummary = summarizeDecomposition(currentTopology);
+  const decompositionErrors = validateDecomposition(currentTopology).filter((issue) => issue.severity === "error").length;
   const conceptStage = stage === "concept";
 
   return (
@@ -166,7 +168,7 @@ export function App() {
           <button type="button" className="back-button" onClick={() => setView("assembly")}><ChevronLeft size={16} />返回组装</button>
         ) : null}
         <div className="project-title">
-          <span>{conceptStage ? (conceptPane === "topology" ? "逻辑拓扑" : "输入上下文") : view === "assembly" ? "组装" : activeModule?.name ?? "模块内部"}</span>
+          <span>{conceptStage ? ({ topology: "逻辑拓扑", inputs: "输入上下文", recognition: "识别", decomposition: "模块划分", configuration: "基础构型" }[conceptPane]) : view === "assembly" ? "组装" : activeModule?.name ?? "模块内部"}</span>
           <input
             value={nameDraft}
             aria-label="项目名称"
@@ -175,7 +177,6 @@ export function App() {
             onKeyDown={(event) => event.key === "Enter" && event.currentTarget.blur()}
           />
         </div>
-        <div className={`save-state is-${saveStatus}`}><Save size={14} /><span>{saveStatus === "saved" ? "本地草稿已保存" : saveStatus === "saving" ? "正在保存" : "保存失败"}</span></div>
         <div className="topbar-actions">
           <ProjectFileActions />
           <div className="toolbar-group">
@@ -234,7 +235,7 @@ export function App() {
         <span className={conceptStage
           ? (conceptPane === "inputs" ? (!inputsState.ok || proposalIsStale ? "status-warning" : "")
             : conceptPane === "recognition" ? (candidate ? "status-warning" : "")
-              : conceptPane === "decomposition" ? (decomposition || decompositionSummary.unassigned > 0 ? "status-warning" : "")
+              : conceptPane === "decomposition" ? (decomposition || decompositionSummary.unassigned > 0 || decompositionErrors > 0 || !decompositionSummary.modules ? "status-warning" : "")
                 : topologyIssues.error ? "status-warning" : "")
           : previewDirty ? "status-warning" : ""}>
           {conceptStage
@@ -243,7 +244,7 @@ export function App() {
               : conceptPane === "recognition"
                 ? candidate ? "候选待确认" : "等待候选"
                 : conceptPane === "decomposition"
-                  ? decomposition ? "待确认拆解提案" : decompositionSummary.unassigned > 0 ? `${decompositionSummary.unassigned} 个区域未分配` : decompositionSummary.modules > 0 ? "拆解已就绪" : "尚未拆解"
+                  ? decomposition ? "待确认拆解提案" : decompositionSummary.unassigned > 0 ? `${decompositionSummary.unassigned} 个区域未分配` : decompositionErrors > 0 ? `${decompositionErrors} 个拆解错误` : decompositionSummary.modules > 0 ? "拆解已就绪" : "尚未拆解"
                   : topologyIssues.error ? `${topologyIssues.error} 个逻辑错误` : topologyIssues.warning ? `${topologyIssues.warning} 项待确认` : "逻辑校验通过"
             : previewDirty ? "3D 需要刷新" : "3D 已同步"}
         </span>

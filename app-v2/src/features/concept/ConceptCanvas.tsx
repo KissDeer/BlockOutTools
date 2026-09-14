@@ -19,6 +19,7 @@ import { useCurrentTopology } from "./use-current-topology";
 import { LogicEdgeView, type LogicEdgeData } from "./LogicEdgeView";
 import { LogicNodeView, type LogicNodeData } from "./LogicNodeView";
 import { moduleColor } from "./module-colors";
+import { asLogicHandleSide, resolveLogicHandles } from "./logic-handles";
 
 const nodeTypes: NodeTypes = { logic: LogicNodeView };
 const edgeTypes: EdgeTypes = { logic: LogicEdgeView };
@@ -104,6 +105,7 @@ export function ConceptCanvas() {
         id: link.id,
         source: link.from,
         target: link.to,
+        ...resolveLogicHandles(link, positionOf.get(link.from), positionOf.get(link.to)),
         type: "logic",
         selected: link.id === selectedLinkId,
         data: {
@@ -122,7 +124,10 @@ export function ConceptCanvas() {
 
   function onConnect(connection: FlowConnection) {
     if (!connection.source || !connection.target) return;
-    addLogicLink(connection.source, connection.target, logicKind);
+    addLogicLink(connection.source, connection.target, logicKind, {
+      sourceHandle: asLogicHandleSide(connection.sourceHandle),
+      targetHandle: asLogicHandleSide(connection.targetHandle),
+    });
   }
 
   if (topology.nodes.length === 0) {

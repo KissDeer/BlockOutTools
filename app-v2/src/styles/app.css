@@ -260,7 +260,19 @@ button:disabled { opacity: 0.34; cursor: not-allowed; }
 .inspector-section > button, .inspector-section details button { color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; margin: 4px 0; font-size: 12px; cursor: pointer; }
 .preview-header select, .preview-header input[type="number"], .editor-toolbar select { background: #27312a; color: #d7e5db; border: 1px solid #536358; border-radius: 4px; padding: 5px; font: inherit; }
 .preview-header label { display: flex; align-items: center; gap: 5px; font-size: 12px; }
-.disk-save-state { color: #a8c2b3; font-size: 10px; max-width: 75px; line-height: 1.4; }
+.project-file-actions { gap: 9px; }
+.project-save-state span { display: inline; }
+.project-files-panel { width: min(430px, calc(100vw - 32px)); }
+.project-files-panel header { margin-bottom: 8px; }
+.project-file-commands { display: grid; gap: 5px; }
+.project-file-commands button { display: flex; align-items: center; gap: 10px; width: 100%; margin: 0; padding: 10px; text-align: left; }
+.project-file-commands button:hover, .project-files-panel .library-item:hover { background: #3a493f; border-color: var(--accent); }
+.project-file-commands button > svg { flex-shrink: 0; color: var(--accent); }
+.project-file-commands button > span { flex: 1; }
+.project-file-commands small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+.project-file-commands kbd { color: var(--muted); font: inherit; font-size: 11px; }
+.project-library-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border); }
+.project-library-heading button { display: flex; align-items: center; gap: 5px; margin: 0; font-size: 11px; }
 .route-point { position: absolute; width: 12px; height: 12px; border: 2px solid #e9f4ec; background: #ae8137; border-radius: 50%; padding: 0; pointer-events: all; cursor: move; }
 .editor-toolbar > button { color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; min-height: 30px; padding: 0 9px; font-size: 12px; cursor: pointer; white-space: nowrap; }
 .topbar .back-button, .topbar .text-command, .topbar .issue-indicator { white-space: nowrap; flex-shrink: 0; }
@@ -271,10 +283,16 @@ button:disabled { opacity: 0.34; cursor: not-allowed; }
 @media (max-width: 1450px) {
   .brand-lockup { width: 150px; flex-shrink: 0; }
   .topbar { gap: 8px; }
-  .save-state span { display: none; }
   .project-title { min-width: 120px; }
   .project-title > span { display: none; }
-  .disk-save-state { max-width: 60px; }
+}
+@media (max-width: 1300px) {
+  .topbar { gap: 6px; }
+  .brand-lockup { width: 120px; gap: 6px; }
+  .brand-lockup > span { display: none; }
+  .project-title { min-width: 80px; }
+  .project-title input { width: 100%; }
+  .topbar .stage-switch button, .topbar .pane-switch button { padding-inline: 6px; }
 }
 
 /* ==================== 阶段一：构想工作台（逻辑拓扑） ==================== */
@@ -342,8 +360,8 @@ button:disabled { opacity: 0.34; cursor: not-allowed; }
 .logic-node-preview-meta { color: var(--faint); font-size: 9px; }
 .logic-node-unbound { padding: 6px 0; color: var(--faint); font-size: 10px; }
 .logic-node-foot { display: flex; justify-content: space-between; margin-top: 5px; color: var(--faint); font-size: 9px; }
-.logic-node .logic-handle { width: 8px; height: 8px; background: var(--surface-3); border: 1px solid #5c6a60; }
-.logic-node .logic-handle:hover { background: var(--accent); }
+.logic-node .logic-handle { width: 12px; height: 12px; background: var(--surface-3); border: 1px solid #7e9585; }
+.logic-node .logic-handle:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(75,184,154,.18); }
 
 .logic-edge-label { position: absolute; display: flex; align-items: center; gap: 5px; padding: 2px 6px; background: rgba(24,27,25,.95); border: 1px solid; border-radius: 4px; font-size: 10px; white-space: nowrap; pointer-events: none; }
 .logic-edge-label strong { font-size: 10.5px; }

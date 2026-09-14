@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { CircleAlert, ExternalLink, Layers, Wand2 } from "lucide-react";
 import { validateConfiguration } from "../../domain/concept-configuration";
 import { allModules } from "../../domain/concept-scopes";
+import { canDeliver } from "../../domain/concept-validation";
 import { useProjectStore } from "../../store/project-store";
 import { moduleColor } from "./module-colors";
 import { useCurrentTopology, useRootTopology } from "./use-current-topology";
@@ -21,6 +22,7 @@ export function ConceptConfigurationInspector() {
   const errors = issues.filter((issue) => issue.severity === "error").length;
   // 构型可能落在任意一层作用域，判断要覆盖全树
   const hasConfiguredModule = useMemo(() => allModules(rootTopology).some(({ module }) => module.moduleDefinitionId), [rootTopology]);
+  const assemblyGate = useMemo(() => canDeliver(rootTopology), [rootTopology]);
 
   return (
     <div className="inspector-content">
@@ -81,7 +83,7 @@ export function ConceptConfigurationInspector() {
           <button type="button" className="primary-command" disabled={errors > 0} onClick={applyConfigurationCandidate}>
             套用构型到模块定义
           </button>
-          <p className="field-help">已有绑定的模块会被整体替换积木并递增修订；这是一次可撤销事务。</p>
+          <p className="field-help">更新已有模块的积木并递增修订；同源体块与端口保留身份，移除端口会解除其关联连线。整次操作可撤销。</p>
         </div>
       ) : null}
 
@@ -94,7 +96,7 @@ export function ConceptConfigurationInspector() {
           type="button"
           className="primary-command"
           style={{ width: "100%" }}
-          disabled={!hasConfiguredModule}
+          disabled={!hasConfiguredModule || !assemblyGate.ok}
           onClick={generateAssembly}
         >
           生成组装
@@ -102,6 +104,9 @@ export function ConceptConfigurationInspector() {
         {!hasConfiguredModule ? (
           <p className="field-help">先生成并套用基础构型，模块才有几何可以摆放。</p>
         ) : null}
+        {assemblyGate.blockers.map((issue) => (
+          <div key={issue.id} className="logic-issue is-error"><CircleAlert size={13} /><span>{issue.message}</span></div>
+        ))}
         {assemblyResult ? (
           <dl className="summary-list" style={{ marginTop: 8 }}>
             <div><dt>新建实例</dt><dd>{assemblyResult.instancesCreated}</dd></div>
@@ -115,6 +120,9 @@ export function ConceptConfigurationInspector() {
         ) : null}
         {assemblyResult?.missingPorts.length ? (
           <div className="logic-issue is-error"><CircleAlert size={13} /><span>这些链路缺少端口，没有连线：{assemblyResult.missingPorts.join("、")}</span></div>
+        ) : null}
+        {assemblyResult?.skippedLinks.length ? (
+          <div className="logic-issue is-warning"><CircleAlert size={13} /><span>这些链路需要指定子层边界入口，尚未连接：{assemblyResult.skippedLinks.join("、")}</span></div>
         ) : null}
       </section>
     </div>

@@ -11,6 +11,7 @@ export function ConceptConfigurationBoard() {
   const topology = useCurrentTopology();
   // 快照要给 agent 全树：构型可能发生在任何一层
   const rootTopology = useRootTopology();
+  const scopeId = useProjectStore((state) => state.conceptScopeId);
   const configuration = useProjectStore((state) => state.configuration);
   const setConfiguration = useProjectStore((state) => state.setConfiguration);
   const generateConfiguration = useProjectStore((state) => state.generateConfiguration);
@@ -24,7 +25,7 @@ export function ConceptConfigurationBoard() {
   async function syncState() {
     setStatus("正在同步拓扑与划分…");
     try {
-      const response = await fetch("/api/concept/state", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(conceptSnapshot(topology)) });
+      const response = await fetch("/api/concept/state", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(conceptSnapshot(rootTopology, scopeId)) });
       const data = (await response.json()) as { error?: string };
       setStatus(data.error ? `同步失败：${data.error}` : "已同步，可以在 DSH 里让我给基础构型");
     } catch {
