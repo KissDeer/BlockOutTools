@@ -31,6 +31,10 @@
 .level-tree-row small { color: var(--faint); font-size: 9.5px; }
 .level-tree-row.is-here small { color: #0e191599; }
 .level-tree-row em { margin-left: auto; padding: 0 5px; color: var(--warning); background: #2a2419; border-radius: 8px; font-size: 9.5px; font-style: normal; }
+.level-tree-row em.is-built { color: var(--accent); background: #17251f; }
+.level-tree-row em.is-ungrouped { color: var(--faint); background: transparent; }
+.level-tree-row.is-ungrouped span { color: var(--muted); }
+.level-tree-row.is-here em { color: #0e1915; background: #0e191522; }
 .level-tree-foot { display: flex; align-items: center; gap: 5px; margin: 8px 0 0; color: var(--faint); font-size: 9.5px; }
 .workflow-workspace { display: flex; flex-direction: column; }
 .workflow-navigation { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 10px; border-bottom: 1px solid var(--border-soft); background: var(--surface); font-size: 11px; }
