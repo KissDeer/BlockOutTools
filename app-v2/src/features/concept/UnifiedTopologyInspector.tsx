@@ -1,9 +1,11 @@
 import { ConceptInspector } from "./ConceptInspector";
-import { ConceptDecompositionInspector } from "./ConceptDecompositionInspector";
-import { useDecompositionUI } from "./decomposition-ui-store";
 
+/**
+ * 拓扑检查器。
+ *
+ * 原来按"选了几个区域 / 选了哪个模块"分流到拆解检查器；
+ * 拆解已从主流程撤下，这里直接就是区域 / 连线检查器。
+ */
 export function UnifiedTopologyInspector() {
-  const count = useDecompositionUI((state) => state.selectedNodeIds.length);
-  const selectedModuleId = useDecompositionUI((state) => state.selectedModuleId);
-  return count > 1 || selectedModuleId ? <ConceptDecompositionInspector /> : <ConceptInspector />;
+  return <ConceptInspector />;
 }
