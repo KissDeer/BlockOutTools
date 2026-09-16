@@ -1,0 +1,116 @@
+{
+  "id": "module_96006de7-34e6-4b0b-b4b7-15530b29dc08",
+  "name": "树脚村庄",
+  "revision": 1,
+  "blocks": [
+    {
+      "id": "block_ced56a99-7f7a-43da-b3a3-6a85de914881",
+      "name": "树脚村庄",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_00b8e53a-8e04-4dd5-a83b-c77d98071645",
+        "featureId": "lnode_8b572c39-90af-4c23-903b-3e40c1d0ec91",
+        "status": "confirmed",
+        "note": "模板尺寸（走廊），请按设计调整"
+      },
+      "type": "box",
+      "role": "solid",
+      "elevationReference": "bottom",
+      "parameters": {
+        "BoxSize": [
+          1200,
+          3600,
+          400
+        ],
+        "blockout_material_color": [
+          0.22,
+          0.57,
+          0.48,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.72,
+          0.86,
+          0.8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "port_1cc95d28-82f8-474f-9a11-c733141477eb",
+      "name": "树脚村庄 · 对外连接 R",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_00b8e53a-8e04-4dd5-a83b-c77d98071645",
+        "featureId": "llink_1e2c42b8-5050-4ddf-a38f-bed06a261c9d",
+        "status": "confirmed",
+        "note": "对外连接 R"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_6dd0e72e-ce8c-455b-973d-3ed9675139ee",
+      "name": "树脚村庄 · 对外连接 W",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_00b8e53a-8e04-4dd5-a83b-c77d98071645",
+        "featureId": "llink_40a9c685-9b7c-4f57-863e-7f3b3713f7f8",
+        "status": "confirmed",
+        "note": "对外连接 W"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_be6f10b3-bd4e-4abc-92f2-6725cc6c910c",
+      "name": "树脚村庄 · 对外连接 X",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_00b8e53a-8e04-4dd5-a83b-c77d98071645",
+        "featureId": "llink_30ebf0af-9edb-4ffe-9b99-3b3e789cf036",
+        "status": "confirmed",
+        "note": "对外连接 X"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    }
+  ]
+}

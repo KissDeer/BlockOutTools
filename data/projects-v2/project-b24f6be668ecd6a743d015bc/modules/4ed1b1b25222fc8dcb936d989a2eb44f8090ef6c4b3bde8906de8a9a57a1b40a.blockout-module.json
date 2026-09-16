@@ -1,0 +1,185 @@
+{
+  "id": "module_06f8aaae-3c21-401d-828f-fecc7185c817",
+  "name": "教堂3f",
+  "revision": 1,
+  "blocks": [
+    {
+      "id": "block_c912db49-109b-470a-956d-f0ace665a4f1",
+      "name": "教堂3f",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_aa50d112-0c8a-46ad-8d0f-0b15ed43c299",
+        "featureId": "lnode_fec80bcd-cb2c-4920-a2ec-94e9724a448a",
+        "status": "confirmed",
+        "note": "模板尺寸（走廊），请按设计调整"
+      },
+      "type": "box",
+      "role": "solid",
+      "elevationReference": "bottom",
+      "parameters": {
+        "BoxSize": [
+          1200,
+          3600,
+          400
+        ],
+        "blockout_material_color": [
+          0.22,
+          0.57,
+          0.48,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.72,
+          0.86,
+          0.8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "port_8bfc07b9-afb5-4e4f-9c1e-e78ae45b8046",
+      "name": "教堂3f · 对外连接 C",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_aa50d112-0c8a-46ad-8d0f-0b15ed43c299",
+        "featureId": "llink_8f1ae785-1daa-4c02-911b-219e9c906791",
+        "status": "confirmed",
+        "note": "对外连接 C"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_06240091-1bf4-4776-b5a8-579769b7a2eb",
+      "name": "教堂3f · 对外连接 D",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_aa50d112-0c8a-46ad-8d0f-0b15ed43c299",
+        "featureId": "llink_e0a70003-839c-4f86-ab4c-f400251ea46b",
+        "status": "confirmed",
+        "note": "对外连接 D"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_1571b5e6-17ad-4a46-a768-cfab3387ae08",
+      "name": "教堂3f · 对外连接 E",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_aa50d112-0c8a-46ad-8d0f-0b15ed43c299",
+        "featureId": "llink_dd961df5-f8da-4df2-b30e-5696977ee421",
+        "status": "confirmed",
+        "note": "对外连接 E"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_b6264f5f-f87c-4ba8-a6eb-c4d1f0890a12",
+      "name": "教堂3f · 对外连接 T",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_aa50d112-0c8a-46ad-8d0f-0b15ed43c299",
+        "featureId": "llink_ed600abe-3cf1-4edb-aa56-693726d26623",
+        "status": "confirmed",
+        "note": "对外连接 T"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_1e99bf75-1ab6-420f-9718-5067f8dbd9fd",
+      "name": "教堂3f · 对外连接 A2",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_aa50d112-0c8a-46ad-8d0f-0b15ed43c299",
+        "featureId": "llink_64132bc6-f9e3-4b5a-a70d-9864f2986629",
+        "status": "confirmed",
+        "note": "对外连接 A2"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_43e65713-cfd1-4719-9b12-d1b4c2e43604",
+      "name": "教堂3f · 对外连接 P",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_aa50d112-0c8a-46ad-8d0f-0b15ed43c299",
+        "featureId": "llink_d463e215-622e-4707-8092-b251e50e71e5",
+        "status": "confirmed",
+        "note": "对外连接 P"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    }
+  ]
+}

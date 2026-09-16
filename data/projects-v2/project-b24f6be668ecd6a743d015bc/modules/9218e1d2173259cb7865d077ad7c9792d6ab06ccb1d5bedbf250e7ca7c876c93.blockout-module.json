@@ -1,0 +1,116 @@
+{
+  "id": "module_9b561dc2-2a58-46f7-b6d5-c8caedbb2384",
+  "name": "村外柱子",
+  "revision": 1,
+  "blocks": [
+    {
+      "id": "block_26e422f1-cb5f-41b4-873d-be6c1307406e",
+      "name": "村外柱子",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_dd6a8bd9-ff6f-4109-90e5-edf0251e82b4",
+        "featureId": "lnode_b3c1b4ae-4198-4106-a2f1-17601ea905f9",
+        "status": "confirmed",
+        "note": "模板尺寸（走廊），请按设计调整"
+      },
+      "type": "box",
+      "role": "solid",
+      "elevationReference": "bottom",
+      "parameters": {
+        "BoxSize": [
+          1200,
+          3600,
+          400
+        ],
+        "blockout_material_color": [
+          0.22,
+          0.57,
+          0.48,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.72,
+          0.86,
+          0.8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "port_34bf48c6-1933-4333-b39d-4415a9a51e33",
+      "name": "村外柱子 · 对外连接 M",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_dd6a8bd9-ff6f-4109-90e5-edf0251e82b4",
+        "featureId": "llink_4115fad8-6a49-4e6d-979b-01f601cc86ff",
+        "status": "confirmed",
+        "note": "对外连接 M"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_df69a990-ac06-4112-88b9-f4a90b5eee45",
+      "name": "村外柱子 · 对外连接 Y",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_dd6a8bd9-ff6f-4109-90e5-edf0251e82b4",
+        "featureId": "llink_7158afcd-6a37-406d-81da-7ad9fc80308b",
+        "status": "confirmed",
+        "note": "对外连接 Y"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_07177ec7-a2fb-42d4-8ab4-31d0361392a2",
+      "name": "村外柱子 · 对外连接 F",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_dd6a8bd9-ff6f-4109-90e5-edf0251e82b4",
+        "featureId": "llink_e1e805da-a9d4-43e8-aea5-fa036811aab2",
+        "status": "confirmed",
+        "note": "对外连接 F"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    }
+  ]
+}

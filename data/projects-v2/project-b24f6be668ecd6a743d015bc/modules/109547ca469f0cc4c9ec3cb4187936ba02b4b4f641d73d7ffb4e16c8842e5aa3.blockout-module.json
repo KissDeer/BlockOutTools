@@ -1,0 +1,202 @@
+{
+  "id": "module_de9bb535-50e1-4a23-881f-0e5a89fc841c",
+  "name": "教堂下篝火",
+  "revision": 1,
+  "blocks": [
+    {
+      "id": "block_e21b14a9-4612-48eb-b86a-1a047a7c5973",
+      "name": "教堂下篝火",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_e995be73-4730-499a-a55f-b9c98dcba929",
+        "featureId": "lnode_b5aeafee-0ead-4a07-8e45-e6f3a4f0b76e",
+        "status": "confirmed",
+        "note": "模板尺寸（走廊），请按设计调整"
+      },
+      "type": "box",
+      "role": "solid",
+      "elevationReference": "bottom",
+      "parameters": {
+        "BoxSize": [
+          1200,
+          3600,
+          400
+        ],
+        "blockout_material_color": [
+          0.22,
+          0.57,
+          0.48,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.72,
+          0.86,
+          0.8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "block_19a8b1f0-c987-44cc-b32c-3180dbd20114",
+      "name": "篝火门口",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_e995be73-4730-499a-a55f-b9c98dcba929",
+        "featureId": "lnode_b59f86b1-16e5-4273-8908-071e9272494e",
+        "status": "confirmed",
+        "note": "模板尺寸（走廊），请按设计调整"
+      },
+      "type": "box",
+      "role": "solid",
+      "elevationReference": "bottom",
+      "parameters": {
+        "BoxSize": [
+          1200,
+          3600,
+          400
+        ],
+        "blockout_material_color": [
+          0.22,
+          0.57,
+          0.48,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.72,
+          0.86,
+          0.8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "port_72b8a0fb-d878-42c5-90c3-404131063bdb",
+      "name": "教堂下篝火 · 对外连接 K",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_e995be73-4730-499a-a55f-b9c98dcba929",
+        "featureId": "llink_c2369737-ad12-4807-a409-ba8ed13c0f0f",
+        "status": "confirmed",
+        "note": "对外连接 K"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_431781fd-3dcb-48c6-9e16-b09142496726",
+      "name": "篝火门口 · 对外连接 M",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_e995be73-4730-499a-a55f-b9c98dcba929",
+        "featureId": "llink_4115fad8-6a49-4e6d-979b-01f601cc86ff",
+        "status": "confirmed",
+        "note": "对外连接 M"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_14cb5876-28b9-4857-ba04-1a0763d4ca2c",
+      "name": "篝火门口 · 对外连接 N",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_e995be73-4730-499a-a55f-b9c98dcba929",
+        "featureId": "llink_84b6f883-6e45-4c85-aa74-d96802c06ede",
+        "status": "confirmed",
+        "note": "对外连接 N"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_8a7ff4ca-3049-43d5-b5be-50da30ca61bf",
+      "name": "教堂下篝火 · 对外连接 U",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_e995be73-4730-499a-a55f-b9c98dcba929",
+        "featureId": "llink_ae98fabb-eac7-42ce-8203-ff0c2a347160",
+        "status": "confirmed",
+        "note": "对外连接 U"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_47cae438-db93-4e5b-9c72-0f71754b377b",
+      "name": "篝火门口 · 对外连接 W",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_e995be73-4730-499a-a55f-b9c98dcba929",
+        "featureId": "llink_40a9c685-9b7c-4f57-863e-7f3b3713f7f8",
+        "status": "confirmed",
+        "note": "对外连接 W"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    }
+  ]
+}

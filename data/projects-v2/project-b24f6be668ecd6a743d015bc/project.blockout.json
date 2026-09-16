@@ -61,7 +61,7 @@
     "maxStairRise": 20,
     "minStairTread": 28
   },
-  "updatedAt": "2026-09-14T09:15:20.282Z",
+  "updatedAt": "2026-09-16T09:51:10.899Z",
   "concept": {
     "id": "scope_root",
     "name": "根作用域",
@@ -78,8 +78,8 @@
         "role": "start",
         "floor": 0,
         "graphPosition": [
-          360.7437093386649,
-          1749.4669202399216
+          1140.024342999964,
+          1271.3964717920958
         ],
         "relativePosition": null,
         "elevation": null,
@@ -91,8 +91,8 @@
         "role": "boss",
         "floor": 0,
         "graphPosition": [
-          357.1857896883748,
-          -88.90483826885105
+          1131.8766460760785,
+          -275.21478429099636
         ],
         "relativePosition": null,
         "elevation": null,
@@ -104,8 +104,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          354.40801191059717,
-          91.09516173114892
+          1135.9486851076065,
+          -171.35381496478865
         ],
         "relativePosition": null,
         "elevation": null,
@@ -117,8 +117,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          351.8533631098262,
-          335.2755108908163
+          1136.7060123521278,
+          -32.13591991051027
         ],
         "relativePosition": null,
         "elevation": null,
@@ -130,8 +130,8 @@
         "role": "transition",
         "floor": 3,
         "graphPosition": [
-          360,
-          564
+          1134.542031785245,
+          189.0873600907573
         ],
         "relativePosition": null,
         "elevation": null,
@@ -143,8 +143,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          0,
-          768
+          592.6057591222836,
+          341.3489686071572
         ],
         "relativePosition": null,
         "elevation": null,
@@ -156,8 +156,8 @@
         "role": "transition",
         "floor": 2,
         "graphPosition": [
-          360,
-          768
+          1056.3444417834367,
+          383.657289891895
         ],
         "relativePosition": null,
         "elevation": null,
@@ -169,8 +169,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          720,
-          768
+          1674.891773068933,
+          339.7852119793219
         ],
         "relativePosition": null,
         "elevation": null,
@@ -182,8 +182,8 @@
         "role": "transition",
         "floor": 1,
         "graphPosition": [
-          360,
-          972
+          1187.0721783279205,
+          571.2240234779701
         ],
         "relativePosition": null,
         "elevation": null,
@@ -195,8 +195,8 @@
         "role": "transition",
         "floor": -1,
         "graphPosition": [
-          720,
-          972
+          1678.2961854755388,
+          471.95658643750374
         ],
         "relativePosition": null,
         "elevation": null,
@@ -208,8 +208,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          360,
-          1176
+          1142.6768009695277,
+          763.9547970140093
         ],
         "relativePosition": null,
         "elevation": null,
@@ -221,8 +221,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          0,
-          1380
+          755.1764285220349,
+          860.6281732809337
         ],
         "relativePosition": null,
         "elevation": null,
@@ -234,8 +234,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          361.0411130016749,
-          1319.6441885712022
+          1140.7452890772713,
+          885.6646771003873
         ],
         "relativePosition": null,
         "elevation": null,
@@ -247,8 +247,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          718.5670347003155,
-          1395.0461356466876
+          1669.5636223729296,
+          713.2926755203708
         ],
         "relativePosition": null,
         "elevation": null,
@@ -260,8 +260,8 @@
         "role": "transition",
         "floor": 0,
         "graphPosition": [
-          360,
-          1548
+          1142.3157069858787,
+          1073.6059828069037
         ],
         "relativePosition": null,
         "elevation": null,
@@ -548,6 +548,11 @@
         "nodeIds": [
           "lnode_e4b324da-cded-49c9-9612-07efe715841c"
         ],
+        "moduleDefinitionId": "module_de77b0e7-72b2-47d8-aeeb-7935c04286c2",
+        "relativeOrigin": [
+          -900,
+          -900
+        ],
         "note": ""
       },
       {
@@ -558,12 +563,11 @@
           "lnode_5a1ccd1f-4d82-47eb-9a73-a123658a5632",
           "lnode_26337eae-ab41-431d-8e89-464d80f2bd27"
         ],
-        "note": ""
-      },
-      {
-        "id": "lmodule_1fcdb63f-dce8-4f6d-8169-a09b31888ddb",
-        "name": "教堂3f",
-        "nodeIds": [],
+        "moduleDefinitionId": "module_8712ca32-8f4f-41b1-89ed-be34410e4f2f",
+        "relativeOrigin": [
+          -2100,
+          -1800
+        ],
         "note": ""
       },
       {
@@ -572,27 +576,23 @@
         "nodeIds": [
           "lnode_8bd6e7f6-e250-47a7-b29a-48e06602dda6"
         ],
-        "note": ""
-      },
-      {
-        "id": "lmodule_aa83b121-6669-4de4-b4c2-8e6b2c1b3875",
-        "name": "教堂2f",
-        "nodeIds": [],
-        "note": ""
-      },
-      {
-        "id": "lmodule_0d2da9f6-e293-4f44-b25e-c5866f016aa2",
-        "name": "教堂密道",
-        "nodeIds": [],
+        "moduleDefinitionId": "module_617fc495-8251-4fb0-ac38-931d3384b6d4",
+        "relativeOrigin": [
+          -600,
+          -1800
+        ],
         "note": ""
       },
       {
         "id": "lmodule_aa50d112-0c8a-46ad-8d0f-0b15ed43c299",
-        "name": "教堂1层",
+        "name": "教堂3f",
         "nodeIds": [
-          "lnode_70d83d8a-9941-4ced-b058-be0feb0be8da",
-          "lnode_fec80bcd-cb2c-4920-a2ec-94e9724a448a",
-          "lnode_063fc0d3-1f99-45ed-8412-95cc05e2df4a"
+          "lnode_fec80bcd-cb2c-4920-a2ec-94e9724a448a"
+        ],
+        "moduleDefinitionId": "module_06f8aaae-3c21-401d-828f-fecc7185c817",
+        "relativeOrigin": [
+          -600,
+          -1800
         ],
         "note": ""
       },
@@ -603,6 +603,11 @@
           "lnode_d0fa23cd-5a72-4fab-9fe9-b54b44650860",
           "lnode_3c7a7e15-4541-4aad-9db7-7648e3517a04"
         ],
+        "moduleDefinitionId": "module_8e27b027-38fa-4b2d-a51c-e4a90c4acd99",
+        "relativeOrigin": [
+          -600,
+          -1800
+        ],
         "note": ""
       },
       {
@@ -612,6 +617,11 @@
           "lnode_b5aeafee-0ead-4a07-8e45-e6f3a4f0b76e",
           "lnode_b59f86b1-16e5-4273-8908-071e9272494e"
         ],
+        "moduleDefinitionId": "module_de9bb535-50e1-4a23-881f-0e5a89fc841c",
+        "relativeOrigin": [
+          -600,
+          -1800
+        ],
         "note": ""
       },
       {
@@ -620,12 +630,11 @@
         "nodeIds": [
           "lnode_8b572c39-90af-4c23-903b-3e40c1d0ec91"
         ],
-        "note": ""
-      },
-      {
-        "id": "lmodule_f1f4e02c-ded4-4dce-91cf-d99b9fc10652",
-        "name": "篝火门口",
-        "nodeIds": [],
+        "moduleDefinitionId": "module_96006de7-34e6-4b0b-b4b7-15530b29dc08",
+        "relativeOrigin": [
+          -600,
+          -1800
+        ],
         "note": ""
       },
       {
@@ -633,6 +642,11 @@
         "name": "村外柱子",
         "nodeIds": [
           "lnode_b3c1b4ae-4198-4106-a2f1-17601ea905f9"
+        ],
+        "moduleDefinitionId": "module_9b561dc2-2a58-46f7-b6d5-c8caedbb2384",
+        "relativeOrigin": [
+          -600,
+          -1800
         ],
         "note": ""
       },
@@ -642,6 +656,37 @@
         "nodeIds": [
           "lnode_01596966-25ee-4e36-ae3d-942d44ecd8a3"
         ],
+        "moduleDefinitionId": "module_5dffa24c-2cd4-4704-b56b-b57e98aef1a2",
+        "relativeOrigin": [
+          -600,
+          -1800
+        ],
+        "note": ""
+      },
+      {
+        "id": "lmodule_8c9cf03d-4566-4549-a160-ca9ef884b197",
+        "name": "教堂2f",
+        "nodeIds": [
+          "lnode_063fc0d3-1f99-45ed-8412-95cc05e2df4a"
+        ],
+        "moduleDefinitionId": "module_8f4eb1ff-9fa9-4f2a-bc98-08d45e4fea99",
+        "relativeOrigin": [
+          -600,
+          -1800
+        ],
+        "note": ""
+      },
+      {
+        "id": "lmodule_30288184-95e6-4fe0-9218-d426738b1904",
+        "name": "教堂1f",
+        "nodeIds": [
+          "lnode_70d83d8a-9941-4ced-b058-be0feb0be8da"
+        ],
+        "moduleDefinitionId": "module_18938fc4-4ea9-4b59-a74d-752648059042",
+        "relativeOrigin": [
+          -600,
+          -1800
+        ],
         "note": ""
       }
     ],
@@ -650,6 +695,18 @@
   },
   "moduleFiles": [
     "modules/19b6a4d9441732a5f38fe2129ea45581f3605f17f9bf63e64f13d8c7d8af0f4b.blockout-module.json",
-    "modules/00d04488582dabd01fcaea440a3677d544392e9d64d14386bccada3c7c3c1259.blockout-module.json"
+    "modules/00d04488582dabd01fcaea440a3677d544392e9d64d14386bccada3c7c3c1259.blockout-module.json",
+    "modules/349016c04c6f13c4ed3f09d32dc8cc91a66adb773525f8cb569b48f7117e7837.blockout-module.json",
+    "modules/ba25612b67f9912605ae7228a0cc6cc957d71a9a186a8d650280ac4e7f47c17a.blockout-module.json",
+    "modules/5fe6145797c8732d3c6efed2c69929ddae3c814494b52d488e39ec1c6d7a5488.blockout-module.json",
+    "modules/4ed1b1b25222fc8dcb936d989a2eb44f8090ef6c4b3bde8906de8a9a57a1b40a.blockout-module.json",
+    "modules/ad2bf61124eba242b1f4e8f318ea2fe0271c397c5d7ac5260fba6ccaee3adf1f.blockout-module.json",
+    "modules/109547ca469f0cc4c9ec3cb4187936ba02b4b4f641d73d7ffb4e16c8842e5aa3.blockout-module.json",
+    "modules/bfb01b7bee0c9e72dfa2a1da185197b4a66a7e6a94f2212a5383c909dd4ee725.blockout-module.json",
+    "modules/9218e1d2173259cb7865d077ad7c9792d6ab06ccb1d5bedbf250e7ca7c876c93.blockout-module.json",
+    "modules/72151a61c03abcf8572c5df8b466a965c40d233c003010bff2278f316b332ed9.blockout-module.json",
+    "modules/c881e15e7935683d2ef86ebffd0473b400cab32caa4e52bc75f889090a3c71c8.blockout-module.json",
+    "modules/f52043f740cfadd3d92acace944e563fac6f923bdc0bd1bceaa64afdf770a345.blockout-module.json",
+    "modules/626086363a7c12e2ddda955d539cb0134c3261111e9383b28af2f6e77b9dd872.blockout-module.json"
   ]
 }

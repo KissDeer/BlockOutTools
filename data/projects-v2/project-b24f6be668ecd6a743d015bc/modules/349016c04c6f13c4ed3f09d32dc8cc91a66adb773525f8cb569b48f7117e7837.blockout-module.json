@@ -1,0 +1,70 @@
+{
+  "id": "module_de77b0e7-72b2-47d8-aeeb-7935c04286c2",
+  "name": "外界出生点篝火",
+  "revision": 1,
+  "blocks": [
+    {
+      "id": "block_de5acb0a-dc51-4219-8497-8c438843c492",
+      "name": "外界出生点篝火",
+      "transform": {
+        "position": [
+          900,
+          900,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_3527bc21-c044-4b68-a1d1-b83485b789c8",
+        "featureId": "lnode_e4b324da-cded-49c9-9612-07efe715841c",
+        "status": "confirmed",
+        "note": "模板尺寸（起点小厅），请按设计调整"
+      },
+      "type": "box",
+      "role": "solid",
+      "elevationReference": "bottom",
+      "parameters": {
+        "BoxSize": [
+          1800,
+          1800,
+          400
+        ],
+        "blockout_material_color": [
+          0.22,
+          0.57,
+          0.48,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.72,
+          0.86,
+          0.8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "port_25d131d8-f989-45d3-985a-72ce9d0db901",
+      "name": "外界出生点篝火 · 对外连接 Z",
+      "transform": {
+        "position": [
+          900,
+          900,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_3527bc21-c044-4b68-a1d1-b83485b789c8",
+        "featureId": "llink_ab94a17c-f9d4-45b5-94ae-93824ea98f5b",
+        "status": "confirmed",
+        "note": "对外连接 Z"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    }
+  ]
+}

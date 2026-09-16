@@ -1,0 +1,162 @@
+{
+  "id": "module_18938fc4-4ea9-4b59-a74d-752648059042",
+  "name": "教堂1f",
+  "revision": 1,
+  "blocks": [
+    {
+      "id": "block_14a2bbfb-e497-4084-95bd-d89fb9301688",
+      "name": "教堂1层",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_30288184-95e6-4fe0-9218-d426738b1904",
+        "featureId": "lnode_70d83d8a-9941-4ced-b058-be0feb0be8da",
+        "status": "confirmed",
+        "note": "模板尺寸（走廊），请按设计调整"
+      },
+      "type": "box",
+      "role": "solid",
+      "elevationReference": "bottom",
+      "parameters": {
+        "BoxSize": [
+          1200,
+          3600,
+          400
+        ],
+        "blockout_material_color": [
+          0.22,
+          0.57,
+          0.48,
+          1
+        ],
+        "blockout_material_top_color": [
+          0.72,
+          0.86,
+          0.8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "port_93573eef-f03b-4fe9-88ed-59001e390335",
+      "name": "教堂1层 · 对外连接 J",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_30288184-95e6-4fe0-9218-d426738b1904",
+        "featureId": "llink_33a35ce1-b266-4eef-b555-bad5ebf0d09d",
+        "status": "confirmed",
+        "note": "对外连接 J"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_046232c1-6463-4024-9d49-b5550d5f67ad",
+      "name": "教堂1层 · 对外连接 K",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_30288184-95e6-4fe0-9218-d426738b1904",
+        "featureId": "llink_c2369737-ad12-4807-a409-ba8ed13c0f0f",
+        "status": "confirmed",
+        "note": "对外连接 K"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_6ba469b1-bef0-44ab-acc8-9f2c5b09bb79",
+      "name": "教堂1层 · 对外连接 Q",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_30288184-95e6-4fe0-9218-d426738b1904",
+        "featureId": "llink_5d807524-816b-4857-b3f5-e12595293241",
+        "status": "confirmed",
+        "note": "对外连接 Q"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_a7c23646-85eb-4da1-abb0-6f12432e9f6c",
+      "name": "教堂1层 · 对外连接 S",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_30288184-95e6-4fe0-9218-d426738b1904",
+        "featureId": "llink_6ceb83b7-f9ec-4b95-96a4-9782bb0b5e8b",
+        "status": "confirmed",
+        "note": "对外连接 S"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    },
+    {
+      "id": "port_aeb2db46-0b57-49a6-9aaf-09884cbbed2b",
+      "name": "教堂1层 · 对外连接 T",
+      "transform": {
+        "position": [
+          600,
+          1800,
+          0
+        ],
+        "rotation": 0
+      },
+      "provenance": {
+        "sourceId": "lmodule_30288184-95e6-4fe0-9218-d426738b1904",
+        "featureId": "llink_ed600abe-3cf1-4edb-aa56-693726d26623",
+        "status": "confirmed",
+        "note": "对外连接 T"
+      },
+      "type": "port",
+      "parameters": {
+        "width": 200,
+        "depth": 80
+      }
+    }
+  ]
+}
