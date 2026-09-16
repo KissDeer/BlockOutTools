@@ -14,6 +14,9 @@ import { createDemoProject } from "../domain/demo-project";
 import { createId } from "../domain/ids";
 import { loadDraft, saveDraft } from "../domain/persistence";
 import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, Transform, Vec2 } from "../domain/types";
+import { ensureLogicModule, placeModuleDefinition } from "../domain/module-workflow";
+import { createModulePreviewProject } from "../domain/module-preview-project";
+import { applyModuleDraft as applyModuleDraftCommand, validateModuleDraft, type ModuleDraft } from "../domain/module-draft";
 
 /** concept = 阶段一 构想工作台；build = 阶段二 拼接与转化 */
 export type AppStage = "concept" | "build";
@@ -23,12 +26,30 @@ export type AppView = "assembly" | "module";
 export type TransformMode = "move" | "rotate" | "scale";
 export type SaveStatus = "saved" | "saving" | "error";
 
+interface ModuleReturn {
+  stage: AppStage;
+  view: AppView;
+  conceptScopeId: string | null;
+  selectedInstanceId: string | null;
+  selectedConnectionId: string | null;
+  selectedLogicNodeId: string | null;
+  selectedLogicLinkId: string | null;
+}
+
 interface ProjectStore {
   project: BlockoutProject;
   stage: AppStage;
   view: AppView;
   activeInstanceId: string | null;
   activeModuleId: string | null;
+  moduleReturn: ModuleReturn | null;
+  moduleDraft: ModuleDraft | null;
+  setModuleDraft: (draft: ModuleDraft | null) => void;
+  applyModuleDraft: () => string[];
+  openLogicModule: (logicModuleId: string) => void;
+  returnFromModule: () => void;
+  showAssembly: () => void;
+  placeModule: (moduleId: string, scopePath?: string[]) => string | null;
   selectedInstanceId: string | null;
   selectedConnectionId: string | null;
   selectedBlockIds: string[];
@@ -77,6 +98,7 @@ interface ProjectStore {
   previewDirty: boolean;
   previewRevision: number;
   previewProject: BlockoutProject | null;
+  previewModuleId: string | null;
   saveStatus: SaveStatus;
   past: BlockoutProject[];
   future: BlockoutProject[];
@@ -191,6 +213,35 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     return scopeView(base, get().conceptScopeId);
   }
 
+  function enterModule(moduleId: string, instanceId: string | null): void {
+    const state = get();
+    if (!state.project.modules.some((module) => module.id === moduleId)) return;
+    const bookmark: ModuleReturn = {
+      stage: state.stage, view: state.view, conceptScopeId: state.conceptScopeId,
+      selectedInstanceId: instanceId ?? state.selectedInstanceId, selectedConnectionId: state.selectedConnectionId,
+      selectedLogicNodeId: state.selectedLogicNodeId, selectedLogicLinkId: state.selectedLogicLinkId,
+    };
+    set({ stage: "build", view: "module", activeModuleId: moduleId, activeInstanceId: instanceId,
+      moduleReturn: state.stage === "build" && state.view === "module" ? state.moduleReturn : bookmark,
+      moduleDraft: null, selectedInstanceId: instanceId ?? state.selectedInstanceId, selectedConnectionId: null, selectedBlockIds: [] });
+  }
+
+  function historySelection(project: BlockoutProject): Partial<ProjectStore> {
+    const state = get();
+    const conceptScopeId = state.conceptScopeId && project.concept?.scopes.some((scope) => scope.id === state.conceptScopeId) ? state.conceptScopeId : null;
+    const topology = project.concept ? scopeView(project.concept, conceptScopeId) : null;
+    const moduleExists = project.modules.some((module) => module.id === state.activeModuleId);
+    return {
+      conceptScopeId, selectedBlockIds: [], moduleDraft: null,
+      selectedInstanceId: project.instances.some((instance) => instance.id === state.selectedInstanceId) ? state.selectedInstanceId : null,
+      selectedConnectionId: project.connections.some((connection) => connection.id === state.selectedConnectionId) ? state.selectedConnectionId : null,
+      selectedLogicNodeId: topology?.nodes.some((node) => node.id === state.selectedLogicNodeId) ? state.selectedLogicNodeId : null,
+      selectedLogicLinkId: topology?.links.some((link) => link.id === state.selectedLogicLinkId) ? state.selectedLogicLinkId : null,
+      activeInstanceId: project.instances.some((instance) => instance.id === state.activeInstanceId) ? state.activeInstanceId : null,
+      ...(moduleExists ? {} : { activeModuleId: null, view: "assembly" as const }),
+    };
+  }
+
   /** 拓扑改动一律：先算出新的**当前作用域**，再写回它在树里的位置 */
   function commitTopology(next: LogicTopology): void {
     const root = get().project.concept ?? createEmptyTopology();
@@ -203,6 +254,45 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     view: "assembly",
     activeInstanceId: null,
     activeModuleId: null,
+    moduleReturn: null,
+    moduleDraft: null,
+    setModuleDraft: (moduleDraft) => {
+      if (moduleDraft && (moduleDraft.projectId !== get().project.projectId || moduleDraft.moduleId !== currentModuleId())) return;
+      set({ moduleDraft, selectedBlockIds: [] });
+    },
+    applyModuleDraft: () => {
+      const { project, moduleDraft } = get();
+      if (!moduleDraft) return ["没有待采用的模块草案"];
+      const errors = validateModuleDraft(project, moduleDraft);
+      if (errors.length) return errors;
+      try {
+        commit(applyModuleDraftCommand(project, moduleDraft));
+        set({ moduleDraft: null, selectedBlockIds: [] });
+        return [];
+      } catch (error) { return [error instanceof Error ? error.message : "采用失败"]; }
+    },
+    openLogicModule: (logicModuleId) => {
+      const result = ensureLogicModule(get().project, logicModuleId);
+      if (result.childScopeId) {
+        set({ stage: "concept", conceptPane: "topology", conceptScopeId: result.childScopeId, selectedLogicNodeId: null, selectedLogicLinkId: null, moduleDraft: null });
+        return;
+      }
+      if (!result.module) return;
+      commit(result.project);
+      enterModule(result.module.id, null);
+    },
+    returnFromModule: () => {
+      const bookmark = get().moduleReturn;
+      set({ ...(bookmark ?? { stage: "build", view: "assembly" }), conceptPane: "topology", moduleDraft: null, selectedBlockIds: [] });
+    },
+    showAssembly: () => set({ stage: "build", view: "assembly", moduleDraft: null }),
+    placeModule: (moduleId, scopePath) => {
+      const result = placeModuleDefinition(get().project, moduleId, scopePath);
+      if (!result.instance) return null;
+      commit(result.project);
+      set({ selectedInstanceId: result.instance.id, selectedConnectionId: null });
+      return result.instance.id;
+    },
     selectedInstanceId: initialProject.instances[0]?.id ?? null,
     selectedConnectionId: null,
     selectedBlockIds: [],
@@ -225,15 +315,19 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     previewDirty: true,
     previewRevision: 0,
     previewProject: null,
+    previewModuleId: null,
     saveStatus: "saved",
     past: [],
     future: [],
     instanceClipboardId: null,
     blockClipboard: [],
-    setStage: (stage) => set({ stage }),
-    setView: (view) => set({ view }),
-    openModule: (instanceId) => set((state) => ({ view: "module", activeInstanceId: instanceId, activeModuleId: state.project.instances.find((item) => item.id === instanceId)?.definitionId ?? null, selectedInstanceId: instanceId, selectedConnectionId: null, selectedBlockIds: [] })),
-    openModuleById: (moduleId) => set({ stage: "build", view: "module", activeModuleId: moduleId, activeInstanceId: null, selectedConnectionId: null, selectedBlockIds: [] }),
+    setStage: (stage) => set({ stage, conceptPane: "topology", moduleDraft: null }),
+    setView: (view) => set({ view, moduleDraft: null }),
+    openModule: (instanceId) => {
+      const instance = get().project.instances.find((item) => item.id === instanceId);
+      if (instance) enterModule(instance.definitionId, instanceId);
+    },
+    openModuleById: (moduleId) => enterModule(moduleId, null),
     setSelectedInstance: (selectedInstanceId) => set({ selectedInstanceId, selectedConnectionId: null }),
     setSelectedConnection: (selectedConnectionId) => set({ selectedConnectionId, selectedInstanceId: null }),
     setSelectedBlocks: (selectedBlockIds) => set({ selectedBlockIds }),
@@ -298,7 +392,16 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const result = createLogicModuleCommand(currentTopology(), name, nodeIds ?? []);
       commitTopology(result.topology);
     },
-    updateLogicModule: (moduleId, patch) => commitTopology(updateLogicModuleCommand(currentTopology(), moduleId, patch)),
+    updateLogicModule: (moduleId, patch) => {
+      const current = currentTopology();
+      const definitionId = current.modules.find((group) => group.id === moduleId)?.moduleDefinitionId;
+      const next = updateLogicModuleCommand(current, moduleId, patch);
+      const project = get().project;
+      const concept = writeScopeView(project.concept ?? createEmptyTopology(), get().conceptScopeId, next);
+      const bindingCount = [concept, ...concept.scopes].flatMap((scope) => scope.modules).filter((group) => group.moduleDefinitionId === definitionId).length;
+      commit({ ...setConcept(project, concept), modules: patch.name?.trim() && definitionId && bindingCount === 1
+        ? project.modules.map((module) => module.id === definitionId ? { ...module, name: patch.name!.trim() } : module) : project.modules });
+    },
     removeLogicModule: (moduleId) => commitTopology(removeLogicModuleCommand(currentTopology(), moduleId)),
     seedModules: () => commitTopology(seedModulesFromNodes(currentTopology())),
     setConfiguration: (configuration) => set({ configuration }),
@@ -318,7 +421,12 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     setTransformMode: (transformMode) => set({ transformMode }),
     setConnectionType: (connectionType) => set({ connectionType }),
     togglePreview: () => set((state) => ({ previewOpen: !state.previewOpen })),
-    refreshPreview: () => set((state) => ({ previewRevision: state.previewRevision + 1, previewProject: state.project, previewDirty: false, previewOpen: true })),
+    refreshPreview: () => {
+      const state = get();
+      const moduleId = state.stage === "build" && state.view === "module" ? currentModuleId() : null;
+      set({ previewRevision: state.previewRevision + 1, previewProject: moduleId ? createModulePreviewProject(state.project, moduleId) : state.project,
+        previewModuleId: moduleId, previewDirty: false, previewOpen: true });
+    },
     renameProject: (name) => commit(renameProject(get().project, name)),
     updateModule: (module) => commit(updateModule(get().project, module)),
     updateSettings: (patch) => commit(updateProjectSettings(get().project, patch)),
@@ -410,6 +518,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     updateInstanceGraph: (instanceId, position) => commit(updateInstanceGraph(get().project, instanceId, position)),
     updateInstanceTransform: (instanceId, transform) => commit(updateInstanceTransform(get().project, instanceId, transform)),
     addBlock: (type, position) => {
+      if (get().moduleDraft) return;
       const moduleId = currentModuleId();
       if (!moduleId) return;
       const result = addBlock(get().project, moduleId, type, position);
@@ -418,11 +527,13 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       set({ selectedBlockIds: [result.block.id] });
     },
     updateBlock: (block) => {
+      if (get().moduleDraft) return;
       const moduleId = currentModuleId();
       if (!moduleId) return;
       commit(updateBlock(get().project, moduleId, block));
     },
     deleteSelectedBlocks: () => {
+      if (get().moduleDraft) return;
       const moduleId = currentModuleId();
       const ids = get().selectedBlockIds;
       if (!moduleId || ids.length === 0) return;
@@ -436,6 +547,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       set({ blockClipboard: module?.blocks.filter((item) => ids.has(item.id)).map((item) => structuredClone(item)) ?? [] });
     },
     pasteBlocks: () => {
+      if (get().moduleDraft) return;
       const moduleId = currentModuleId();
       const module = get().project.modules.find((item) => item.id === moduleId);
       const clipboard = get().blockClipboard;
@@ -492,28 +604,24 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const state = get();
       const previous = state.past.at(-1);
       if (!previous) return;
-      const nodes = new Set(previous.concept?.nodes.map((item) => item.id) ?? []);
-      const links = new Set(previous.concept?.links.map((item) => item.id) ?? []);
-      set({ project: previous, past: state.past.slice(0, -1), future: [state.project, ...state.future].slice(0, 100), previewDirty: true, selectedConnectionId: null, selectedInstanceId: null, selectedBlockIds: [], selectedLogicNodeId: nodes.has(state.selectedLogicNodeId ?? "") ? state.selectedLogicNodeId : null, selectedLogicLinkId: links.has(state.selectedLogicLinkId ?? "") ? state.selectedLogicLinkId : null, ...(previous.instances.some((item) => item.id === state.activeInstanceId) ? {} : { view: "assembly" as const, activeInstanceId: null }) });
+      set({ ...historySelection(previous), project: previous, past: state.past.slice(0, -1), future: [state.project, ...state.future].slice(0, 100), previewDirty: true });
       scheduleSave(previous, set);
     },
     redo: () => {
       const state = get();
       const next = state.future[0];
       if (!next) return;
-      const nodes = new Set(next.concept?.nodes.map((item) => item.id) ?? []);
-      const links = new Set(next.concept?.links.map((item) => item.id) ?? []);
-      set({ project: next, past: [...state.past, state.project].slice(-100), future: state.future.slice(1), previewDirty: true, selectedConnectionId: null, selectedInstanceId: null, selectedBlockIds: [], selectedLogicNodeId: nodes.has(state.selectedLogicNodeId ?? "") ? state.selectedLogicNodeId : null, selectedLogicLinkId: links.has(state.selectedLogicLinkId ?? "") ? state.selectedLogicLinkId : null });
+      set({ ...historySelection(next), project: next, past: [...state.past, state.project].slice(-100), future: state.future.slice(1), previewDirty: true });
       scheduleSave(next, set);
     },
     replaceProject: (project) => {
       set({
-        project, stage: "concept", view: "assembly", activeInstanceId: null, activeModuleId: null,
+        project, stage: "concept", view: "assembly", activeInstanceId: null, activeModuleId: null, moduleReturn: null, moduleDraft: null,
         selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [],
         selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, selectedInputId: null,
         conceptPane: "topology", conceptScopeId: null, candidate: null, candidateExcluded: [], selectedCandidateNodeId: null,
         decomposition: null, configuration: null, assemblyResult: null,
-        past: [], future: [], previewDirty: true, previewProject: null, previewRevision: 0,
+        past: [], future: [], previewDirty: true, previewProject: null, previewModuleId: null, previewRevision: 0, previewOpen: false,
       });
       scheduleSave(project, set);
     },

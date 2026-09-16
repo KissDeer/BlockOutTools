@@ -1,0 +1,43 @@
+.workflow-shell { grid-template-columns: 284px minmax(540px, 1fr) 296px; grid-template-rows: 52px auto minmax(0, 1fr) 24px; min-width: 1180px; }
+.workflow-shell .left-sidebar, .workflow-shell .workspace, .workflow-shell .inspector { grid-row: 3; }
+.workflow-shell .statusbar { grid-row: 4; }
+.workflow-shell .preview-panel { position: relative; grid-row: 3; grid-column: 2 / -1; top: auto; right: auto; bottom: auto; left: auto; }
+.workflow-project-context { grid-column: 1 / -1; grid-row: 2; min-width: 0; z-index: 25; }
+.workflow-shell .brand-lockup { width: auto; flex-shrink: 0; }
+.workflow-shell .project-title { min-width: 100px; flex: 1; }
+.workflow-shell .project-title input { width: 100%; min-width: 60px; }
+.workflow-shell .stage-switch { flex-shrink: 0; }
+.workflow-workspace { display: flex; flex-direction: column; }
+.workflow-navigation { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 10px; border-bottom: 1px solid var(--border-soft); background: var(--surface); font-size: 11px; }
+.workflow-navigation > strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.workflow-navigation > span { color: var(--muted); margin-right: auto; font-size: 10px; }
+.workflow-navigation .text-command, .workflow-navigation .back-button { flex-shrink: 0; font-size: 11px; }
+.workflow-canvas { position: relative; flex: 1; min-height: 180px; }
+.workflow-canvas > * { height: 100%; }
+.workflow-tools { position: relative; margin-left: auto; color: var(--muted); }
+.workflow-tools summary, .assembly-reference summary { padding: 6px; cursor: pointer; }
+.workflow-tools > div { position: absolute; right: 0; top: 30px; z-index: 20; width: 170px; padding: 6px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; box-shadow: 0 8px 20px #0005; }
+.workflow-tools button { display: block; width: 100%; text-align: left; padding: 8px; border: 0; background: transparent; cursor: pointer; }
+.workflow-tools button:hover { background: var(--surface-3); }
+.module-reference-sidebar { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.module-reference-sidebar > .module-context-panel { flex: 1; min-height: 0; overflow-y: auto; }
+.module-palette-fieldset, .block-inspector-fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.module-palette-fieldset { flex: 0 0 auto; border-top: 1px solid var(--border); background: var(--surface); }
+.module-palette-fieldset .sidebar-content { height: auto; }
+.module-palette-fieldset .sidebar-heading { height: 30px; }
+.module-palette-fieldset .block-palette { display: grid; grid-template-columns: 1fr 1fr; padding: 8px; gap: 5px; }
+.module-palette-fieldset .block-palette button { min-width: 0; min-height: 38px; padding: 5px; }
+.module-palette-fieldset .palette-icon { width: 28px; height: 28px; }
+.module-palette-fieldset .block-palette small, .module-palette-fieldset .sidebar-footnote { display: none; }
+.workflow-notice { margin: 0; padding: 8px 10px; background: #d8a84e15; color: var(--warning); font-size: 11px; line-height: 1.6; }
+.assembly-reference { border-top: 1px solid var(--border); font-size: 11px; }
+.workflow-module-list { overflow: auto; flex: 1; padding: 8px; }
+.workflow-module-card { padding: 10px; margin-bottom: 8px; border: 1px solid var(--border-soft); border-radius: 5px; background: var(--surface-2); }
+.workflow-module-card.is-selected { border-color: var(--accent); }
+.workflow-module-card strong { font-size: 12px; }
+.workflow-module-card p { color: var(--muted); font-size: 10px; line-height: 1.7; margin: 6px 0; }
+.workflow-module-card .module-card-actions { display: flex; gap: 5px; margin-top: 8px; }
+.workflow-module-card button { min-height: 26px; font-size: 11px; }
+.workflow-module-card select { width: 100%; background: var(--surface); color: var(--text); padding: 4px; border: 1px solid var(--border); font-size: 10px; }
+.workflow-module-card .instance-choice { display: block; width: 100%; margin-top: 5px; padding: 5px; text-align: left; background: var(--surface); color: var(--muted); border: 1px solid transparent; border-radius: 3px; }
+.workflow-module-card .instance-choice[aria-pressed="true"] { border-color: var(--accent); color: var(--text); }

@@ -19,6 +19,8 @@ export default function PreviewPanel() {
   const revision = useProjectStore((state) => state.previewRevision);
   // Display controls operate on the last explicitly refreshed project, not live edits.
   const previewProject = useProjectStore((state) => state.previewProject);
+  const previewModuleId = useProjectStore((state) => state.previewModuleId);
+  const draftPreview = useProjectStore((state) => Boolean(state.moduleDraft));
   const snapshot = previewProject ?? project;
   const dirty = useProjectStore((state) => state.previewDirty);
   const toggle = useProjectStore((state) => state.togglePreview);
@@ -29,6 +31,11 @@ export default function PreviewPanel() {
   const [isolateId, setIsolateId] = useState("");
   const [showPorts, setShowPorts] = useState(true);
   const [cutHeight, setCutHeight] = useState("");
+  const effectiveIsolateId = snapshot.instances.some((item) => item.id === isolateId) ? isolateId : "";
+
+  useEffect(() => {
+    if (isolateId && !snapshot.instances.some((item) => item.id === isolateId)) setIsolateId("");
+  }, [snapshot, isolateId]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -50,11 +57,11 @@ export default function PreviewPanel() {
     const content = new THREE.Group();
     scene.add(content);
     const resolution = resolveAssembly(snapshot);
-    const instances = resolution.instances.filter((item) => !isolateId || item.id === isolateId);
+    const instances = resolution.instances.filter((item) => !effectiveIsolateId || item.id === effectiveIsolateId);
     const primitives = buildDeploymentGeometry(snapshot, instances);
     setPrimitiveCount(primitives.length);
     setAssemblyIssueCount(resolution.issues.length);
-    setSpatialIssueCount(validateProject(snapshot).length);
+    setSpatialIssueCount(validateProject(snapshot).filter((issue) => !previewModuleId || issue.moduleId === previewModuleId).length);
     renderer.localClippingEnabled = cutHeight !== "";
     const clippingPlanes = cutHeight === "" ? [] : [new THREE.Plane(new THREE.Vector3(0, -1, 0), Number(cutHeight))];
     for (const primitive of primitives) {
@@ -138,24 +145,25 @@ export default function PreviewPanel() {
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [revision, snapshot, isolateId, showPorts, cutHeight]);
+  }, [revision, snapshot, effectiveIsolateId, showPorts, cutHeight, previewModuleId]);
 
   return (
     <aside className="preview-panel" aria-label="三维预览">
       <header className="panel-header preview-header">
-        <div><strong>3D 预览</strong><span>{revision === 0 ? "尚未生成" : `${primitiveCount} 个预览几何 · ${assemblyIssueCount === 0 ? "端口约束闭合" : `${assemblyIssueCount} 条连接未闭合`} · ${spatialIssueCount} 项规范提示`}</span></div>
+        <div><strong>{previewModuleId ? "模块局部 3D" : "整体 3D 预览"}</strong><span>{revision === 0 ? "尚未生成，点击刷新" : `${primitiveCount} 个预览几何 · ${previewModuleId ? "局部厘米坐标" : `${assemblyIssueCount} 项实际对接提示`} · ${spatialIssueCount} 项规范提示`}{draftPreview ? " · 当前已采用几何，不含草案" : ""}</span></div>
         <div className="toolbar-group">
-          <select aria-label="预览模块" value={isolateId} onChange={(event) => setIsolateId(event.target.value)}><option value="">全部模块</option>{project.instances.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
+          <select aria-label="预览模块" value={effectiveIsolateId} onChange={(event) => setIsolateId(event.target.value)}><option value="">{previewModuleId ? "当前模块" : "全部已放置模块"}</option>{snapshot.instances.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
           <label><input type="checkbox" checked={showPorts} onChange={(event) => setShowPorts(event.target.checked)} />端口方向</label>
           <input aria-label="剖切高度" type="number" placeholder="剖切高度 cm" value={cutHeight} onChange={(event) => setCutHeight(event.target.value)} style={{ width: 110 }} />
           <button type="button" className={`refresh-preview ${dirty ? "is-dirty" : ""}`} onClick={refresh}><RefreshCw size={15} />{dirty || revision === 0 ? "刷新" : "重新生成"}</button>
           <IconButton label="收起 3D 预览" onClick={toggle}><X size={17} /></IconButton>
         </div>
       </header>
-      <div ref={hostRef} className="preview-host">
-        {revision === 0 ? <div className="preview-empty"><BoxGlyph /><strong>3D 尚未生成</strong><span>点击刷新，根据当前模块实例重建预览。</span></div> : null}
+      <div className="preview-host">
+        <div ref={hostRef} style={{ position: "absolute", inset: 0 }} />
+        {revision === 0 ? <div className="preview-empty"><BoxGlyph /><strong>3D 尚未生成</strong><span>点击刷新，预览当前模块的局部形态或整体已放置模块。</span></div> : primitiveCount === 0 ? <div className="preview-empty"><BoxGlyph /><strong>{previewModuleId ? "当前模块还没有实体积木" : "整体还没有可预览的几何"}</strong><span>{previewModuleId ? "添加盒体、门洞或直梯后刷新；无需先放入整体。" : "放置模块后刷新，或进入模块查看局部 3D。"}</span></div> : null}
       </div>
-      <footer className="preview-footer"><span>左键旋转 · 右键平移 · 滚轮缩放 · 端口闭合不代表路径可走</span>{dirty ? <em>当前项目有未刷新的修改</em> : assemblyIssueCount > 0 ? <em>{assemblyIssueCount} 条端口约束未闭合</em> : <strong>检查楼梯落脚点与通道净空</strong>}</footer>
+      <footer className="preview-footer"><span>左键旋转 · 右键平移 · 滚轮缩放 · {previewModuleId ? "局部预览不表示外部接口已对接" : "对接检查不表示玩法路径可走"}</span>{dirty ? <em>当前项目有未刷新的修改</em> : !previewModuleId && assemblyIssueCount > 0 ? <em>{assemblyIssueCount} 条端口约束未闭合</em> : <strong>检查楼梯落脚点与通道净空</strong>}</footer>
     </aside>
   );
 }

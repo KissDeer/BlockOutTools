@@ -40,12 +40,25 @@ export const blockSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
+export const designMaterialSchema = z.object({
+  id: z.string().min(1), name: z.string().min(1),
+  kind: z.enum(["structure", "mood", "rules", "note"]),
+  text: z.string(),
+  imageData: z.string().max(16_000_000).refine((value) => !value || /^data:image\/(png|jpeg|webp);base64,/.test(value), "图片格式无效"),
+  moduleIds: z.array(z.string().min(1)),
+});
+
 export const projectSchema = z.object({
   schemaVersion: z.literal(2),
   projectId: z.string().min(1),
   name: z.string().min(1),
   assemblyAnchorInstanceId: z.string().min(1).optional(),
-  modules: z.array(z.object({ id: z.string().min(1), name: z.string().min(1), revision: z.number().int().nonnegative(), blocks: z.array(blockSchema), reference: referenceSchema.optional(), interpretation: z.record(z.string(), z.unknown()).optional() })),
+  modules: z.array(z.object({
+    id: z.string().min(1), name: z.string().min(1), revision: z.number().int().nonnegative(),
+    blocks: z.array(blockSchema), reference: referenceSchema.optional(), interpretation: z.record(z.string(), z.unknown()).optional(),
+    designBrief: z.object({ purpose: z.string(), goals: z.string() }).optional(),
+    shapeConfirmation: z.object({ digest: z.string().min(1), confirmedAt: z.string().datetime() }).optional(),
+  })),
   instances: z.array(z.object({ id: z.string().min(1), definitionId: z.string().min(1), name: z.string().min(1), graphPosition: vec2, assemblyTransform: transform, scopePath: z.array(z.string().min(1)).optional() })),
   connections: z.array(z.object({
     id: z.string().min(1),
@@ -70,6 +83,7 @@ export const projectSchema = z.object({
   }),
   updatedAt: z.string().datetime(),
   concept: logicTopologySchema.optional(),
+  designContext: z.object({ goal: z.string(), constraints: z.string(), materials: z.array(designMaterialSchema) }).optional(),
 }).superRefine((project, context) => {
   const fail = (message: string) => context.addIssue({ code: "custom", message });
   const unique = (ids: string[], label: string) => { if (new Set(ids).size !== ids.length) fail(`${label}身份重复`); };
@@ -77,6 +91,7 @@ export const projectSchema = z.object({
   unique(project.instances.map((item) => item.id), "实例");
   unique(project.connections.map((item) => item.id), "连接");
   unique(project.modules.flatMap((item) => item.blocks.map((block) => block.id)), "积木");
+  unique(project.designContext?.materials.map((item) => item.id) ?? [], "设计资料");
   for (const instance of project.instances) if (!project.modules.some((module) => module.id === instance.definitionId)) fail(`实例 ${instance.id} 引用了不存在的模块`);
   if (project.assemblyAnchorInstanceId && !project.instances.some((item) => item.id === project.assemblyAnchorInstanceId)) fail("组装基准实例不存在");
   const occupied = new Set<string>();

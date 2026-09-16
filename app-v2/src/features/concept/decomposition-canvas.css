@@ -4,7 +4,7 @@
 .decomposition-canvas .react-flow__node-moduleFrame .decomp-frame-title,
 .decomposition-canvas .react-flow__node-moduleFrame .decomp-frame-menu { pointer-events: auto; }
 .decomposition-canvas .logic-node-unbound { display: none; }
-.decomposition-canvas .logic-handle { opacity: .35; pointer-events: none; }
+.decomposition-canvas .logic-handle { opacity: .8; pointer-events: auto; }
 .decomposition-canvas .logic-edge-label { pointer-events: none; }
 .decomp-frame { height: 100%; border: 1.5px solid color-mix(in srgb, var(--module-color) 65%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--module-color) 5%, transparent); transition: background .12s, border-color .12s; }
 .decomp-frame.is-active { border-width: 2px; border-color: var(--module-color); }
@@ -17,6 +17,21 @@
 .decomp-frame-title button { padding: 3px; color: inherit; border: 0; background: transparent; cursor: pointer; }
 .decomp-frame-title input { width: 100%; min-width: 70px; padding: 4px 6px; background: #171c19; color: #f1f5f1; border: 1px solid var(--module-color); border-radius: 3px; }
 .decomp-frame-empty { padding: 30px 12px; text-align: center; font-size: 12px; color: var(--muted); }
+.decomp-frame-summary { padding: 11px 14px; color: var(--muted); font-size: 11px; }
+.decomp-frame.is-collapsed { background: #202722; }
+.decomp-frame .module-summary-handle { background: var(--module-color); width: 7px; height: 7px; border: 1px solid #263229; }
+.decomp-frame:not(.is-collapsed) .module-summary-handle { visibility: hidden; }
+.decomposition-canvas .canvas-mode-label { bottom: 38px; left: 64px; top: auto; pointer-events: none; }
+.topology-module-entry { display: flex; gap: 4px; margin: 4px 0; }
+.topology-module-entry > button { display: flex; align-items: center; padding: 9px 8px; text-align: left; color: var(--text); background: transparent; border: 1px solid transparent; border-radius: 4px; cursor: pointer; }
+.topology-module-entry > button:hover { background: var(--surface-2); }
+.topology-module-entry > button.is-selected { background: rgba(75,184,154,.09); border-color: rgba(75,184,154,.34); }
+.topology-module-entry > button > span { flex-direction: column; gap: 5px; }
+.topology-module-entry > button:first-child { flex: 1; min-width: 0; }
+.topology-module-entry > .topology-build-button { width: auto; flex: none; padding: 6px 9px; font-size: 11px; }
+.topology-module-entry i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 7px; }
+.topology-all-regions { margin: 12px 0; font-size: 12px; color: var(--muted); }
+.topology-all-regions summary { cursor: pointer; padding: 6px 0; }
 .decomp-frame-menu { position: absolute; top: 42px; right: 0; width: 174px; z-index: 50; padding: 5px; background: #232923; border: 1px solid var(--module-color); border-radius: 5px; box-shadow: 0 8px 22px #0008; }
 .decomp-frame-menu button { display: block; width: 100%; padding: 8px; color: var(--text); background: transparent; border: none; text-align: left; font-size: 12px; cursor: pointer; }
 .decomp-frame-menu button:hover { background: #394139; }

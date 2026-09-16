@@ -5,6 +5,7 @@ import type { Plugin } from "vite";
 import { recognitionCandidateSchema } from "../src/domain/concept-candidate";
 import { decompositionCandidateSchema } from "../src/domain/concept-decomposition";
 import { configurationCandidateSchema } from "../src/domain/concept-configuration";
+import { moduleDraftMiddleware } from "./module-draft-bridge";
 
 /**
  * 阶段一的本地桥：让 DSH 里的 agent 能读到输入材料（图片落盘，可直接看图），
@@ -32,6 +33,7 @@ async function readBody(request: IncomingMessage): Promise<Record<string, unknow
 }
 
 export function conceptBridgePlugin(): Plugin {
+  const moduleDrafts = moduleDraftMiddleware();
   const root = resolve(process.env.BLOCKOUT_V2_CONCEPT_DIR || "../data/concept");
   let inputs: InputsBundle | null = null;
   let state: { state: unknown; receivedAt: string } | null = null;
@@ -145,7 +147,7 @@ export function conceptBridgePlugin(): Plugin {
 
   return {
     name: "blockout-concept-bridge",
-    configureServer(server) { server.middlewares.use(middleware); },
-    configurePreviewServer(server) { server.middlewares.use(middleware); },
+    configureServer(server) { server.middlewares.use(moduleDrafts); server.middlewares.use(middleware); },
+    configurePreviewServer(server) { server.middlewares.use(moduleDrafts); server.middlewares.use(middleware); },
   };
 }

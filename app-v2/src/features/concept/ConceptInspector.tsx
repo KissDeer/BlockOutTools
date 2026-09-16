@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Box, Cuboid, ExternalLink, Flag, KeyRound, Link2, Plus, Trash2, Unlink } from "lucide-react";
+import { ExternalLink, Flag, Plus, Trash2 } from "lucide-react";
 import {
   LOGIC_KINDS,
   NODE_ROLES,
@@ -9,13 +9,14 @@ import {
   type LogicTraversal,
 } from "../../domain/concept";
 import { topologyStats } from "../../domain/concept-commands";
-import { canDeliver, validateTopology } from "../../domain/concept-validation";
+import { validateTopology } from "../../domain/concept-validation";
 import { NumberField } from "../../components/NumberField";
 import { SelectField } from "../../components/SelectField";
 import { TextField } from "../../components/TextField";
 import { useProjectStore } from "../../store/project-store";
 import { ModulePlanPreview } from "./ModulePlanPreview";
 import { useCurrentTopology } from "./use-current-topology";
+import { confirmModuleChange } from "./confirm-module-change";
 
 const LOGIC_OPTIONS = (Object.keys(LOGIC_KINDS) as LogicKind[]).map((kind) => ({ value: kind, label: LOGIC_KINDS[kind].label }));
 const ROLE_OPTIONS = (Object.keys(NODE_ROLES) as LogicNodeRole[]).map((role) => ({ value: role, label: NODE_ROLES[role] }));
@@ -32,17 +33,14 @@ export function ConceptInspector() {
   const removeLink = useProjectStore((state) => state.removeLogicLink);
   const addLogicKey = useProjectStore((state) => state.addLogicKey);
   const setStartNode = useProjectStore((state) => state.setLogicStartNode);
-  const setNodeModule = useProjectStore((state) => state.setNodeModule);
   const addLogicModule = useProjectStore((state) => state.addLogicModule);
-  const bindNodeModule = useProjectStore((state) => state.bindNodeModule);
-  const createModuleForNode = useProjectStore((state) => state.createModuleForNode);
+  const openLogicModule = useProjectStore((state) => state.openLogicModule);
   const openModuleById = useProjectStore((state) => state.openModuleById);
-  const refreshPreview = useProjectStore((state) => state.refreshPreview);
   const [keyFoundAt, setKeyFoundAt] = useState("");
 
   const issues = useMemo(() => validateTopology(topology), [topology]);
   const stats = useMemo(() => topologyStats(topology), [topology]);
-  const gate = useMemo(() => canDeliver(topology), [topology]);
+
   const node = topology.nodes.find((item) => item.id === selectedNodeId) ?? null;
   const link = topology.links.find((item) => item.id === selectedLinkId) ?? null;
 
@@ -117,8 +115,8 @@ export function ConceptInspector() {
 
   /* ---------------- 选中区域 ---------------- */
   if (node) {
-    const module = project.modules.find((item) => item.id === node.moduleId) ?? null;
     const ownerModule = topology.modules.find((item) => item.nodeIds.includes(node.id)) ?? null;
+    const module = project.modules.find((item) => item.id === (ownerModule?.moduleDefinitionId ?? node.moduleId)) ?? null;
     const isStart = topology.startNodeId === node.id;
     const relatedLinks = topology.links.filter((item) => item.from === node.id || item.to === node.id);
     const relatedIssues = issues.filter((issue) => issue.nodeIds.includes(node.id));
@@ -145,93 +143,27 @@ export function ConceptInspector() {
         </section>
 
         <section className="inspector-section">
-          <h3>所属模块（横向拆解）</h3>
-          <label className="select-field">
-            <span>模块</span>
-            <select
-              value={ownerModule?.id ?? ""}
-              onChange={(event) => setNodeModule(node.id, event.target.value || null)}
-            >
-              <option value="">未分配</option>
-              {topology.modules.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
-            </select>
-          </label>
-          {ownerModule ? (
-            <p className="field-help">当前属于“{ownerModule.name}”，该模块共 {ownerModule.nodeIds.length} 个区域。</p>
-          ) : (
-            <p className="field-help">还没有分到模块；未分配的区域会拦住拆解交付。</p>
-          )}
-          <button type="button" className="secondary-command" style={{ marginTop: 6 }} onClick={() => addLogicModule(`${node.name} 模块`, [node.id])}>
-            <Plus size={14} />新建模块并放入
-          </button>
+          <h3>所属模块</h3>
+          {ownerModule ? <>
+            <p className="field-help">{ownerModule.name} · {ownerModule.nodeIds.length} 个区域。拖入其他模块或使用画布上方“移动到”调整归属。</p>
+            {module?.blocks.length ? <ModulePlanPreview module={module} width={268} height={152} /> : null}
+            <button type="button" className="primary-command" onClick={() => openLogicModule(ownerModule.id)}><ExternalLink size={14} />搭建{ownerModule.name}</button>
+          </> : <>
+            <p className="field-help">框选相关区域组成模块，或将此区域拖入已有模块。其他模块未完成不影响当前搭建。</p>
+            <button type="button" className="secondary-command" onClick={() => addLogicModule(`${node.name} 模块`, [node.id])}><Plus size={14} />此区域组成模块</button>
+            {module ? <button type="button" className="secondary-command" onClick={() => openModuleById(module.id)}>打开旧版绑定模块</button> : null}
+          </>}
         </section>
 
         <section className="inspector-section">
-          <h3>定位（相对父级，与真实世界位置无关）</h3>
-          {node.relativePosition ? (
-            <>
-              <dl className="summary-list">
-                <div><dt>相对位置</dt><dd>({Math.round(node.relativePosition[0])}, {Math.round(node.relativePosition[1])}) cm</dd></div>
-                <div><dt>标高</dt><dd>{node.elevation ? `${node.elevation.base} ~ ${node.elevation.top} cm` : "未给出"}</dd></div>
-              </dl>
-              <p className="field-help">来自范围图标定换算。世界位置仍然只在阶段二组装时产生。</p>
-            </>
-          ) : (
-            <p className="field-help" style={{ marginTop: 0 }}>还没有相对位置。可以在「识别」里按范围图定位，或在这里手填。</p>
-          )}
-          <div className="field-grid two-columns">
-            <NumberField label="相对 X" value={node.relativePosition?.[0] ?? 0} onCommit={(x) => updateNode(node.id, { relativePosition: [x, node.relativePosition?.[1] ?? 0] })} />
-            <NumberField label="相对 Y" value={node.relativePosition?.[1] ?? 0} onCommit={(y) => updateNode(node.id, { relativePosition: [node.relativePosition?.[0] ?? 0, y] })} />
-          </div>
-          <label className="checkbox-field">
-            <input
-              type="checkbox"
-              checked={Boolean(node.elevation)}
-              onChange={(event) => updateNode(node.id, { elevation: event.target.checked ? { base: 0, top: 400 } : null })}
-            />
-            给出标高
-          </label>
-          {node.elevation ? (
-            <div className="field-grid two-columns">
-              <NumberField label="底面标高" value={node.elevation.base} onCommit={(base) => updateNode(node.id, { elevation: { base, top: node.elevation?.top ?? base } })} />
-              <NumberField label="顶面标高" value={node.elevation.top} onCommit={(top) => updateNode(node.id, { elevation: { base: node.elevation?.base ?? 0, top } })} />
-            </div>
-          ) : null}
-        </section>
-
-        <section className="inspector-section">
-          <h3>模块</h3>
-          {module ? (
-            <>
-              <ModulePlanPreview module={module} width={268} height={152} />
-              <dl className="summary-list" style={{ marginTop: 9 }}>
-                <div><dt>Box</dt><dd>{module.blocks.filter((item) => item.type === "box").length}</dd></div>
-                <div><dt>门洞</dt><dd>{module.blocks.filter((item) => item.type === "doorway").length}</dd></div>
-                <div><dt>出入口</dt><dd>{module.blocks.filter((item) => item.type === "port").length}</dd></div>
-                <div><dt>修订</dt><dd>r{module.revision}</dd></div>
-              </dl>
-              <p className="field-help">绑定模块：{module.name}</p>
-              <div className="inspector-commands" style={{ padding: "8px 0 0" }}>
-                <button type="button" className="primary-command" onClick={() => openModuleById(module.id)}><ExternalLink size={14} />进入模块编辑</button>
-                <button type="button" className="secondary-command" onClick={refreshPreview}><Cuboid size={14} />打开 3D 预览</button>
-                <button type="button" className="secondary-command" onClick={() => bindNodeModule(node.id, undefined)}><Unlink size={14} />解绑模块</button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="field-help" style={{ marginTop: 0 }}>这个区域还没有模块。绑定或新建后，就能直接看到里面的体块并进入编辑。</p>
-              <label className="select-field">
-                <span>绑定已有模块</span>
-                <select value="" onChange={(event) => { if (event.target.value) bindNodeModule(node.id, event.target.value); }}>
-                  <option value="">选择模块…</option>
-                  {project.modules.map((item) => <option key={item.id} value={item.id}>{item.name}（{item.blocks.length} 积木）</option>)}
-                </select>
-              </label>
-              <button type="button" className="primary-command" style={{ marginTop: 8 }} onClick={() => createModuleForNode(node.id)}>
-                <Plus size={14} />新建模块并绑定
-              </button>
-            </>
-          )}
+          <h3>标高要求</h3>
+          <p className="field-help">逻辑层号只作提示。确定的标高会成为模块搭建依据；未确定时可以留空。</p>
+          <label className="checkbox-field"><input type="checkbox" checked={Boolean(node.elevation)} onChange={(event) => updateNode(node.id, { elevation: event.target.checked ? { base: 0, top: 400 } : null })} />已确定标高</label>
+          {node.elevation ? <div className="field-grid two-columns">
+            <NumberField label="底面标高" value={node.elevation.base} onCommit={(base) => updateNode(node.id, { elevation: { base, top: node.elevation?.top ?? base } })} />
+            <NumberField label="顶面标高" value={node.elevation.top} onCommit={(top) => updateNode(node.id, { elevation: { base: node.elevation?.base ?? 0, top } })} />
+          </div> : null}
+          {node.relativePosition ? <details><summary>保留的来源位置</summary><p className="field-help">({Math.round(node.relativePosition[0])}, {Math.round(node.relativePosition[1])}) cm；仅供旧资料追溯，不是进入模块的前置条件。</p></details> : null}
         </section>
 
         {relatedLinks.length ? (
@@ -259,7 +191,7 @@ export function ConceptInspector() {
         ) : null}
 
         <div className="inspector-commands">
-          <button type="button" className="danger-command" onClick={() => removeNode(node.id)}><Trash2 size={14} />删除区域</button>
+          <button type="button" className="danger-command" onClick={() => { if (confirmModuleChange(project, topology, [node.id], null)) removeNode(node.id); }}><Trash2 size={14} />删除区域</button>
         </div>
       </div>
     );
@@ -286,15 +218,8 @@ export function ConceptInspector() {
       </section>
 
       <section className="inspector-section">
-        <h3>交付门</h3>
-        {gate.ok ? (
-          <p className="field-help" style={{ marginTop: 0 }}>没有结构性错误，可以交给阶段二。</p>
-        ) : (
-          <>
-            <p className="field-help" style={{ marginTop: 0 }}>还有 {gate.blockers.length} 个错误必须先解决：</p>
-            {gate.blockers.map((issue) => <div key={issue.id} className="logic-issue is-error"><span>{issue.message}</span></div>)}
-          </>
-        )}
+        <h3>继续搭建</h3>
+        <p className="field-help">框选区域组成模块，双击模块标题即可进入内部搭建。逻辑问题会持续提醒；参考图和全局坐标都不是手工搭建的前置条件。</p>
       </section>
 
       <section className="inspector-section">
@@ -302,7 +227,7 @@ export function ConceptInspector() {
         <p className="field-help" style={{ marginTop: 0 }}>
           选中区域或链路查看详情。<br />
           从这个区域拖到另一个区域即可建立链路；先在左栏选好链路类型。<br />
-          给区域绑定模块后，可直接看到模块内部体块并进入编辑。
+          拖入模块可调整归属；模块可折叠查看关系，展开后继续编辑区域。
         </p>
       </section>
     </div>

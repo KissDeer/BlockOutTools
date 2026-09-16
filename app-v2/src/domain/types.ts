@@ -62,6 +62,22 @@ export interface PortBlock extends BlockBase {
 
 export type Block = BoxBlock | DoorwayBlock | StairsLinearBlock | PortBlock;
 
+export interface DesignMaterial {
+  id: string;
+  name: string;
+  kind: "structure" | "mood" | "rules" | "note";
+  text: string;
+  imageData: string;
+  /** Empty means project-wide. References stable module definition IDs. */
+  moduleIds: string[];
+}
+
+export interface DesignContext {
+  goal: string;
+  constraints: string;
+  materials: DesignMaterial[];
+}
+
 export interface ModuleDefinition {
   id: string;
   name: string;
@@ -69,6 +85,8 @@ export interface ModuleDefinition {
   blocks: Block[];
   reference?: DiagramReference;
   interpretation?: Record<string, unknown>;
+  designBrief?: { purpose: string; goals: string };
+  shapeConfirmation?: { digest: string; confirmedAt: string };
 }
 
 export interface DiagramReference {
@@ -145,6 +163,7 @@ export interface BlockoutProject {
   assemblyAnchorInstanceId?: string;
   /** 阶段一：逻辑拓扑（只表达连通逻辑，不含真实位置） */
   concept?: LogicTopology;
+  designContext?: DesignContext;
 }
 
 export interface ValidationIssue {

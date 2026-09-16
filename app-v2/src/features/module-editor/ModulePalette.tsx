@@ -8,24 +8,24 @@ const icons = {
   "stairs-linear": ChartNoAxesColumnIncreasing,
   port: ArrowRightFromLine,
 };
+const labels = { box: "盒体", doorway: "门洞", "stairs-linear": "直梯", port: "出入口" };
 
 export function ModulePalette() {
   const addBlock = useProjectStore((state) => state.addBlock);
   return (
     <div className="sidebar-content">
-      <div className="sidebar-heading"><div><span>可部署积木</span><strong>{CATALOG.filter((item) => item.deployable).length}</strong></div><Box size={16} /></div>
+      <div className="sidebar-heading"><div><span>手工添加积木</span><strong>{CATALOG.length}</strong></div><Box size={16} /></div>
       <div className="block-palette">
         {CATALOG.map((item) => {
           const Icon = icons[item.type];
           return (
-            <button type="button" key={item.type} onClick={() => addBlock(item.type)}>
+            <button type="button" key={item.type} aria-label={`添加${labels[item.type]}`} title={`添加${labels[item.type]}`} onClick={() => addBlock(item.type)}>
               <span className={`palette-icon type-${item.type}`}><Icon size={20} /></span>
-              <span><strong>{item.shortLabel}</strong><small>{item.deployable ? "UE Blueprint" : "模块关系"}</small></span>
+              <span><strong>{labels[item.type]}</strong></span>
             </button>
           );
         })}
       </div>
-      <div className="sidebar-footnote">Phase 0 先验证 Box、门洞、直梯和出入口。其他 UE 类型将复用同一 Schema 接入。</div>
     </div>
   );
 }

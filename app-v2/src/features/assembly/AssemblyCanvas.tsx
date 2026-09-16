@@ -10,6 +10,7 @@ import {
   type Edge,
   type Node,
   type NodeTypes,
+  type Viewport,
 } from "@xyflow/react";
 import { useProjectStore } from "../../store/project-store";
 import { CONNECTION_LABELS } from "../../domain/connection-labels";
@@ -18,6 +19,7 @@ import { ModuleNode, type ModuleNodeData } from "./ModuleNode";
 
 const nodeTypes: NodeTypes = { module: ModuleNode };
 const edgeTypes = { routing: RoutingEdge };
+const viewports = new Map<string, Viewport>();
 
 interface PendingPort {
   instanceId: string;
@@ -119,7 +121,8 @@ export function AssemblyCanvas() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}
-        fitView
+        defaultViewport={viewports.get(project.projectId)}
+        fitView={!viewports.has(project.projectId)}
         fitViewOptions={{ padding: 0.28, maxZoom: 1.15 }}
         minZoom={0.25}
         maxZoom={1.8}
@@ -128,6 +131,7 @@ export function AssemblyCanvas() {
         onPaneClick={() => { setPendingPort(null); selectInstance(null); }}
         onNodeDragStop={(_, node) => updateGraph(node.id, [node.position.x, node.position.y])}
         onConnect={onConnect}
+        onMoveEnd={(_, viewport) => viewports.set(project.projectId, viewport)}
         deleteKeyCode={null}
       >
         <Background gap={24} size={1} color="#323832" />
