@@ -11,3 +11,8 @@ __pycache__/
 output/playwright/
 data/projects-v2/**/.save-*.tmp
 data/concept/
+
+# 本地叠加的 agent 指令与随手草稿：不进版本库，正式记录走 design-log/
+AGENTS.local.md
+CLAUDE.local.md
+design-log/**/*.local.md
