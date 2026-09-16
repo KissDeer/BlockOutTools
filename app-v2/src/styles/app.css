@@ -360,6 +360,11 @@ button:disabled { opacity: 0.34; cursor: not-allowed; }
 .logic-node-preview-meta { color: var(--faint); font-size: 9px; }
 .logic-node-unbound { padding: 6px 0; color: var(--faint); font-size: 10px; }
 .logic-node-foot { display: flex; justify-content: space-between; margin-top: 5px; color: var(--faint); font-size: 9px; }
+
+/* 节点内部：已经拼好的内容与"里面还有什么" */
+.logic-node.has-interior { border-color: #56624f; }
+.logic-node-interior { display: flex; align-items: center; gap: 4px; padding: 6px 0 3px; color: var(--warning); font-size: 10px; }
+.logic-node-enter { color: var(--accent); }
 .logic-node .logic-handle { width: 12px; height: 12px; background: var(--surface-3); border: 1px solid #7e9585; }
 .logic-node .logic-handle:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(75,184,154,.18); }
 

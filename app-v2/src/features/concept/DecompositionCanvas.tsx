@@ -9,6 +9,7 @@ import { LOGIC_KINDS, TRAVERSALS, type LogicModule, type LogicTopology } from ".
 import { useProjectStore } from "../../store/project-store";
 import { LogicEdgeView, type LogicEdgeData } from "./LogicEdgeView";
 import { LogicNodeView, type LogicNodeData } from "./LogicNodeView";
+import { nodeInteriorPlan } from "../../domain/module-workflow";
 import { asLogicHandleSide, resolveLogicHandles } from "./logic-handles";
 import { moduleColor } from "./module-colors";
 import { useCurrentTopology } from "./use-current-topology";
@@ -107,6 +108,7 @@ export function DecompositionCanvas() {
   const selectedLinkId = useProjectStore((state) => state.selectedLogicLinkId);
   const selectedNodeId = useProjectStore((state) => state.selectedLogicNodeId);
   const selectLink = useProjectStore((state) => state.setSelectedLogicLink);
+  const enterLevel = useProjectStore((state) => state.enterLevel);
   const { selectedNodeIds, selectedModuleId, setSelection, focusNodeIds, focusRevision, collapsedModuleIds, reset } = useDecompositionUI();
   const [localPositions, setLocalPositions] = useState<Record<string, Position>>({});
   const [sizes, setSizes] = useState<Record<string, { width: number; height: number }>>({});
@@ -168,14 +170,20 @@ export function DecompositionCanvas() {
       outgoing.set(link.from, (outgoing.get(link.from) ?? 0) + 1);
     });
     const selected = new Set(selectedNodeIds);
-    return topology.nodes.filter((node) => !collapsedModuleIds.includes(groupOf.get(node.id)?.id ?? "")).map((node) => ({
-      id: node.id, type: "logic", position: { x: node.graphPosition[0], y: node.graphPosition[1] }, selected: selected.has(node.id), connectable: true,
-      data: { node, module: node.moduleId ? modulesById.get(node.moduleId) ?? null : null,
-        isStart: topology.startNodeId === node.id, incoming: incoming.get(node.id) ?? 0,
-        outgoing: outgoing.get(node.id) ?? 0, showPreview: false, group: groupOf.get(node.id) ?? null } satisfies LogicNodeData,
-      ...(sizes[node.id] ? { measured: sizes[node.id] } : {}),
-    }));
-  }, [topology, project.modules, selectedNodeIds, sizes, groupOf, collapsedModuleIds]);
+    return topology.nodes.filter((node) => !collapsedModuleIds.includes(groupOf.get(node.id)?.id ?? "")).map((node) => {
+      // 节点内部：多层嵌套在这里已经展平，画的就是最终结果
+      const interior = nodeInteriorPlan(project, node.id);
+      return {
+        id: node.id, type: "logic", position: { x: node.graphPosition[0], y: node.graphPosition[1] }, selected: selected.has(node.id), connectable: true,
+        data: {
+          node, interiorBlocks: interior.blocks, childCount: interior.childCount, linkCount: interior.linkCount,
+          isStart: topology.startNodeId === node.id, incoming: incoming.get(node.id) ?? 0,
+          outgoing: outgoing.get(node.id) ?? 0, showPreview: true, group: groupOf.get(node.id) ?? null,
+        } satisfies LogicNodeData,
+        ...(sizes[node.id] ? { measured: sizes[node.id] } : {}),
+      };
+    });
+  }, [topology, project, selectedNodeIds, sizes, groupOf, collapsedModuleIds]);
 
   const frameNodes = useMemo<Node[]>(() => frames.map((frame) => {
       const index = topology.modules.findIndex((module) => module.id === frame.id);
@@ -360,6 +368,8 @@ export function DecompositionCanvas() {
     <ReactFlow key={scopeKey} nodes={nodes} edges={edges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} onInit={setFlow}
       onNodesChange={onNodesChange} connectionMode={ConnectionMode.Loose} onConnect={onConnect}
       onEdgeClick={(_, edge) => { setSelection([]); selectLink(edge.id); }}
+      // 双击进入节点内部：这是唯一的"进入"入口，人不会离开这张画布
+      onNodeDoubleClick={(_, node) => enterLevel(node.id)}
       defaultViewport={savedViewport} fitView={!savedViewport} onMoveEnd={(_, viewport) => viewports.set(scopeKey, viewport)}
       fitViewOptions={fitViewOptions} minZoom={0.15} maxZoom={1.8}
       selectionOnDrag selectionMode={SelectionMode.Partial} selectionKeyCode={null} multiSelectionKeyCode={multiSelectionKeyCode}
@@ -394,6 +404,6 @@ export function DecompositionCanvas() {
       {dragView.frameId ? "移动整个模块 · 区域归属保持不变" : draggedGroup ? `松开加入「${draggedGroup.name}」 · ${draggingIds.length} 个区域` : leaving ? `松开移出模块 · ${draggingIds.length} 个区域` : "松开保持未归属"}
     </div> : null}
     <div className="canvas-mode-label">连线：{LOGIC_KINDS[logicKind].label} · 从边缘连接点拖出</div>
-    <div className="decomp-canvas-help">空白处框选 · Ctrl / ⌘ 多选 · 中键 / 右键平移 · 拖入模块调整归属 · 双击模块标题开始搭建</div>
+    <div className="decomp-canvas-help">空白处框选 · Ctrl / ⌘ 多选 · 中键 / 右键平移 · 拖入模块调整归属 · <strong>双击节点进入它内部</strong>；节点里显示已经拼好的内容</div>
   </div>;
 }

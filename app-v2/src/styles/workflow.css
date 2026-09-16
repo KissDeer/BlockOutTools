@@ -7,6 +7,31 @@
 .workflow-shell .project-title { min-width: 100px; flex: 1; }
 .workflow-shell .project-title input { width: 100%; min-width: 60px; }
 .workflow-shell .stage-switch { flex-shrink: 0; }
+
+/* ---- 层级导航：取代原来的两个顶层页签 ---- */
+.level-breadcrumb { display: flex; align-items: center; gap: 2px; flex: 1; min-width: 0; overflow: hidden; font-size: 11.5px; }
+.level-breadcrumb button { display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 11.5px; cursor: pointer; white-space: nowrap; }
+.level-breadcrumb button:hover { color: var(--text); background: var(--surface-2); }
+.level-breadcrumb button.is-current { color: #0e1915; background: var(--accent); border-color: var(--accent); font-weight: 650; }
+.level-step { display: inline-flex; align-items: center; gap: 2px; color: var(--faint); }
+.level-broken { margin-left: 8px; color: var(--warning); font-size: 10px; font-style: normal; white-space: nowrap; }
+
+/* ---- 层级树：一张画布之外，随时知道全局 ---- */
+.level-tree { flex-shrink: 0; max-height: 42%; overflow: auto; padding: 8px 10px 10px; border-bottom: 1px solid var(--border); background: #161a17; }
+.level-tree-root { display: flex; align-items: center; gap: 6px; width: 100%; padding: 6px 7px; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; font-size: 11.5px; cursor: pointer; }
+.level-tree-root.is-here { border-color: var(--accent); }
+.level-tree-root small { margin-left: auto; color: var(--faint); font-size: 10px; }
+.level-tree-list { margin: 5px 0 0; padding: 0 0 0 9px; list-style: none; border-left: 1px solid var(--border-soft); }
+.level-tree-list ul { margin: 2px 0 2px 4px; padding-left: 9px; list-style: none; border-left: 1px dashed var(--border-soft); }
+.level-tree-row { display: flex; align-items: center; gap: 5px; width: 100%; padding: 4px 6px; color: var(--muted); background: transparent; border: 0; border-radius: 4px; font-size: 11px; text-align: left; cursor: pointer; }
+.level-tree-row:hover { color: var(--text); background: var(--surface-2); }
+.level-tree-row.is-here { color: #0e1915; background: var(--accent); font-weight: 650; }
+.level-tree-row.is-ancestor { color: var(--text); }
+.level-tree-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.level-tree-row small { color: var(--faint); font-size: 9.5px; }
+.level-tree-row.is-here small { color: #0e191599; }
+.level-tree-row em { margin-left: auto; padding: 0 5px; color: var(--warning); background: #2a2419; border-radius: 8px; font-size: 9.5px; font-style: normal; }
+.level-tree-foot { display: flex; align-items: center; gap: 5px; margin: 8px 0 0; color: var(--faint); font-size: 9.5px; }
 .workflow-workspace { display: flex; flex-direction: column; }
 .workflow-navigation { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 10px; border-bottom: 1px solid var(--border-soft); background: var(--surface); font-size: 11px; }
 .workflow-navigation > strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

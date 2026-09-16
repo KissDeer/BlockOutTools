@@ -6,10 +6,13 @@ import {
   expandModule,
   flattenModules,
   leafModules,
+  levelPathOfNode,
   linkScope,
+  nodeInterior,
   pathKey,
   pathLabel,
   removeScope,
+  resolveLevel,
   scopeCrumbs,
   scopeView,
   writeScopeView,
@@ -27,7 +30,11 @@ function base(): BlockoutProject {
 }
 
 /** 根作用域放一个"游乐园"（展开），子作用域里放"马戏团"与"鬼屋"并各自成模块 */
-function park(): { topology: LogicTopology; parkModuleId: string; scopeId: string; villageModuleId: string; villageNodeId: string } {
+function park(): {
+  topology: LogicTopology; parkModuleId: string; scopeId: string;
+  villageModuleId: string; villageNodeId: string;
+  parkNodeId: string; circusNodeId: string; houseNodeId: string;
+} {
   let topology = createEmptyTopology();
   const outer = addLogicNode(topology, [0, 0], { name: "游乐园", role: "hub" });
   topology = outer.topology;
@@ -61,8 +68,103 @@ function park(): { topology: LogicTopology; parkModuleId: string; scopeId: strin
   view = createLogicModule(view, "鬼屋", [house.node.id]).topology;
   topology = writeScopeView(topology, scopeId, view);
 
-  return { topology, parkModuleId, scopeId, villageModuleId: villageModule.module.id, villageNodeId: village.node.id };
+  return {
+    topology, parkModuleId, scopeId,
+    villageModuleId: villageModule.module.id, villageNodeId: village.node.id,
+    parkNodeId: outer.node.id, circusNodeId: circus.node.id, houseNodeId: house.node.id,
+  };
 }
+
+describe("层级：一张画布上的焦点路径", () => {
+  it("空路径就是整图，能看到根层全部节点与链路", () => {
+    const { topology } = park();
+    const level = resolveLevel(topology, []);
+    expect(level.kind).toBe("logic");
+    expect(level.scopeId).toBeNull();
+    expect(level.nodeId).toBeNull();
+    expect(level.nodes.map((node) => node.name)).toEqual(["游乐园", "小村"]);
+    expect(level.links).toHaveLength(1);
+    expect(level.steps).toEqual([]);
+    expect(level.brokenAt).toBeNull();
+  });
+
+  it("进入有内部的节点 = 换到那一层的逻辑，人没离开画布", () => {
+    const { topology, parkNodeId, scopeId } = park();
+    const level = resolveLevel(topology, [parkNodeId]);
+    expect(level.kind).toBe("logic");
+    expect(level.scopeId).toBe(scopeId);
+    expect(level.nodes.map((node) => node.name)).toEqual(["马戏团", "鬼屋"]);
+    expect(level.steps.map((step) => step.nodeName)).toEqual(["游乐园"]);
+    expect(level.steps[0].kind).toBe("logic");
+  });
+
+  it("进入没有内部的节点 = 几何层，同时仍知道自己属于哪一层", () => {
+    const { topology, parkNodeId, circusNodeId, scopeId } = park();
+    const level = resolveLevel(topology, [parkNodeId, circusNodeId]);
+    expect(level.kind).toBe("geometry");
+    expect(level.nodeId).toBe(circusNodeId);
+    // 几何层不切换作用域：仍然看得到它所在那一层的其他节点
+    expect(level.scopeId).toBe(scopeId);
+    expect(level.nodes.map((node) => node.name)).toEqual(["马戏团", "鬼屋"]);
+    expect(level.steps.map((step) => step.kind)).toEqual(["logic", "geometry"]);
+  });
+
+  it("多层嵌套逐层解析，每层各看各的内容", () => {
+    const { topology, parkNodeId, circusNodeId } = park();
+    // 把"鬼屋"再展开一层，做成三层
+    const houseModuleId = topology.scopes[0].modules.find((module) => module.name === "鬼屋")?.id as string;
+    const houseNodeId = topology.scopes[0].nodes.find((node) => node.name === "鬼屋")?.id as string;
+    const deeper = expandModule(topology, houseModuleId, "鬼屋内部");
+    expect(deeper).not.toBeNull();
+    // 在鬼屋内部放一个区域
+    const innerView = addLogicNode(scopeView(deeper!.topology, deeper!.scope.id), [0, 0], { name: "地下室", role: "secret" });
+    const withRoom = writeScopeView(deeper!.topology, deeper!.scope.id, innerView.topology);
+
+    // 第一层：整图
+    expect(resolveLevel(withRoom, []).nodes.map((node) => node.name)).toEqual(["游乐园", "小村"]);
+    // 第二层：游乐园内部
+    expect(resolveLevel(withRoom, [parkNodeId]).nodes.map((node) => node.name)).toEqual(["马戏团", "鬼屋"]);
+    // 第三层：鬼屋内部
+    const third = resolveLevel(withRoom, [parkNodeId, houseNodeId]);
+    expect(third.kind).toBe("logic");
+    expect(third.nodes.map((node) => node.name)).toEqual(["地下室"]);
+    expect(third.steps.map((step) => step.nodeName)).toEqual(["游乐园", "鬼屋"]);
+    // 马戏团没有内部，进去就是几何层
+    expect(resolveLevel(withRoom, [parkNodeId, circusNodeId]).kind).toBe("geometry");
+  });
+
+  it("路径失效时安全退回，不抛错也不假装还在那一层", () => {
+    const { topology, parkNodeId } = park();
+    const level = resolveLevel(topology, [parkNodeId, "lnode_不存在"]);
+    expect(level.brokenAt).toBe(1);
+    // 退回上一层，而不是整图
+    expect(level.scopeId).toBe(topology.scopes[0].id);
+  });
+
+  it("层级的可见内容会随拓扑变化自动跟上，不需要另存状态", () => {
+    const { topology, parkNodeId } = park();
+    const before = resolveLevel(topology, [parkNodeId]).nodes.length;
+    const view = scopeView(topology, topology.scopes[0].id);
+    const grown = writeScopeView(topology, topology.scopes[0].id, addLogicNode(view, [4000, 0], { name: "售票处" }).topology);
+    expect(resolveLevel(grown, [parkNodeId]).nodes.length).toBe(before + 1);
+  });
+
+  it("层级树能从节点反查出它显示在哪一层", () => {
+    const { topology, parkNodeId, circusNodeId, villageNodeId } = park();
+    // 游乐园自己在根层可见；要看到它的内部才需要进入它
+    expect(levelPathOfNode(topology, parkNodeId)).toEqual([]);
+    expect(levelPathOfNode(topology, villageNodeId)).toEqual([]);
+    // 马戏团在游乐园内部才可见
+    expect(levelPathOfNode(topology, circusNodeId)).toEqual([parkNodeId]);
+    expect(levelPathOfNode(topology, "lnode_不存在")).toBeNull();
+  });
+
+  it("节点内部是什么可以直接问出来", () => {
+    const { topology, parkNodeId, circusNodeId } = park();
+    expect(nodeInterior(topology, parkNodeId)).toMatchObject({ kind: "logic", childCount: 2, linkCount: 1 });
+    expect(nodeInterior(topology, circusNodeId)).toMatchObject({ kind: "geometry", childCount: 0 });
+  });
+});
 
 describe("嵌套：旧草稿兼容", () => {
   it("根作用域没有 id/name/scopes 的旧草稿仍能解析，不会被静默丢弃", () => {

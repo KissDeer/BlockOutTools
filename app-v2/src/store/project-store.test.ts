@@ -156,7 +156,6 @@ describe("project store clipboard actions", () => {
     const project = createDemoProject();
     useProjectStore.setState({
       project,
-      view: "assembly",
       activeInstanceId: null,
       selectedInstanceId: project.instances[0].id,
       selectedConnectionId: null,
@@ -189,7 +188,6 @@ describe("project store clipboard actions", () => {
     const source = project.modules[0].blocks[0];
     useProjectStore.setState({
       project,
-      view: "module",
       activeInstanceId: project.instances[0].id,
       selectedInstanceId: project.instances[0].id,
       selectedConnectionId: null,
@@ -217,7 +215,6 @@ describe("project store clipboard actions", () => {
     const project = createDemoProject();
     useProjectStore.setState({
       project,
-      view: "assembly",
       selectedInstanceId: null,
       selectedConnectionId: project.connections[0].id,
       past: [],

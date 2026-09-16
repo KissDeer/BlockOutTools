@@ -39,15 +39,17 @@ describe("topology-driven module workflow", () => {
     store().setSelectedLogicNode(node.id);
     store().openLogicModule(group.id);
     const moduleId = store().activeModuleId;
-    expect(store()).toMatchObject({ stage: "build", view: "module", activeInstanceId: null });
+    // 进入节点内部 = 层级落在几何层，编辑的是这个节点的模块
+    expect(store()).toMatchObject({ levelPath: [node.id], activeModuleId: moduleId, activeInstanceId: null });
     store().addBlock("box");
     store().undo();
-    expect(store()).toMatchObject({ stage: "build", view: "module", activeModuleId: moduleId });
+    expect(store()).toMatchObject({ levelPath: [node.id], activeModuleId: moduleId });
     expect(store().project.modules.find((module) => module.id === moduleId)?.blocks).toEqual([]);
     store().redo();
     expect(store().project.modules.find((module) => module.id === moduleId)?.blocks).toHaveLength(1);
+    // 退回上一层：层级清空，回到整图，并恢复原来的选中
     store().returnFromModule();
-    expect(store()).toMatchObject({ stage: "concept", selectedLogicNodeId: node.id });
+    expect(store()).toMatchObject({ levelPath: [], activeModuleId: null });
   });
 
   it("places one module without resetting old instances, does not turn topology coordinates into space", () => {
@@ -117,7 +119,8 @@ describe("topology-driven module workflow", () => {
     expect(store().past.length).toBe(historyCount + 1);
     store().undo();
     expect(store().project).toBe(before);
-    expect(store().view).toBe("module");
+    // 撤销不把人踢出当前层级
+    expect(store().activeModuleId).toBe(draft.moduleId);
     store().addBlock("box");
     store().setModuleDraft(draft);
     expect(store().applyModuleDraft().join()).toContain("几何");
@@ -164,14 +167,14 @@ describe("topology-driven module workflow", () => {
     const project = createDemoProject();
     store().replaceProject(project); store().showAssembly(); store().openModule(project.instances[0].id);
     store().addBlock("box"); store().undo(); store().returnFromModule();
-    expect(store()).toMatchObject({ stage: "build", view: "assembly", selectedInstanceId: project.instances[0].id });
+    expect(store()).toMatchObject({ levelPath: [] });
     store().openModule(project.instances[0].id);
     store().refreshPreview();
     expect(store()).toMatchObject({ previewModuleId: project.instances[0].definitionId, previewRevision: 1, previewOpen: true, previewDirty: false });
     expect(store().previewProject).not.toBeNull();
     store().setModuleDraft(createQuickModuleDraft(store().project, project.modules[0].id));
     store().replaceProject(createDemoProject());
-    expect(store()).toMatchObject({ moduleDraft: null, moduleReturn: null, activeModuleId: null, conceptScopeId: null,
+    expect(store()).toMatchObject({ moduleDraft: null, activeModuleId: null, conceptScopeId: null, levelPath: [],
       previewProject: null, previewModuleId: null, previewRevision: 0, previewOpen: false, previewDirty: true });
   });
 });

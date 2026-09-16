@@ -1,12 +1,16 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { Flag } from "lucide-react";
+import { Boxes, Flag, Route } from "lucide-react";
 import { NODE_ROLES, type LogicNode } from "../../domain/concept";
-import type { ModuleDefinition } from "../../domain/types";
+import type { Block } from "../../domain/types";
 import { ModulePlanPreview } from "./ModulePlanPreview";
 
 export interface LogicNodeData extends Record<string, unknown> {
   node: LogicNode;
-  module: ModuleDefinition | null;
+  /** 这个节点内部的**展平**几何：多层嵌套时给的是最终结果 */
+  interiorBlocks: Block[];
+  /** 内部还有几个区域、几条链路 */
+  childCount: number;
+  linkCount: number;
   isStart: boolean;
   incoming: number;
   outgoing: number;
@@ -15,12 +19,23 @@ export interface LogicNodeData extends Record<string, unknown> {
   group: { name: string; color: string } | null;
 }
 
+const PREVIEW_WIDTH = 152;
+const PREVIEW_HEIGHT = 76;
+
+/** 节点内部几何的缩略图：多层嵌套已经展平，这里画的就是最终结果 */
+function InteriorPlan({ blocks }: { blocks: Block[] }) {
+  // 复用整体摆放那套俯视缩略图，保证同一份几何在哪儿画都长一样
+  return <ModulePlanPreview module={{ id: "node-interior", name: "内部", revision: 0, blocks }} width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />;
+}
+
 export function LogicNodeView({ data, selected }: NodeProps) {
-  const { node, module, isStart, incoming, outgoing, showPreview, group } = data as LogicNodeData;
+  const { node, interiorBlocks, childCount, linkCount, isStart, incoming, outgoing, showPreview, group } = data as LogicNodeData;
+  const built = interiorBlocks.length > 0;
+  const hasInterior = childCount > 0 || built;
 
   return (
     <div
-      className={`logic-node role-${node.role} ${selected ? "is-selected" : ""} ${isStart ? "is-start" : ""}`}
+      className={`logic-node role-${node.role} ${selected ? "is-selected" : ""} ${isStart ? "is-start" : ""} ${hasInterior ? "has-interior" : ""}`}
       style={group ? { borderTopColor: group.color, borderTopWidth: 3 } : undefined}
     >
       {[
@@ -38,14 +53,25 @@ export function LogicNodeView({ data, selected }: NodeProps) {
         {isStart ? <span className="logic-start"><Flag size={11} />起点</span> : null}
       </div>
       <div className="logic-node-name" title={node.name}>{node.name}</div>
-      {module && showPreview ? (
+      {showPreview && built ? (
         <div className="logic-node-preview">
-          <ModulePlanPreview module={module} width={152} height={76} />
-          <span className="logic-node-preview-meta">{module.blocks.length} 积木 · {module.blocks.filter((block) => block.type === "port").length} 出入口</span>
+          <InteriorPlan blocks={interiorBlocks} />
+          <span className="logic-node-preview-meta">
+            <Boxes size={11} />{interiorBlocks.filter((block) => block.type !== "port").length} 体块 · {interiorBlocks.filter((block) => block.type === "port").length} 出入口
+          </span>
         </div>
       ) : null}
-      {!module ? <div className="logic-node-unbound">未绑定模块</div> : null}
-      <div className="logic-node-foot"><span>进 {incoming}</span><span>出 {outgoing}</span></div>
+      {/* 里面还有什么：即使还没搭，也要先告诉人里面有几个东西、怎么连 */}
+      {showPreview && !built && childCount > 0 ? (
+        <div className="logic-node-interior">
+          <Route size={12} />里面 {childCount} 个区域 · {linkCount} 条链路
+        </div>
+      ) : null}
+      {showPreview && !built && childCount === 0 ? <div className="logic-node-unbound">内部还是空的</div> : null}
+      <div className="logic-node-foot">
+        <span>进 {incoming}</span><span>出 {outgoing}</span>
+        {hasInterior ? <span className="logic-node-enter">双击进入</span> : null}
+      </div>
     </div>
   );
 }

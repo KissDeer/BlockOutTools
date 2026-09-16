@@ -191,3 +191,106 @@ export function pathLabel(path: ScopeStep[]): string {
 export function pathKey(path: ScopeStep[]): string {
   return path.map((step) => step.moduleId).join("/");
 }
+
+/* ---------------- 层级：一张画布上的焦点路径 ---------------- */
+
+export interface LevelStep {
+  nodeId: string;
+  nodeName: string;
+  /** 进入这个节点之后看到的是逻辑层还是几何层 */
+  kind: "logic" | "geometry";
+}
+
+export interface ResolvedLevel {
+  /** 从整图到当前层，面包屑与层级树都用它 */
+  steps: LevelStep[];
+  /** 当前层形态：logic = 画这一层的逻辑拓扑；geometry = 画某个节点内部的几何 */
+  kind: "logic" | "geometry";
+  /** 当前逻辑层所在的作用域（null = 根） */
+  scopeId: string | null;
+  /** kind === "geometry" 时：正在编辑内部几何的节点 */
+  nodeId: string | null;
+  /** 当前层能看到的节点与链路 */
+  nodes: LogicTopology["nodes"];
+  links: LogicTopology["links"];
+  /** 路径里失效的那一段下标；拓扑被改过之后可能发生 */
+  brokenAt: number | null;
+}
+
+/**
+ * 把"进入了哪些节点"解析成当前层。
+ *
+ * 与拓扑对齐：**节点是唯一的容器**。节点内部要么是一层逻辑（有子作用域），
+ * 要么是一份几何（没有子作用域）。所以层级路径只记节点 id，
+ * 其余全部从拓扑推导，不另存一份状态 —— 拓扑改了，层级自己就跟着变。
+ */
+export function resolveLevel(topology: LogicTopology, levelPath: string[]): ResolvedLevel {
+  const steps: LevelStep[] = [];
+  let scopeId: string | null = null;
+  let geometryNodeId: string | null = null;
+
+  for (const [index, nodeId] of levelPath.entries()) {
+    // 上一层已经是几何层，就不可能再往里进
+    if (geometryNodeId) return { ...levelOf(topology, scopeId), steps, brokenAt: index };
+    const scope = scopeFor(topology, scopeId);
+    const node = scope?.nodes.find((item) => item.id === nodeId);
+    if (!scope || !node) return { ...levelOf(topology, scopeId), steps, brokenAt: index };
+    const group = scope.modules.find((item) => item.nodeIds.includes(nodeId));
+    const childScopeId = group?.childScopeId && topology.scopes.some((entry) => entry.id === group.childScopeId) ? group.childScopeId : null;
+    steps.push({ nodeId, nodeName: node.name, kind: childScopeId ? "logic" : "geometry" });
+    if (childScopeId) scopeId = childScopeId;
+    else geometryNodeId = nodeId;
+  }
+
+  const kind = steps.at(-1)?.kind ?? "logic";
+  return { ...levelOf(topology, scopeId), steps, kind, nodeId: kind === "geometry" ? geometryNodeId : null, brokenAt: null };
+}
+
+/** 某一层的可见内容 */
+function levelOf(topology: LogicTopology, scopeId: string | null): Pick<ResolvedLevel, "kind" | "scopeId" | "nodeId" | "nodes" | "links"> {
+  const scope = scopeFor(topology, scopeId);
+  return { kind: "logic", scopeId, nodeId: null, nodes: scope?.nodes ?? [], links: scope?.links ?? [] };
+}
+
+function scopeFor(topology: LogicTopology, scopeId: string | null): LogicScope | null {
+  if (scopeId === null) return topology;
+  return topology.scopes.find((scope) => scope.id === scopeId) ?? null;
+}
+
+/** 某个节点内部有什么：层级树与节点缩略图都用它 */
+export function nodeInterior(topology: LogicTopology, nodeId: string): { kind: "logic" | "geometry"; scopeId: string | null; childCount: number; linkCount: number } {
+  const found = nodeScopeAndGroup(topology, nodeId);
+  const childScopeId = found?.group?.childScopeId && topology.scopes.some((scope) => scope.id === found.group?.childScopeId) ? found.group.childScopeId : null;
+  if (!childScopeId) return { kind: "geometry", scopeId: null, childCount: 0, linkCount: 0 };
+  const scope = topology.scopes.find((item) => item.id === childScopeId);
+  return { kind: "logic", scopeId: childScopeId, childCount: scope?.nodes.length ?? 0, linkCount: scope?.links.length ?? 0 };
+}
+
+/** 节点在哪一层、属于哪个分组 */
+export function nodeScopeAndGroup(topology: LogicTopology, nodeId: string): { scopeId: string | null; group: LogicModule | null } | null {
+  for (const scope of [topology, ...topology.scopes]) {
+    const node = scope.nodes.find((item) => item.id === nodeId);
+    if (!node) continue;
+    const group = scope.modules.find((item) => item.nodeIds.includes(nodeId)) ?? null;
+    return { scopeId: scope.id === topology.id ? null : scope.id, group };
+  }
+  return null;
+}
+
+/** 从根到某节点的层级路径：层级树点一下就靠它 */
+export function levelPathOfNode(topology: LogicTopology, nodeId: string): string[] | null {
+  const walk = (scope: LogicScope, scopeId: string | null, path: string[], visiting: Set<string>, depth: number): string[] | null => {
+    if (depth > MAX_SCOPE_DEPTH) return null;
+    for (const node of scope.nodes) if (node.id === nodeId) return path;
+    for (const group of scope.modules) {
+      const child = group.childScopeId ? topology.scopes.find((item) => item.id === group.childScopeId) : null;
+      if (!child || visiting.has(child.id)) continue;
+      const owner = group.nodeIds[0];
+      const nextPath = owner ? [...path, owner] : path;
+      const found = walk(child, child.id, nextPath, new Set([...visiting, child.id]), depth + 1);
+      if (found) return found;
+    }
+    return null;
+  };
+  return walk(topology, null, [], new Set(), 0);
+}

@@ -7,7 +7,7 @@ import type { DecompositionCandidate } from "../domain/concept-decomposition";
 import { generateConfiguration as generateConfigurationCommand, type ConfigurationCandidate } from "../domain/concept-configuration";
 import { generateAssembly as generateAssemblyCommand, type AssemblyGenerationResult } from "../domain/concept-assembly";
 import { createEmptyTopology } from "../domain/concept";
-import { expandModule as expandModuleCommand, collapseModule as collapseModuleCommand, scopeView, writeScopeView } from "../domain/concept-scopes";
+import { expandModule as expandModuleCommand, collapseModule as collapseModuleCommand, allModules, levelPathOfNode, nodeScopeAndGroup, resolveLevel, scopeView, writeScopeView } from "../domain/concept-scopes";
 import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
 import type { LogicKey, LogicKind, LogicLink, LogicModule, LogicNode, LogicTopology } from "../domain/concept";
 import { createDemoProject } from "../domain/demo-project";
@@ -26,29 +26,35 @@ export type AppView = "assembly" | "module";
 export type TransformMode = "move" | "rotate" | "scale";
 export type SaveStatus = "saved" | "saving" | "error";
 
-interface ModuleReturn {
-  stage: AppStage;
-  view: AppView;
-  conceptScopeId: string | null;
-  selectedInstanceId: string | null;
-  selectedConnectionId: string | null;
-  selectedLogicNodeId: string | null;
-  selectedLogicLinkId: string | null;
-}
-
 interface ProjectStore {
   project: BlockoutProject;
-  stage: AppStage;
-  view: AppView;
+  /**
+   * 当前层级：一张画布上的焦点路径（节点 id 链）。[] = 整图。
+   * 层级不另存"我在逻辑层还是几何层"——那由拓扑推导（见 `resolveLevel`），
+   * 拓扑一变，层级自己跟上。
+   */
+  levelPath: string[];
+  /** 进入某个节点的内部 */
+  enterLevel: (nodeId: string) => void;
+  /** 跳到指定层级（面包屑、层级树都用它） */
+  setLevelPath: (path: string[]) => void;
+  /** 退回上一层 */
+  returnFromModule: () => void;
+  /** 查看整体 = 回到根层 */
+  showAssembly: () => void;
   activeInstanceId: string | null;
   activeModuleId: string | null;
-  moduleReturn: ModuleReturn | null;
+  /**
+   * 没有对应逻辑节点的旧模块。层级模型要求几何挂在节点上，
+   * 但早期项目里存在没有拓扑的模块；仍然让人能打开它的几何，并明确标为遗留。
+   */
+  detachedModuleId: string | null;
   moduleDraft: ModuleDraft | null;
   setModuleDraft: (draft: ModuleDraft | null) => void;
   applyModuleDraft: () => string[];
   openLogicModule: (logicModuleId: string) => void;
-  returnFromModule: () => void;
-  showAssembly: () => void;
+  openModule: (instanceId: string) => void;
+  openModuleById: (moduleId: string) => void;
   placeModule: (moduleId: string, scopePath?: string[]) => string | null;
   selectedInstanceId: string | null;
   selectedConnectionId: string | null;
@@ -104,10 +110,6 @@ interface ProjectStore {
   future: BlockoutProject[];
   instanceClipboardId: string | null;
   blockClipboard: Block[];
-  setStage: (stage: AppStage) => void;
-  setView: (view: AppView) => void;
-  openModule: (instanceId: string) => void;
-  openModuleById: (moduleId: string) => void;
   setSelectedInstance: (instanceId: string | null) => void;
   setSelectedConnection: (connectionId: string | null) => void;
   setSelectedBlocks: (blockIds: string[]) => void;
@@ -213,17 +215,46 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     return scopeView(base, get().conceptScopeId);
   }
 
-  function enterModule(moduleId: string, instanceId: string | null): void {
+  /** 进入"产出这份几何的那个节点" */
+  function enterNodeOwning(topology: LogicTopology, module: LogicModule | undefined): void {
+    const nodeId = module?.nodeIds[0];
+    if (!nodeId) return;
+    const path = levelPathOfNode(topology, nodeId);
+    if (path) get().setLevelPath([...path, nodeId]);
+  }
+
+  /** 层级落在几何层时，找出正在编辑的那个模块 */
+  function moduleIdForLevel(project: BlockoutProject, path: string[]): string | null {
+    const topology = project.concept;
+    if (!topology || path.length === 0) return null;
+    const level = resolveLevel(topology, path);
+    if (level.kind !== "geometry" || !level.nodeId) return null;
+    return nodeScopeAndGroup(topology, level.nodeId)?.group?.moduleDefinitionId ?? null;
+  }
+
+  /**
+   * 切换层级。这是唯一的层级写入口：作用域、正在编辑的模块、各类选中项
+   * 全部由它一处推导，避免多处状态各自漂移。
+   */
+  function applyLevel(path: string[]): void {
     const state = get();
-    if (!state.project.modules.some((module) => module.id === moduleId)) return;
-    const bookmark: ModuleReturn = {
-      stage: state.stage, view: state.view, conceptScopeId: state.conceptScopeId,
-      selectedInstanceId: instanceId ?? state.selectedInstanceId, selectedConnectionId: state.selectedConnectionId,
-      selectedLogicNodeId: state.selectedLogicNodeId, selectedLogicLinkId: state.selectedLogicLinkId,
-    };
-    set({ stage: "build", view: "module", activeModuleId: moduleId, activeInstanceId: instanceId,
-      moduleReturn: state.stage === "build" && state.view === "module" ? state.moduleReturn : bookmark,
-      moduleDraft: null, selectedInstanceId: instanceId ?? state.selectedInstanceId, selectedConnectionId: null, selectedBlockIds: [] });
+    const topology = state.project.concept;
+    const level = topology ? resolveLevel(topology, path) : null;
+    // 拓扑被改过之后路径可能失效，退到还能对上的那一段
+    const safePath = level && level.brokenAt !== null ? path.slice(0, level.brokenAt) : path;
+    const settled = topology && safePath !== path ? resolveLevel(topology, safePath) : level;
+    set({
+      levelPath: safePath,
+      detachedModuleId: null,
+      conceptScopeId: settled?.kind === "logic" ? settled.scopeId : settled?.scopeId ?? null,
+      activeModuleId: moduleIdForLevel(state.project, safePath),
+      moduleDraft: null,
+      selectedBlockIds: [],
+      selectedLogicNodeId: null,
+      selectedLogicLinkId: null,
+      selectedInstanceId: null,
+      selectedConnectionId: null,
+    });
   }
 
   function historySelection(project: BlockoutProject): Partial<ProjectStore> {
@@ -238,8 +269,17 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       selectedLogicNodeId: topology?.nodes.some((node) => node.id === state.selectedLogicNodeId) ? state.selectedLogicNodeId : null,
       selectedLogicLinkId: topology?.links.some((link) => link.id === state.selectedLogicLinkId) ? state.selectedLogicLinkId : null,
       activeInstanceId: project.instances.some((instance) => instance.id === state.activeInstanceId) ? state.activeInstanceId : null,
-      ...(moduleExists ? {} : { activeModuleId: null, view: "assembly" as const }),
+      ...(moduleExists ? {} : { activeModuleId: null }),
     };
+  }
+
+  /** 撤销/重做之后层级可能对不上拓扑了，退到仍然成立的那一段 */
+  function reconcileLevel(project: BlockoutProject): void {
+    const state = get();
+    if (!project.concept || state.levelPath.length === 0) return;
+    const level = resolveLevel(project.concept, state.levelPath);
+    if (level.brokenAt === null) return;
+    applyLevel(state.levelPath.slice(0, level.brokenAt));
   }
 
   /** 拓扑改动一律：先算出新的**当前作用域**，再写回它在树里的位置 */
@@ -250,11 +290,10 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
 
   return {
     project: initialProject,
-    stage: "concept",
-    view: "assembly",
+    levelPath: [],
+    detachedModuleId: null,
     activeInstanceId: null,
     activeModuleId: null,
-    moduleReturn: null,
     moduleDraft: null,
     setModuleDraft: (moduleDraft) => {
       if (moduleDraft && (moduleDraft.projectId !== get().project.projectId || moduleDraft.moduleId !== currentModuleId())) return;
@@ -271,21 +310,53 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
         return [];
       } catch (error) { return [error instanceof Error ? error.message : "采用失败"]; }
     },
-    openLogicModule: (logicModuleId) => {
-      const result = ensureLogicModule(get().project, logicModuleId);
-      if (result.childScopeId) {
-        set({ stage: "concept", conceptPane: "topology", conceptScopeId: result.childScopeId, selectedLogicNodeId: null, selectedLogicLinkId: null, moduleDraft: null });
-        return;
+    /** 进入某个节点的内部：有子作用域就换到那一层逻辑，否则进它的几何 */
+    enterLevel: (nodeId) => {
+      const path = get().levelPath;
+      get().setLevelPath([...path, nodeId]);
+    },
+    setLevelPath: (path) => {
+      const state = get();
+      const topology = state.project.concept;
+      const nodeId = path.at(-1);
+      // 进入一个还没有定义的分组时，先给它建一个空的模块定义（几何挂在那里）
+      if (topology && nodeId) {
+        const found = nodeScopeAndGroup(topology, nodeId);
+        if (found?.group && !found.group.moduleDefinitionId && !found.group.childScopeId) {
+          const ensured = ensureLogicModule(state.project, found.group.id);
+          if (ensured.module) commit(ensured.project);
+        }
       }
-      if (!result.module) return;
-      commit(result.project);
-      enterModule(result.module.id, null);
+      applyLevel(path);
     },
+    /**
+     * 进入"产出这份几何的那个节点"。
+     * 注意有两种 id 空间：逻辑模块 id（拆解分组）与模块定义 id（几何）。
+     * 从整体摆放进去时手上是定义 id，从拓扑分组进去时手上是逻辑模块 id。
+     */
+    openLogicModule: (logicModuleId) => {
+      const topology = get().project.concept;
+      if (!topology) return;
+      enterNodeOwning(topology, allModules(topology).find((entry) => entry.module.id === logicModuleId)?.module);
+    },
+    openModuleById: (definitionId) => {
+      const state = get();
+      const topology = state.project.concept;
+      const owner = topology ? allModules(topology).find((entry) => entry.module.moduleDefinitionId === definitionId)?.module : undefined;
+      if (topology && owner) { enterNodeOwning(topology, owner); return; }
+      // 没有对应逻辑节点的旧模块：直接打开几何，层级保持在整图
+      if (state.project.modules.some((module) => module.id === definitionId)) {
+        set({ levelPath: [], detachedModuleId: definitionId, activeModuleId: definitionId, moduleDraft: null, selectedBlockIds: [] });
+      }
+    },
+    /** 退回上一层：面包屑与返回按钮共用 */
     returnFromModule: () => {
-      const bookmark = get().moduleReturn;
-      set({ ...(bookmark ?? { stage: "build", view: "assembly" }), conceptPane: "topology", moduleDraft: null, selectedBlockIds: [] });
+      const path = get().levelPath;
+      if (path.length === 0) return;
+      get().setLevelPath(path.slice(0, -1));
     },
-    showAssembly: () => set({ stage: "build", view: "assembly", moduleDraft: null }),
+    /** 查看整体 = 回到根层 */
+    showAssembly: () => get().setLevelPath([]),
     placeModule: (moduleId, scopePath) => {
       const result = placeModuleDefinition(get().project, moduleId, scopePath);
       if (!result.instance) return null;
@@ -321,13 +392,10 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     future: [],
     instanceClipboardId: null,
     blockClipboard: [],
-    setStage: (stage) => set({ stage, conceptPane: "topology", moduleDraft: null }),
-    setView: (view) => set({ view, moduleDraft: null }),
-    openModule: (instanceId) => {
+    openModule: (instanceId: string) => {
       const instance = get().project.instances.find((item) => item.id === instanceId);
-      if (instance) enterModule(instance.definitionId, instanceId);
+      if (instance) get().openModuleById(instance.definitionId);
     },
-    openModuleById: (moduleId) => enterModule(moduleId, null),
     setSelectedInstance: (selectedInstanceId) => set({ selectedInstanceId, selectedConnectionId: null }),
     setSelectedConnection: (selectedConnectionId) => set({ selectedConnectionId, selectedInstanceId: null }),
     setSelectedBlocks: (selectedBlockIds) => set({ selectedBlockIds }),
@@ -423,7 +491,9 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     togglePreview: () => set((state) => ({ previewOpen: !state.previewOpen })),
     refreshPreview: () => {
       const state = get();
-      const moduleId = state.stage === "build" && state.view === "module" ? currentModuleId() : null;
+      // 站在某一层的几何里就看局部，站在逻辑层就看整体
+      const level = state.project.concept ? resolveLevel(state.project.concept, state.levelPath) : null;
+      const moduleId = level?.kind === "geometry" || state.detachedModuleId ? currentModuleId() : null;
       set({ previewRevision: state.previewRevision + 1, previewProject: moduleId ? createModulePreviewProject(state.project, moduleId) : state.project,
         previewModuleId: moduleId, previewDirty: false, previewOpen: true });
     },
@@ -616,7 +686,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     },
     replaceProject: (project) => {
       set({
-        project, stage: "concept", view: "assembly", activeInstanceId: null, activeModuleId: null, moduleReturn: null, moduleDraft: null,
+        project, levelPath: [], detachedModuleId: null,
+        activeInstanceId: null, activeModuleId: null, moduleDraft: null,
         selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [],
         selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, selectedInputId: null,
         conceptPane: "topology", conceptScopeId: null, candidate: null, candidateExcluded: [], selectedCandidateNodeId: null,
