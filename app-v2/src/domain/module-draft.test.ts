@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createBlock } from "./catalog";
 import { createEmptyScope, createEmptyTopology, type LogicNode } from "./concept";
 import { createDemoProject } from "./demo-project";
-import { applyModuleDraft, confirmModuleShape, createModuleDraftRequest, createQuickModuleDraft, moduleDraftDiff, moduleShapeStatus, validateModuleDraft } from "./module-draft";
+import { applyModuleDraft, confirmModuleShape, createModuleDraftRequest, createQuickModuleDraft, moduleDraftDiff, moduleDraftImpact, moduleShapeStatus, validateModuleDraft } from "./module-draft";
 import { parseProjectFile } from "./persistence";
 import { projectSchema } from "./project-schema";
 import type { BlockoutProject } from "./types";
@@ -24,6 +24,71 @@ function fixture(): BlockoutProject {
   const demo = createDemoProject();
   return { ...demo, assemblyAnchorInstanceId: undefined, modules: [{ id: "module-a", name: "主厅", revision: 0, blocks: [] }, { id: "module-b", name: "外部", revision: 0, blocks: [] }], instances: [], connections: [], concept };
 }
+
+describe("采用前看清代价（草案试算）", () => {
+  /** 在快速起稿上挂一个过窄的门洞，用来观察"采用会引入什么问题" */
+  function draftWithNarrowDoorway(project: BlockoutProject) {
+    const quick = createQuickModuleDraft(project, "module-a");
+    const doorway = createBlock("doorway", [0, 0, 0]);
+    if (doorway.type !== "doorway") throw new Error("门洞模板无效");
+    doorway.name = "过窄门洞";
+    doorway.parameters.DoorwaySize = [40, Math.max(1, project.blockoutProfile.minDoorWidth - 20), project.blockoutProfile.minDoorHeight + 60];
+    return { ...quick, blocks: [...quick.blocks, doorway] };
+  }
+
+  it("报出采用后会新增的规范问题，并且不改动项目", () => {
+    const project = fixture();
+    project.blockoutProfile = { ...project.blockoutProfile, enabled: true };
+    const draft = draftWithNarrowDoorway(project);
+    const before = structuredClone(project);
+
+    const impact = moduleDraftImpact(project, draft);
+    expect(impact).not.toBeNull();
+    expect(impact!.introduced.some((issue) => issue.rule === "DOOR_MIN_WIDTH" && issue.severity === "error")).toBe(true);
+    // 这个问题原本不存在，所以不该出现在"剩余"里
+    expect(impact!.remaining.some((issue) => issue.rule === "DOOR_MIN_WIDTH")).toBe(false);
+    // 试算不写入任何东西
+    expect(project).toEqual(before);
+  });
+
+  it("报出采用后会消除的问题", () => {
+    const project = fixture();
+    project.blockoutProfile = { ...project.blockoutProfile, enabled: true };
+    // 先让当前模块带一个过窄门洞
+    const existing = project.modules.find((module) => module.id === "module-a")!;
+    const narrow = createBlock("doorway", [0, 0, 0]);
+    if (narrow.type !== "doorway") throw new Error("门洞模板无效");
+    narrow.parameters.DoorwaySize = [40, Math.max(1, project.blockoutProfile.minDoorWidth - 20), project.blockoutProfile.minDoorHeight + 60];
+    existing.blocks = [narrow];
+
+    expect(moduleDraftImpact(project, createQuickModuleDraft(project, "module-a"))!.resolved.some((issue) => issue.rule === "DOOR_MIN_WIDTH")).toBe(true);
+  });
+
+  it("没有新增也没有消除时给出干净结论", () => {
+    const project = fixture();
+    project.blockoutProfile = { ...project.blockoutProfile, enabled: true };
+    const quick = createQuickModuleDraft(project, "module-a");
+    // 同一份草案对同一模块重复试算：第二次相对第一次应当是"干净"的
+    const first = applyModuleDraft(project, quick);
+    const impact = moduleDraftImpact(first, quick);
+    expect(impact!.introduced).toEqual([]);
+    expect(impact!.resolved).toEqual([]);
+  });
+
+  it("草案与项目不匹配时无法试算", () => {
+    const project = fixture();
+    const quick = createQuickModuleDraft(project, "module-a");
+    expect(moduleDraftImpact(project, { ...quick, moduleId: "module-missing" })).toBeNull();
+    expect(moduleDraftImpact(project, { nonsense: true })).toBeNull();
+  });
+
+  it("规范检查关闭时不制造结论", () => {
+    const project = fixture();
+    project.blockoutProfile = { ...project.blockoutProfile, enabled: false };
+    const impact = moduleDraftImpact(project, draftWithNarrowDoorway(project));
+    expect(impact).toEqual({ introduced: [], remaining: [], resolved: [] });
+  });
+});
 
 describe("module-scoped context", () => {
   it("uses shared and module materials without duplicating originals or leaking another module", () => {

@@ -34,6 +34,12 @@
 .context-actions button:disabled { opacity: .5; cursor: default; }
 .context-material-form { display: grid; gap: 9px; padding: 10px 0; }
 .material-upload-preview { max-width: 100%; max-height: 100px; object-fit: contain; }
+
+/* 同名资料：给出可引用的序号，不做自动取舍 */
+.material-variant { margin-left: 6px; padding: 1px 5px; border: 1px solid #8a6f3f; border-radius: 3px; color: #e2c489; font-size: 10px; font-style: normal; white-space: nowrap; }
+.material-sharing-row.is-duplicate { border-left: 2px solid #8a6f3f; padding-left: 7px; }
+.material-sharing-row .material-delete-confirm { display: flex; gap: 6px; }
+.material-delete-confirm .context-danger { border-color: #a4574c; background: #3a2320; color: #f0b8ae; }
 .context-material-sharing { margin-top: 10px; font-size: 11px; }
 .context-material-sharing summary { color: #b8c5ac; cursor: pointer; }
 .material-sharing-row { padding: 8px; display: grid; gap: 5px; border-bottom: 1px solid #353c30; }

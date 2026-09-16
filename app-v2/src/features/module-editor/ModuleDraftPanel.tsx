@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronDown, Download, RefreshCw, Sparkles, Upload, X } from "lucide-react";
-import { confirmModuleShape, createModuleDraftRequest, createQuickModuleDraft, moduleDraftDiff, moduleDraftSchema, moduleShapeStatus, validateModuleDraft, type ModuleDraft, type ModuleDraftRequest } from "../../domain/module-draft";
+import { confirmModuleShape, createModuleDraftRequest, createQuickModuleDraft, moduleDraftDiff, moduleDraftImpact, moduleDraftSchema, moduleShapeStatus, validateModuleDraft, type ModuleDraft, type ModuleDraftRequest } from "../../domain/module-draft";
 import { geometryDigest, resolveModuleContext } from "../../domain/workflow-context";
 import type { ModuleContext } from "../../domain/workflow-context";
 import { useProjectStore } from "../../store/project-store";
@@ -17,7 +17,7 @@ function ReferenceList({ context }: { context: ModuleContext }) {
   return <details className="draft-reference-list" open>
     <summary>本次参考 · {context.materials.length} 份资料</summary>
     <p>项目目标与约束 · 模块目的与目标 · {context.nodes.length} 个区域 · {context.internalLinks.length} 条内部通路 · {context.externalLinks.length} 个对外要求 · 现有几何</p>
-    {context.materials.map((item) => <div key={item.id}><span>{item.name}</span><small>{item.source} · {imageLabel(item)}</small></div>)}
+    {context.materials.map((item) => <div key={item.id}><span>{item.name}{item.variantLabel ? <em className="draft-variant">{item.variantLabel}</em> : null}</span><small>{item.source} · {imageLabel(item)}</small></div>)}
     {!context.materials.length ? <p>尚无图片；可以用拓扑和文字起稿，默认尺度需列为假设。</p> : null}
     {context.warnings.map((warning, index) => <p className="draft-error" key={`${index}:${warning}`}>{warning}</p>)}
     <small>仅显示当前模块相关材料。结构、氛围与目标仍需人工核对。</small>
@@ -38,6 +38,8 @@ export function ModuleDraftPanel({ moduleId }: { moduleId: string }) {
   const shapeStatus = moduleShapeStatus(project, moduleId);
   const errors = useMemo(() => draft ? validateModuleDraft(project, draft) : [], [project, draft]);
   const diff = useMemo(() => draft ? moduleDraftDiff(project, draft) : null, [project, draft]);
+  // 采用前看清代价：试算套用后的规范检查结果，不写入任何东西
+  const impact = useMemo(() => draft ? moduleDraftImpact(project, draft) : null, [project, draft]);
   const [expanded, setExpanded] = useState(false);
   const [intent, setIntent] = useState("");
   const [request, setRequest] = useState<ModuleDraftRequest | null>(null);
@@ -149,6 +151,27 @@ export function ModuleDraftPanel({ moduleId }: { moduleId: string }) {
         <strong>{draft.source === "agent" ? "AI 草案" : "快速体块草案"} · 预览中，尚未写入</strong>
         {diff ? <p>新增 {diff.added} · 修改 {diff.changed} · 移除 {diff.removed} 个体块；移除 {diff.removedConnections} 条实际对接；影响 {affectedInstances} 个已放置实例。</p> : null}
         {draft.assumptions.length ? <ul>{draft.assumptions.map((item, index) => <li key={`${index}:${item}`}>{item}</li>)}</ul> : null}
+        {/* 采用前看清代价：这里显示的是试算结果，项目仍未改动 */}
+        {impact ? (() => {
+          const introducedErrors = impact.introduced.filter((issue) => issue.severity === "error");
+          const introducedWarnings = impact.introduced.filter((issue) => issue.severity !== "error");
+          const tone = introducedErrors.length ? "is-error" : introducedWarnings.length ? "is-warning" : "is-clear";
+          return <>
+            <p className={`draft-impact ${tone}`}>
+              {tone === "is-clear"
+                ? `采用后规范检查：不会新增问题${impact.resolved.length ? `，并消除 ${impact.resolved.length} 项` : ""}${impact.remaining.length ? `；仍有 ${impact.remaining.length} 项待处理` : ""}`
+                : `采用后规范检查：新增 ${introducedErrors.length} 个错误、${introducedWarnings.length} 个提示${impact.remaining.length ? `；另有 ${impact.remaining.length} 项原本就存在` : ""}`}
+            </p>
+            {impact.introduced.length ? <ul className="draft-impact-list">
+              {impact.introduced.map((issue) => <li key={issue.id} className={issue.severity === "error" ? "is-error" : "is-warning"}>
+                {issue.severity === "error" ? "错误" : "提示"} · {issue.message}
+              </li>)}
+            </ul> : null}
+            {!impact.introduced.length && impact.resolved.length ? <ul className="draft-impact-list">
+              {impact.resolved.map((issue) => <li key={issue.id} className="is-resolved">消除 · {issue.message}</li>)}
+            </ul> : null}
+          </>;
+        })() : <p className="draft-impact is-error">无法试算采用结果：草案格式或目标模块有问题，采用会被拦下。</p>}
         {errors.length ? <p className="draft-error" role="alert">草案已过期或不满足要求：{errors.join("；")}。请取消后重新准备。</p> : null}
         {confirmReplace ? <p className="draft-replace-warning">将替换当前模块的 {diff?.existingBlocks ?? 0} 个体块。未被保留的积木会移除，受影响的实际对接按上方差异处理。资料与拓扑保持原样。</p> : null}
         <div className="draft-actions"><button type="button" className="primary-command" disabled={errors.length > 0} onClick={applyDraft}>{confirmReplace ? "确认替换当前模块" : "采用草案"}</button><button type="button" className="secondary-command" onClick={() => { useProjectStore.getState().setModuleDraft(null); setConfirmReplace(false); setStatus("已取消预览，原模块未改动"); }}><X size={13} />取消预览</button></div>

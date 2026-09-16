@@ -55,7 +55,7 @@ export function ModuleContextPanel({ moduleId }: { moduleId: string }) {
         {context.materials.filter((item) => item.kind === kind).length === 0 ? <p className="context-empty">暂无{kind === "structure" ? "结构" : "氛围"}参考</p> : null}
         {context.materials.filter((item) => item.kind === kind).map((item) => <figure key={item.id}>
           {item.imageData ? <button type="button" className="context-thumbnail" onClick={() => setPinnedId(pinnedId === item.id ? null : item.id)} aria-label={`放大固定 ${item.name}`}><img src={item.imageData} alt={item.name} /><Maximize2 size={13} /></button> : <span className="context-missing-image">原图缺失</span>}
-          <figcaption>{item.name}<small>{item.source}</small></figcaption>{item.text ? <p>{item.text}</p> : null}
+          <figcaption>{item.name}{item.variantLabel ? <em className="material-variant">{item.variantLabel}</em> : null}<small>{item.source}</small></figcaption>{item.text ? <p>{item.text}</p> : null}
         </figure>)}
       </section>)}
     </div>
@@ -63,7 +63,7 @@ export function ModuleContextPanel({ moduleId }: { moduleId: string }) {
     <section className="context-section"><h3>当前要求</h3>
       {context.goal ? <p><small>继承 · 项目目标</small>{context.goal}</p> : null}
       {context.constraints ? <p className="context-rule"><small>继承 · 项目硬约束</small>{context.constraints}</p> : null}
-      {context.materials.filter((item) => item.kind === "rules" || item.kind === "note").map((item) => <p key={item.id}><small>{item.source} · {item.name}</small>{item.text}{item.imageData ? <button type="button" className="context-action" onClick={() => setPinnedId(item.id)}>查看附图</button> : null}</p>)}
+      {context.materials.filter((item) => item.kind === "rules" || item.kind === "note").map((item) => <p key={item.id}><small>{item.source} · {item.name}{item.variantLabel ? ` · ${item.variantLabel}` : ""}</small>{item.text}{item.imageData ? <button type="button" className="context-action" onClick={() => setPinnedId(item.id)}>查看附图</button> : null}</p>)}
       {!context.goal && !context.constraints && !context.materials.some((item) => item.kind === "rules" || item.kind === "note") ? <p className="context-muted">可直接开始搭建，资料与要求随时补充。</p> : null}
       {context.warnings.map((warning, index) => <p className="context-warning" key={`${index}:${warning}`}>{warning}</p>)}
     </section>

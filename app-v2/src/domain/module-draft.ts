@@ -4,7 +4,8 @@ import { fingerprint } from "./fingerprint";
 import { createId } from "./ids";
 import { projectSchema } from "./project-schema";
 import { stableJson } from "./stable-json";
-import type { Block, BlockoutProject } from "./types";
+import { validateProject } from "./validation";
+import type { Block, BlockoutProject, ValidationIssue } from "./types";
 import { geometryDigest, resolveModuleContext } from "./workflow-context";
 import { moduleDraftSchema, type ModuleDraft, type ModuleDraftRequest } from "./module-draft-contract";
 export { moduleDraftSchema, moduleDraftRequestSchema, type ModuleDraft, type ModuleDraftRequest } from "./module-draft-contract";
@@ -166,6 +167,47 @@ export function moduleDraftDiff(project: BlockoutProject, draft: ModuleDraft) {
 
 export function moduleShapeDigest(project: BlockoutProject, moduleId: string): string {
   return fingerprint(`${resolveModuleContext(project, moduleId).contextDigest}:${geometryDigest(project, moduleId)}`);
+}
+
+/**
+ * 试算：把草案合进去会得到什么项目，但不写入任何东西。
+ * 采用前的规范检查影响就是基于它。
+ */
+export function previewModuleDraft(project: BlockoutProject, input: unknown): BlockoutProject | null {
+  const parsed = moduleDraftSchema.safeParse(input);
+  if (!parsed.success) return null;
+  if (!project.modules.some((module) => module.id === parsed.data.moduleId)) return null;
+  const result = projectSchema.safeParse(withDraft(project, parsed.data));
+  return result.success ? result.data : null;
+}
+
+export interface ModuleDraftImpact {
+  /** 采用后会**新增**的规范问题 */
+  introduced: ValidationIssue[];
+  /** 采用后会消失的规范问题 */
+  resolved: ValidationIssue[];
+  /** 采用后仍存在的规范问题 */
+  remaining: ValidationIssue[];
+}
+
+/**
+ * 采用前看清代价：对比"当前模块"与"采用该草案之后"的规范检查结果。
+ * 试算结果不是合法项目时返回 null（此时采用本来就会被拦下）。
+ */
+export function moduleDraftImpact(project: BlockoutProject, input: unknown): ModuleDraftImpact | null {
+  const trial = previewModuleDraft(project, input);
+  if (!trial || !project.concept) return null;
+  const moduleId = (input as { moduleId?: string }).moduleId;
+  if (!moduleId) return null;
+  const before = validateProject(project).filter((issue) => issue.moduleId === moduleId);
+  const after = validateProject(trial).filter((issue) => issue.moduleId === moduleId);
+  const beforeIds = new Set(before.map((issue) => issue.id));
+  const afterIds = new Set(after.map((issue) => issue.id));
+  return {
+    introduced: after.filter((issue) => !beforeIds.has(issue.id)),
+    remaining: after.filter((issue) => beforeIds.has(issue.id)),
+    resolved: before.filter((issue) => !afterIds.has(issue.id)),
+  };
 }
 
 export function moduleShapeStatus(project: BlockoutProject, moduleId: string): "empty" | "unconfirmed" | "confirmed" | "stale" {

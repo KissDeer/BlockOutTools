@@ -45,7 +45,7 @@ export const moduleDraftRequestSchema = z.object({
     moduleId: z.string(), moduleName: z.string(), sourceId: z.string(), scopeIds: z.array(z.string()),
     goal: z.string(), constraints: z.string(), purpose: z.string(), goals: z.string(),
     nodes: z.array(logicNodeSchema), internalLinks: z.array(logicLinkSchema), externalLinks: z.array(logicLinkSchema), keys: z.array(logicKeySchema),
-    materials: z.array(designMaterialSchema.extend({ source: z.string(), calibration: z.unknown().optional() })),
+    materials: z.array(designMaterialSchema.extend({ source: z.string(), calibration: z.unknown().optional(), contentDigest: z.string(), variantLabel: z.string(), origin: z.enum(["project-material", "module-material", "scope-input", "module-reference"]) })),
     sources: z.array(z.string()), warnings: z.array(z.string()), contextDigest: z.string(), ambiguous: z.boolean(),
   }),
 }).strict().refine((request) => request.moduleId === request.context.moduleId && request.contextDigest === request.context.contextDigest, "请求目标与上下文不一致");

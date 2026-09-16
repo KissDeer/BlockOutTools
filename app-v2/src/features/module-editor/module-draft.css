@@ -17,12 +17,22 @@
 .draft-reference-list p { margin: 4px 0 7px; }
 .draft-reference-list > div { display: grid; padding: 3px 0; border-bottom: 1px solid #35402e; }
 .draft-reference-list small { color: #8fa17f; }
+.draft-variant { margin-left: 6px; padding: 1px 5px; border: 1px solid #8a6f3f; border-radius: 3px; color: #e2c489; font-size: 9.5px; font-style: normal; white-space: nowrap; }
 .draft-status { color: #c4b990; margin: 8px 0 0; line-height: 1.7; }
 .draft-status.is-compact { margin: 0; padding: 0 12px 8px; }
 .draft-preview-summary > strong { color: #d9e6cb; font-size: 12px; }
 .draft-preview-summary p, .draft-preview-summary li { line-height: 1.7; margin: 5px 0; }
 .draft-preview-summary ul { padding-left: 19px; margin: 6px 0; }
 .draft-error, .draft-replace-warning { color: #e8b37d; padding: 7px 10px; border-left: 2px solid #b5894f; background: #332b20; }
+.draft-impact { padding: 7px 10px; border-left: 2px solid #6d7a60; background: #232b1e; color: #c2cfb6; }
+.draft-impact.is-error { border-left-color: #b5544a; background: #33211f; color: #efb3ab; }
+.draft-impact.is-warning { border-left-color: #b5894f; background: #332b20; color: #e8c79a; }
+.draft-impact.is-clear { border-left-color: #6f9c72; background: #1f2a20; color: #b6d5b8; }
+.draft-impact-list { list-style: none; padding-left: 0 !important; margin: 4px 0 6px !important; }
+.draft-impact-list li { padding: 4px 9px; margin: 3px 0 !important; border-left: 2px solid #6d7a60; background: #1e241b; color: #bac7ae; }
+.draft-impact-list li.is-error { border-left-color: #b5544a; color: #efb3ab; }
+.draft-impact-list li.is-warning { border-left-color: #b5894f; color: #e8c79a; }
+.draft-impact-list li.is-resolved { border-left-color: #6f9c72; color: #a9cfab; }
 .draft-canvas-badge { position: absolute; left: 12px; top: 12px; z-index: 2; padding: 6px 9px; border: 1px solid #758955; border-radius: 5px; color: #d6e7bb; background: #28311fe8; font-size: 11px; pointer-events: none; }
 .module-editor .editor-toolbar { overflow-x: auto; }
 .module-editor .editor-toolbar-hint { white-space: nowrap; }
