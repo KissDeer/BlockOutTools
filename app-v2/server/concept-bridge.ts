@@ -3,12 +3,12 @@ import { join, resolve } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Plugin } from "vite";
 import { recognitionCandidateSchema } from "../src/domain/concept-candidate";
-import { decompositionCandidateSchema } from "../src/domain/concept-decomposition";
-import { moduleDraftMiddleware } from "./module-draft-bridge";
 
 /**
- * 阶段一的本地桥：让 DSH 里的 agent 能读到输入材料（图片落盘，可直接看图），
- * 并把识别候选写回来给网页确认。只做暂存，不写项目文件。
+ * 识别的本地桥：让 agent 能读到输入材料（图片落盘，可直接看图），
+ * 并把候选写回来给网页核对。只做暂存，不写项目文件。
+ *
+ * 模块草案与拆解提案这两个端点随模块层一起删掉了 —— 它们的数据模型都挂在模块定义上。
  */
 
 const MAX_BODY = 64 * 1024 * 1024;
@@ -32,12 +32,10 @@ async function readBody(request: IncomingMessage): Promise<Record<string, unknow
 }
 
 export function conceptBridgePlugin(): Plugin {
-  const moduleDrafts = moduleDraftMiddleware();
   const root = resolve(process.env.BLOCKOUT_V2_CONCEPT_DIR || "../data/concept");
   let inputs: InputsBundle | null = null;
   let state: { state: unknown; receivedAt: string } | null = null;
   let received: { candidate: unknown; receivedAt: string } | null = null;
-  let decomposition: { candidate: unknown; receivedAt: string } | null = null;
 
   /** 输入同步：图片写到磁盘，agent 可以直接看图；base64 不回传，避免响应过大 */
   async function saveInputs(body: Record<string, unknown>) {
@@ -102,21 +100,6 @@ export function conceptBridgePlugin(): Plugin {
         result = { ok: true };
       } else if (request.method === "GET" && path === "/api/concept/state") {
         result = state ?? { state: null, receivedAt: "" };
-      } else if (request.method === "POST" && path === "/api/concept/decomposition") {
-        const body = await readBody(request);
-        const parsed = decompositionCandidateSchema.safeParse(body);
-        if (!parsed.success) {
-          response.statusCode = 422;
-          response.end(JSON.stringify({ error: "拆解提案格式不合法", issues: parsed.error.issues.slice(0, 8).map((issue) => `${issue.path.join(".")}: ${issue.message}`) }));
-          return;
-        }
-        decomposition = { candidate: parsed.data, receivedAt: new Date().toISOString() };
-        result = { ok: true, modules: parsed.data.modules.length };
-      } else if (request.method === "GET" && path === "/api/concept/decomposition") {
-        result = decomposition ?? { candidate: null, receivedAt: "" };
-      } else if (request.method === "DELETE" && path === "/api/concept/decomposition") {
-        decomposition = null;
-        result = { ok: true };
       } else {
         throw Object.assign(new Error("接口不存在"), { statusCode: 404 });
       }
@@ -124,13 +107,13 @@ export function conceptBridgePlugin(): Plugin {
       if (!response.writableEnded) response.end(JSON.stringify(result));
     } catch (error) {
       response.statusCode = (error as { statusCode?: number }).statusCode ?? 400;
-      response.end(JSON.stringify({ error: error instanceof Error ? error.message : "概念桥接失败" }));
+      response.end(JSON.stringify({ error: error instanceof Error ? error.message : "识别桥接失败" }));
     }
   };
 
   return {
     name: "blockout-concept-bridge",
-    configureServer(server) { server.middlewares.use(moduleDrafts); server.middlewares.use(middleware); },
-    configurePreviewServer(server) { server.middlewares.use(moduleDrafts); server.middlewares.use(middleware); },
+    configureServer(server) { server.middlewares.use(middleware); },
+    configurePreviewServer(server) { server.middlewares.use(middleware); },
   };
 }

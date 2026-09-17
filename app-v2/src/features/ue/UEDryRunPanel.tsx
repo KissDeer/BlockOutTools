@@ -18,7 +18,6 @@ export function UEDryRunPanel({ onClose }: { onClose: () => void }) {
       </header>
       <div className="ue-plan-summary">
         <div><strong>{plan.actorCount}</strong><span>Blueprint Actor</span></div>
-        <div><strong>{plan.assemblyIssues.length}</strong><span>端口残差</span></div>
         <div><strong>{plan.unplaced.length}</strong><span>未落位区域</span></div>
       </div>
       {plan.unplaced.length ? <p className="workflow-notice" role="status">这些区域还没有落位，被按原点处理，会叠在一起：{plan.unplaced.join("、")}。在检查器的「落位与朝向」里给它们填上位置再导出。</p> : null}
@@ -31,7 +30,7 @@ export function UEDryRunPanel({ onClose }: { onClose: () => void }) {
           </article>
         ))}
       </div>
-      <footer className="panel-note">位置来自展平的节点几何；本面板不执行 Apply，也不读取模块实例的摆放。</footer>
+      <footer className="panel-note">位置来自展平的节点几何；本面板不执行 Apply。端口对接检查随模块层一起删掉了，这里不再报这一项。</footer>
     </aside>
   );
 }

@@ -1,8 +1,15 @@
 import { createBlock } from "./catalog";
 import { createId } from "./ids";
-import { nodesOfScope, findModule } from "./concept-scopes";
 import type { LogicNode, LogicTopology } from "./concept";
-import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
+import type { Block, BlockoutProject, BlockType } from "./types";
+
+/**
+ * 项目级命令。
+ *
+ * 几何挂在**节点**上（`LogicNode.blocks`），所以这里只有三类事：
+ * 项目本身的属性、逻辑拓扑的写回、以及节点内积木的增删改。
+ * 模块层删除后，实例、连接、模块定义这些命令一并消失。
+ */
 
 function cloneProject(project: BlockoutProject): BlockoutProject {
   return structuredClone(project);
@@ -18,78 +25,6 @@ export function renameProject(project: BlockoutProject, name: string): BlockoutP
   next.name = name.trim() || next.name;
   return touch(next);
 }
-
-export function addModule(project: BlockoutProject, graphPosition: Vec2 = [320, 220]): { project: BlockoutProject; module: ModuleDefinition; instance: ModuleInstance } {
-  const next = cloneProject(project);
-  const module: ModuleDefinition = { id: createId("module"), name: `新模块 ${next.modules.length + 1}`, revision: 1, blocks: [] };
-  const instance: ModuleInstance = {
-    id: createId("instance"),
-    definitionId: module.id,
-    name: module.name,
-    graphPosition,
-    assemblyTransform: { position: [0, 0, 0], rotation: 0 },
-  };
-  next.modules.push(module);
-  next.instances.push(instance);
-  next.assemblyAnchorInstanceId ??= next.instances[0].id;
-  return { project: touch(next), module, instance };
-}
-
-export function duplicateInstance(project: BlockoutProject, instanceId: string): { project: BlockoutProject; instance: ModuleInstance | null } {
-  const next = cloneProject(project);
-  const source = next.instances.find((item) => item.id === instanceId);
-  if (!source) return { project, instance: null };
-  const instance: ModuleInstance = {
-    ...source,
-    id: createId("instance"),
-    name: `${source.name} 副本`,
-    graphPosition: [source.graphPosition[0] + 48, source.graphPosition[1] + 48],
-    assemblyTransform: { ...source.assemblyTransform, position: [source.assemblyTransform.position[0] + 200, source.assemblyTransform.position[1] + 200, source.assemblyTransform.position[2]] },
-  };
-  next.instances.push(instance);
-  return { project: touch(next), instance };
-}
-
-export function removeInstance(project: BlockoutProject, instanceId: string): BlockoutProject {
-  const next = cloneProject(project);
-  next.instances = next.instances.filter((item) => item.id !== instanceId);
-  if (next.assemblyAnchorInstanceId === instanceId) next.assemblyAnchorInstanceId = next.instances[0]?.id;
-  next.connections = next.connections.filter((item) => item.sourceInstanceId !== instanceId && item.targetInstanceId !== instanceId);
-  return touch(next);
-}
-
-export function updateInstanceGraph(project: BlockoutProject, instanceId: string, graphPosition: Vec2): BlockoutProject {
-  const next = cloneProject(project);
-  const instance = next.instances.find((item) => item.id === instanceId);
-  if (!instance) return project;
-  instance.graphPosition = graphPosition;
-  return touch(next);
-}
-
-export function updateInstanceTransform(project: BlockoutProject, instanceId: string, transform: Transform): BlockoutProject {
-  const next = cloneProject(project);
-  const instance = next.instances.find((item) => item.id === instanceId);
-  if (!instance) return project;
-  instance.assemblyTransform = structuredClone(transform);
-  return touch(next);
-}
-
-export function addBlock(project: BlockoutProject, moduleId: string, type: BlockType, position: [number, number, number] = [0, 0, 0]): { project: BlockoutProject; block: Block | null } {
-  const next = cloneProject(project);
-  const module = next.modules.find((item) => item.id === moduleId);
-  if (!module) return { project, block: null };
-  const block = createBlock(type, position);
-  module.blocks.push(block);
-  module.revision += 1;
-  return { project: touch(next), block };
-}
-
-/* ---------------- 节点自己的几何（2026-09-17 二次修订） ----------------
- *
- * 几何挂在**节点**上，坐标是节点局部厘米（原点 = 这个节点在父级里的落位）。
- * 旧项目仍走上面的模块定义链，两条路并存到 1-F；调用方只认下面这组"目标"入口，
- * 由 `store` 决定当前目标是节点还是遗留模块。
- */
 
 function nodeIn(project: BlockoutProject, nodeId: string): LogicNode | null {
   const topology = project.concept;
@@ -131,123 +66,13 @@ export function removeNodeBlocks(project: BlockoutProject, nodeId: string, block
   return touch(next);
 }
 
-/**
- * 几何编辑的**唯一裁决点**：当前这一刀落在节点上，还是落在遗留模块上。
- * 新代码一律走节点；只有"没有对应逻辑节点的旧模块"才落到模块定义上。
- */
-export type GeometryTarget = { kind: "node"; nodeId: string } | { kind: "module"; moduleId: string } | null;
-
-export function addBlockTo(project: BlockoutProject, target: GeometryTarget, type: BlockType, position: [number, number, number] = [0, 0, 0]): { project: BlockoutProject; block: Block | null } {
-  if (!target) return { project, block: null };
-  return target.kind === "module" ? addBlock(project, target.moduleId, type, position) : addNodeBlock(project, target.nodeId, type, position);
-}
-
-export function updateBlockIn(project: BlockoutProject, target: GeometryTarget, block: Block): BlockoutProject {
-  if (!target) return project;
-  return target.kind === "module" ? updateBlock(project, target.moduleId, block) : updateNodeBlock(project, target.nodeId, block);
-}
-
-export function removeBlocksFrom(project: BlockoutProject, target: GeometryTarget, blockIds: string[]): BlockoutProject {
-  if (!target) return project;
-  return target.kind === "module" ? removeBlocks(project, target.moduleId, blockIds) : removeNodeBlocks(project, target.nodeId, blockIds);
-}
-
-export function updateBlock(project: BlockoutProject, moduleId: string, block: Block): BlockoutProject {
-  const next = cloneProject(project);
-  const module = next.modules.find((item) => item.id === moduleId);
-  if (!module) return project;
-  const index = module.blocks.findIndex((item) => item.id === block.id);
-  if (index < 0) return project;
-  module.blocks[index] = structuredClone(block);
-  module.revision += 1;
-  return touch(next);
-}
-
-export function removeBlocks(project: BlockoutProject, moduleId: string, blockIds: string[]): BlockoutProject {
-  const next = cloneProject(project);
-  const module = next.modules.find((item) => item.id === moduleId);
-  if (!module) return project;
-  const ids = new Set(blockIds);
-  const removedPortIds = new Set(module.blocks.filter((item) => ids.has(item.id) && item.type === "port").map((item) => item.id));
-  module.blocks = module.blocks.filter((item) => !ids.has(item.id));
-  module.revision += 1;
-  if (removedPortIds.size > 0) {
-    next.connections = next.connections.filter((item) => !removedPortIds.has(item.sourcePortId) && !removedPortIds.has(item.targetPortId));
-  }
-  return touch(next);
-}
-
-export function addConnection(project: BlockoutProject, type: ConnectionType, sourceInstanceId: string, sourcePortId: string, targetInstanceId: string, targetPortId: string): BlockoutProject {
-  const sourceInstance = project.instances.find((item) => item.id === sourceInstanceId);
-  const targetInstance = project.instances.find((item) => item.id === targetInstanceId);
-  const sourceModule = project.modules.find((item) => item.id === sourceInstance?.definitionId);
-  const targetModule = project.modules.find((item) => item.id === targetInstance?.definitionId);
-  const sourcePortExists = sourceModule?.blocks.some((item) => item.type === "port" && item.id === sourcePortId);
-  const targetPortExists = targetModule?.blocks.some((item) => item.type === "port" && item.id === targetPortId);
-  const occupied = project.connections.some((item) =>
-    (item.sourceInstanceId === sourceInstanceId && item.sourcePortId === sourcePortId)
-    || (item.targetInstanceId === sourceInstanceId && item.targetPortId === sourcePortId)
-    || (item.sourceInstanceId === targetInstanceId && item.sourcePortId === targetPortId)
-    || (item.targetInstanceId === targetInstanceId && item.targetPortId === targetPortId));
-  if (!sourcePortExists || !targetPortExists || occupied || sourceInstanceId === targetInstanceId) return project;
-  const next = cloneProject(project);
-  next.connections.push({ id: createId("connection"), type, sourceInstanceId, sourcePortId, targetInstanceId, targetPortId, waypoints: [] });
-  return touch(next);
-}
-
-export function updateConnection(project: BlockoutProject, connectionId: string, patch: Partial<Pick<Connection, "type" | "spacing" | "waypoints">>): BlockoutProject {
-  const next = cloneProject(project);
-  const connection = next.connections.find((item) => item.id === connectionId);
-  if (!connection) return project;
-  Object.assign(connection, structuredClone(patch));
-  return touch(next);
-}
-
-export function updateModule(project: BlockoutProject, module: ModuleDefinition): BlockoutProject {
-  const next = cloneProject(project);
-  const index = next.modules.findIndex((item) => item.id === module.id);
-  if (index < 0) return project;
-  const portIds = new Set(module.blocks.filter((block) => block.type === "port").map((block) => block.id));
-  const removedPorts = new Set(next.modules[index].blocks.filter((block) => block.type === "port" && !portIds.has(block.id)).map((block) => block.id));
-  next.connections = next.connections.filter((connection) => !removedPorts.has(connection.sourcePortId) && !removedPorts.has(connection.targetPortId));
-  next.modules[index] = { ...structuredClone(module), revision: next.modules[index].revision + 1 };
-  return touch(next);
-}
-
-export function updateProjectSettings(project: BlockoutProject, patch: Partial<Pick<BlockoutProject, "assemblyAnchorInstanceId" | "blockoutProfile">>): BlockoutProject {
-  return touch({ ...cloneProject(project), ...structuredClone(patch) });
-}
-
-export function removeConnection(project: BlockoutProject, connectionId: string): BlockoutProject {
-  if (!project.connections.some((item) => item.id === connectionId)) return project;
-  const next = cloneProject(project);
-  next.connections = next.connections.filter((item) => item.id !== connectionId);
-  return touch(next);
-}
-
-/** 阶段一：写回逻辑拓扑。只影响 concept 字段，不触碰模块、实例与连接。 */
+/** 写回逻辑拓扑。只影响 concept 字段。 */
 export function setConcept(project: BlockoutProject, topology: LogicTopology): BlockoutProject {
   const next = cloneProject(project);
   next.concept = structuredClone(topology);
   return touch(next);
 }
 
-/** 为逻辑节点新建一个空模块并绑定，便于立刻进入模块内部搭建体块 */
-export function createModuleForNode(project: BlockoutProject, nodeId: string, graphPosition: Vec2): { project: BlockoutProject; module: ModuleDefinition; instance: ModuleInstance } | null {
-  const node = project.concept?.nodes.find((item) => item.id === nodeId);
-  if (!node) return null;
-  const created = addModule(project, graphPosition);
-  created.module.name = node.name;
-  created.instance.name = node.name;
-  const next = cloneProject(created.project);
-  const module = next.modules.find((item) => item.id === created.module.id) as ModuleDefinition;
-  module.name = node.name;
-  const instance = next.instances.find((item) => item.id === created.instance.id) as ModuleInstance;
-  instance.name = node.name;
-  if (next.concept) {
-    const target = next.concept.nodes.find((item) => item.id === nodeId);
-    if (target) target.moduleId = module.id;
-  }
-  return { project: touch(next), module, instance };
+export function updateProjectSettings(project: BlockoutProject, patch: Partial<Pick<BlockoutProject, "blockoutProfile">>): BlockoutProject {
+  return touch({ ...cloneProject(project), ...structuredClone(patch) });
 }
-

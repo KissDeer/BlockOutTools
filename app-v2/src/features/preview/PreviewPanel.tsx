@@ -4,7 +4,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RefreshCw, X } from "lucide-react";
 import { buildDeploymentGeometryFrom, portPoses } from "../../domain/deployment-geometry";
 import { flattenProjectGeometry } from "../../domain/node-geometry";
-import { resolveAssembly } from "../../domain/assembly-resolver";
 import { validateProject } from "../../domain/validation";
 import { IconButton } from "../../components/IconButton";
 import { useProjectStore } from "../../store/project-store";
@@ -17,16 +16,13 @@ export default function PreviewPanel() {
   const hostRef = useRef<HTMLDivElement>(null);
   const project = useProjectStore((state) => state.project);
   const revision = useProjectStore((state) => state.previewRevision);
-  // Display controls operate on the last explicitly refreshed project, not live edits.
-  const previewProject = useProjectStore((state) => state.previewProject);
+  // store 不再保存"刷新那一刻的项目副本"（几何由 flattenProjectGeometry 现算），
+  // 所以预览读的就是当前项目；"有未刷新的修改"由 previewDirty 提示。
   const previewScope = useProjectStore((state) => state.previewScope);
-  const draftPreview = useProjectStore((state) => Boolean(state.moduleDraft));
-  const snapshot = previewProject ?? project;
   const dirty = useProjectStore((state) => state.previewDirty);
   const toggle = useProjectStore((state) => state.togglePreview);
   const refresh = useProjectStore((state) => state.refreshPreview);
   const [primitiveCount, setPrimitiveCount] = useState(0);
-  const [assemblyIssueCount, setAssemblyIssueCount] = useState(0);
   const [spatialIssueCount, setSpatialIssueCount] = useState(0);
   const [isolateId, setIsolateId] = useState("");
   const [showPorts, setShowPorts] = useState(true);
@@ -56,16 +52,14 @@ export default function PreviewPanel() {
 
     const content = new THREE.Group();
     scene.add(content);
-    // 几何只从展平节点几何来（旧项目走 node-geometry 里的实例回落），
-    // 与 UE 导出同一份来源。端口约束是**组装**的检查，跟几何来源没关系，所以仍走求解器。
-    const geometry = flattenProjectGeometry(snapshot);
+    // 几何只从展平节点几何来，与 UE 导出同一份来源：网页看着对，UE 就不会是另一个样子。
+    const geometry = flattenProjectGeometry(project);
     const primitives = buildDeploymentGeometryFrom(
-      snapshot,
+      project,
       effectiveIsolateId ? { ...geometry, blocks: geometry.blocks.filter((placed) => placed.placementId === effectiveIsolateId) } : geometry,
     );
     setPrimitiveCount(primitives.length);
-    setAssemblyIssueCount(resolveAssembly(snapshot).issues.length);
-    setSpatialIssueCount(validateProject(snapshot).length);
+    setSpatialIssueCount(validateProject(project).length);
     renderer.localClippingEnabled = cutHeight !== "";
     const clippingPlanes = cutHeight === "" ? [] : [new THREE.Plane(new THREE.Vector3(0, -1, 0), Number(cutHeight))];
     for (const primitive of primitives) {
@@ -145,13 +139,13 @@ export default function PreviewPanel() {
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [revision, snapshot, effectiveIsolateId, showPorts, cutHeight, previewScope]);
+  }, [revision, project, effectiveIsolateId, showPorts, cutHeight, previewScope]);
 
   const local = previewScope.length > 0;
   return (
     <aside className="preview-panel" aria-label="三维预览">
       <header className="panel-header preview-header">
-        <div><strong>{local ? "节点局部 3D" : "整体 3D 预览"}</strong><span>{revision === 0 ? "尚未生成，点击刷新" : `${primitiveCount} 个预览几何 · ${local ? "节点局部厘米坐标" : `${assemblyIssueCount} 项实际对接提示`} · ${spatialIssueCount} 项规范提示`}{draftPreview ? " · 当前已采用几何，不含草案" : ""}</span></div>
+        <div><strong>{local ? "节点局部 3D" : "整体 3D 预览"}</strong><span>{revision === 0 ? "尚未生成，点击刷新" : `${primitiveCount} 个预览几何 · ${local ? "节点局部厘米坐标" : "整体世界厘米坐标"} · ${spatialIssueCount} 项规范提示`}</span></div>
         <div className="toolbar-group">
           <select aria-label="预览区域" value={effectiveIsolateId} onChange={(event) => setIsolateId(event.target.value)}><option value="">{local ? "全部" : "全部区域"}</option>{previewScope.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
           <label><input type="checkbox" checked={showPorts} onChange={(event) => setShowPorts(event.target.checked)} />端口方向</label>
@@ -164,7 +158,7 @@ export default function PreviewPanel() {
         <div ref={hostRef} style={{ position: "absolute", inset: 0 }} />
         {revision === 0 ? <div className="preview-empty"><BoxGlyph /><strong>3D 尚未生成</strong><span>点击刷新，预览当前节点的局部形态或整张图的已拼几何。</span></div> : primitiveCount === 0 ? <div className="preview-empty"><BoxGlyph /><strong>{local ? "这个节点还没有实体积木" : "整张图还没有可预览的几何"}</strong><span>{local ? "在拼接图里加盒体、门洞或直梯后刷新。" : "在任何区域里拼积木后刷新，或进入区域看局部 3D。"}</span></div> : null}
       </div>
-      <footer className="preview-footer"><span>左键旋转 · 右键平移 · 滚轮缩放 · {local ? "局部预览不表示外部接口已对接" : "对接检查不表示玩法路径可走"}</span>{dirty ? <em>当前项目有未刷新的修改</em> : !local && assemblyIssueCount > 0 ? <em>{assemblyIssueCount} 条端口约束未闭合</em> : <strong>检查楼梯落脚点与通道净空</strong>}</footer>
+      <footer className="preview-footer"><span>左键旋转 · 右键平移 · 滚轮缩放 · {local ? "局部预览不表示外部接口已对接" : "整体预览不表示玩法路径可走"}</span>{dirty ? <em>当前项目有未刷新的修改</em> : <strong>检查楼梯落脚点与通道净空</strong>}</footer>
     </aside>
   );
 }

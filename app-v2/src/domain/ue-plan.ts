@@ -1,6 +1,5 @@
 import { CATALOG, isDeployableBlock } from "./catalog";
 import { actorSyncKey } from "./ids";
-import { resolveAssembly, type AssemblyConstraintIssue } from "./assembly-resolver";
 import { ancestorPath, flattenNodeGeometry, flattenProjectGeometry, type FlatGeometry } from "./node-geometry";
 import type { Block, BlockoutProject } from "./types";
 
@@ -19,7 +18,18 @@ export interface UEDryRunPlan {
   createdAt: string;
   actorCount: number;
   actors: UEActorPlan[];
-  assemblyIssues: AssemblyConstraintIssue[];
+  /**
+   * 端口约束残差：**恒为空数组**，类型写成空元组就是让这件事在编译期成立。
+   *
+   * 这项检查原本由 `resolveAssembly` 给出，查的是"模块实例拼起来时端口对不对得上"；
+   * 模块层删除后没有实例可拼，检查随求解器一起消失，这里不再有产出者 —— 不是"查过没问题"，
+   * 而是"已经没在查"。界面若把它当 0 项通过来显示，那是误读。
+   *
+   * 键仍然保留：`scripts/ue_unreal_spawn.py` 会读 `plan['assemblyIssues']`，
+   * 已导出的 `layouts/ue-plan/*.blockout.actors.json` 也带着它。删键等于让
+   * app 之外的工具链静默少一项，属于跨工具的静默破坏。
+   */
+  assemblyIssues: [];
   /** 没有落位的区域名：它们按原点处理，必须报出来而不是静默叠在一起 */
   unplaced: string[];
 }
@@ -54,7 +64,7 @@ export function buildUEDryRunFrom(project: BlockoutProject, geometry: FlatGeomet
     createdAt: new Date().toISOString(),
     actorCount: actors.length,
     actors,
-    assemblyIssues: resolveAssembly(project).issues,
+    assemblyIssues: [],
     unplaced: geometry.unplaced,
   };
 }

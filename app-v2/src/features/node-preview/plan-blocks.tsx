@@ -1,4 +1,4 @@
-import type { PreviewBlock } from "./module-preview-model";
+import type { PreviewBlock } from "./node-preview-model";
 
 export function rgbaToCss(color: [number, number, number, number], alpha = 1): string {
   return `rgba(${Math.round(color[0] * 255)}, ${Math.round(color[1] * 255)}, ${Math.round(color[2] * 255)}, ${color[3] * alpha})`;

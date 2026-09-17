@@ -70,7 +70,7 @@ export function DiskLibraryActions({ onImport }: { onImport: () => void }) {
     try {
       setMessage("正在写入磁盘…");
       await bind(await writeProject(current, base?.revision ?? null));
-      setMessage("磁盘已保存 · 模块分文件");
+      setMessage("磁盘已保存");
     } catch (error) { setBlocked(true); setOpen(true); setMessage(error instanceof Error ? error.message : "磁盘保存失败"); }
     finally { busy.current = false; setSaveTick((value) => value + 1); }
   }
@@ -133,7 +133,7 @@ export function DiskLibraryActions({ onImport }: { onImport: () => void }) {
       const disk = await writeProject(copy, null);
       if (useProjectStore.getState().project !== current) throw new Error("副本已保存，但当前编辑发生变化，暂未切换；可在列表打开副本");
       archiveDraft(current);
-      await bind(disk); useProjectStore.getState().replaceProject(disk.project); setMessage("已另存为独立项目，模块与积木内容保留");
+      await bind(disk); useProjectStore.getState().replaceProject(disk.project); setMessage("已另存为独立项目");
       setLibrary(await listProjects());
     } catch (error) { setMessage(String(error)); }
     finally { busy.current = false; }

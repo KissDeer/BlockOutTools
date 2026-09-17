@@ -138,41 +138,6 @@ function collectScope(
   }
 }
 
-/** 旧数据：模块实例的积木，位置来自 assemblyTransform */
-function instancePlacements(project: BlockoutProject): Placement[] {
-  const modules = new Map(project.modules.map((module) => [module.id, module]));
-  return project.instances.flatMap((instance) => {
-    if (!modules.has(instance.definitionId)) return [];
-    const path = instance.scopePath?.length ? instance.scopePath : [instance.id];
-    return [{ id: instance.id, path, namePath: [instance.name] }];
-  });
-}
-
-/** 旧数据：实例摆放的积木，摊平成世界坐标 */
-function instanceBlocks(project: BlockoutProject): PlacedBlock[] {
-  const modules = new Map(project.modules.map((module) => [module.id, module]));
-  const nameById = new Map(project.instances.map((instance) => [instance.id, instance.name]));
-  const out: PlacedBlock[] = [];
-  for (const instance of project.instances) {
-    const module = modules.get(instance.definitionId);
-    if (!module) continue;
-    const path = instance.scopePath?.length ? instance.scopePath : [instance.id];
-    const [px, py] = [instance.assemblyTransform.position[0], instance.assemblyTransform.position[1]];
-    for (const block of module.blocks) {
-      const [x, y] = rotate2d(block.transform.position[0], block.transform.position[1], instance.assemblyTransform.rotation);
-      out.push({
-        placementId: instance.id,
-        path,
-        namePath: [...path.map((id) => nameById.get(id) ?? id), instance.name],
-        position: [px + x, py + y, instance.assemblyTransform.position[2] + blockBaseZ(block)],
-        rotation: instance.assemblyTransform.rotation + block.transform.rotation,
-        block,
-      });
-    }
-  }
-  return out;
-}
-
 /**
  * 某个节点内部的几何（含子层），**坐标相对这个节点自己**。
  *
@@ -221,21 +186,9 @@ export function flattenNodeGeometry(project: BlockoutProject, nodeId: string): F
  * `graphPosition` 是画布排版坐标，在这里绝不出现。
  */
 export function flattenProjectGeometry(project: BlockoutProject): FlatGeometry {
-  if (!project.concept) {
-    const blocks = instanceBlocks(project);
-    return { placements: instancePlacements(project), blocks, unplaced: [] };
-  }
-
   const blocks: PlacedBlock[] = [];
   const unplaced: string[] = [];
   collectScope(project, null, [], [], [0, 0], 0, new Set(), 0, unplaced, blocks);
-
-  // 一个节点积木都没有时，退回实例摆放。只在整张图都没有节点几何时才退。
-  if (blocks.length === 0) {
-    const legacy = instanceBlocks(project);
-    return { placements: instancePlacements(project), blocks: legacy, unplaced };
-  }
-
   const placements = [...new Map(blocks.map((placed) => [placed.placementId, { id: placed.placementId, path: placed.path, namePath: placed.namePath }])).values()];
   return { placements, blocks, unplaced };
 }

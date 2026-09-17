@@ -13,8 +13,8 @@ export interface DesignMaterial {
   kind: "structure" | "mood" | "rules" | "note";
   text: string;
   imageData: string;
-  /** Empty means project-wide. References stable module definition IDs. */
-  moduleIds: string[];
+  /** 空 = 整个项目可见。有值 = 只在这些逻辑节点内部可见（节点 id） */
+  nodeIds: string[];
 }
 
 export interface DesignContext {
@@ -23,17 +23,7 @@ export interface DesignContext {
   materials: DesignMaterial[];
 }
 
-export interface ModuleDefinition {
-  id: string;
-  name: string;
-  revision: number;
-  blocks: Block[];
-  reference?: DiagramReference;
-  interpretation?: Record<string, unknown>;
-  designBrief?: { purpose: string; goals: string };
-  shapeConfirmation?: { digest: string; confirmedAt: string };
-}
-
+/** 节点内部用的底图：像素坐标 + 标定比例，用来把图上量到的点换算成厘米 */
 export interface DiagramReference {
   id: string;
   name: string;
@@ -48,42 +38,6 @@ export interface DiagramReference {
   legend: string;
 }
 
-export interface ModuleInstance {
-  id: string;
-  definitionId: string;
-  name: string;
-  graphPosition: Vec2;
-  assemblyTransform: Transform;
-  /**
-   * 层级路径（从根到该实例经过的模块 id 链）。
-   * 嵌套之后用它区分"不同位置上的同名积木"；扁平项目里为空。
-   */
-  scopePath?: string[];
-}
-
-export type ConnectionType =
-  | "door"
-  | "one-way-door"
-  | "locked-door"
-  | "shortcut"
-  | "stairs"
-  | "spiral-stairs"
-  | "elevator"
-  | "one-way-elevator"
-  | "road"
-  | "drop";
-
-export interface Connection {
-  id: string;
-  type: ConnectionType;
-  sourceInstanceId: string;
-  sourcePortId: string;
-  targetInstanceId: string;
-  targetPortId: string;
-  waypoints: Vec2[];
-  spacing?: { forward: number; lateral: number; vertical: number };
-}
-
 export interface BlockoutProfile {
   enabled: boolean;
   enforceUeImport: boolean;
@@ -96,17 +50,20 @@ export interface BlockoutProfile {
   minStairTread: number;
 }
 
+/**
+ * 一个项目。
+ *
+ * 没有"模块"这一层：几何直接挂在逻辑节点上（`LogicNode.blocks`），
+ * 位置来自节点的 `relativePosition` / `relativeRotation`。
+ * 这里只留项目身份、拓扑、规范与资料。
+ */
 export interface BlockoutProject {
   schemaVersion: 2;
   projectId: string;
   name: string;
-  modules: ModuleDefinition[];
-  instances: ModuleInstance[];
-  connections: Connection[];
   blockoutProfile: BlockoutProfile;
   updatedAt: string;
-  assemblyAnchorInstanceId?: string;
-  /** 阶段一：逻辑拓扑（只表达连通逻辑，不含真实位置） */
+  /** 逻辑拓扑：节点 + 链路 + 锁钥，以及节点内部的几何 */
   concept?: LogicTopology;
   designContext?: DesignContext;
 }
@@ -115,7 +72,8 @@ export interface ValidationIssue {
   id: string;
   severity: "error" | "warning";
   rule: string;
-  moduleId: string;
+  /** 问题所在的逻辑节点 */
+  nodeId: string;
   blockId: string;
   message: string;
 }

@@ -1,46 +1,8 @@
 .decomposition-canvas .react-flow__pane { cursor: crosshair; }
 .decomposition-canvas .react-flow__pane:active { cursor: crosshair; }
-.decomposition-canvas .react-flow__node-moduleFrame { pointer-events: none; }
-.decomposition-canvas .react-flow__node-moduleFrame .decomp-frame-title,
-.decomposition-canvas .react-flow__node-moduleFrame .decomp-frame-menu { pointer-events: auto; }
 .decomposition-canvas .logic-node-unbound { display: none; }
 .decomposition-canvas .logic-handle { opacity: .8; pointer-events: auto; }
 .decomposition-canvas .logic-edge-label { pointer-events: none; }
-.decomp-frame { height: 100%; border: 1.5px solid color-mix(in srgb, var(--module-color) 65%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--module-color) 5%, transparent); transition: background .12s, border-color .12s; }
-.decomp-frame.is-active { border-width: 2px; border-color: var(--module-color); }
-.decomp-frame.is-target { border: 3px solid var(--module-color); background: color-mix(in srgb, var(--module-color) 19%, transparent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--module-color) 13%, transparent); }
-.decomp-frame-title { height: 40px; display: flex; align-items: center; gap: 9px; padding: 0 12px; border-bottom: 1px solid color-mix(in srgb, var(--module-color) 25%, transparent); background: color-mix(in srgb, var(--module-color) 12%, #181b19); color: var(--module-color); border-radius: 10px 10px 0 0; cursor: grab; }
-.decomp-frame-title:active { cursor: grabbing; }
-.decomp-frame.is-empty .decomp-frame-title { cursor: pointer; }
-.decomp-frame-title strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; flex: 1; }
-.decomp-frame-title span { font-size: 10px; white-space: nowrap; opacity: .85; }
-.decomp-frame-title button { padding: 3px; color: inherit; border: 0; background: transparent; cursor: pointer; }
-.decomp-frame-title input { width: 100%; min-width: 70px; padding: 4px 6px; background: #171c19; color: #f1f5f1; border: 1px solid var(--module-color); border-radius: 3px; }
-.decomp-frame-empty { padding: 30px 12px; text-align: center; font-size: 12px; color: var(--muted); }
-.decomp-frame-summary { padding: 11px 14px; color: var(--muted); font-size: 11px; }
-.decomp-frame.is-collapsed { background: #202722; }
-.decomp-frame .module-summary-handle { background: var(--module-color); width: 7px; height: 7px; border: 1px solid #263229; }
-.decomp-frame:not(.is-collapsed) .module-summary-handle { visibility: hidden; }
 .decomposition-canvas .canvas-mode-label { bottom: 38px; left: 64px; top: auto; pointer-events: none; }
-.topology-module-entry { display: flex; gap: 4px; margin: 4px 0; }
-.topology-module-entry > button { display: flex; align-items: center; padding: 9px 8px; text-align: left; color: var(--text); background: transparent; border: 1px solid transparent; border-radius: 4px; cursor: pointer; }
-.topology-module-entry > button:hover { background: var(--surface-2); }
-.topology-module-entry > button.is-selected { background: rgba(75,184,154,.09); border-color: rgba(75,184,154,.34); }
-.topology-module-entry > button > span { flex-direction: column; gap: 5px; }
-.topology-module-entry > button:first-child { flex: 1; min-width: 0; }
-.topology-module-entry > .topology-build-button { width: auto; flex: none; padding: 6px 9px; font-size: 11px; }
-.topology-module-entry i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 7px; }
-.topology-all-regions { margin: 12px 0; font-size: 12px; color: var(--muted); }
-.topology-all-regions summary { cursor: pointer; padding: 6px 0; }
-.decomp-frame-menu { position: absolute; top: 42px; right: 0; width: 174px; z-index: 50; padding: 5px; background: #232923; border: 1px solid var(--module-color); border-radius: 5px; box-shadow: 0 8px 22px #0008; }
-.decomp-frame-menu button { display: block; width: 100%; padding: 8px; color: var(--text); background: transparent; border: none; text-align: left; font-size: 12px; cursor: pointer; }
-.decomp-frame-menu button:hover { background: #394139; }
-.decomp-selection-actions { position: absolute; left: 50%; top: 15px; transform: translateX(-50%); z-index: 8; display: flex; align-items: center; gap: 10px; max-width: calc(100% - 24px); padding: 9px 12px; color: var(--text); background: #242c26f5; border: 1px solid #69766b; border-radius: 8px; box-shadow: 0 8px 24px #0006; white-space: nowrap; }
-.decomp-selection-actions span { font-size: 12px; }
-.decomp-selection-actions button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; color: var(--text); background: #354d40; border: 1px solid #647c6a; border-radius: 4px; cursor: pointer; font-size: 12px; }
-.decomp-selection-actions button:disabled { opacity: .4; cursor: default; }
-.decomp-selection-actions select, .decomp-selection-actions input { min-width: 0; max-width: 210px; padding: 6px 8px; background: #1a211c; color: var(--text); border: 1px solid #647c6a; border-radius: 4px; font-size: 12px; }
-.decomp-selection-actions form { display: flex; gap: 8px; }
-.decomp-drag-feedback { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 9; padding: 10px 16px; border: 1px solid #82b29a; border-radius: 6px; color: #dcefe3; background: #213b2df5; box-shadow: 0 4px 16px #0005; pointer-events: none; font-size: 13px; white-space: nowrap; }
 .decomp-canvas-help { position: absolute; bottom: 14px; left: 60px; right: 12px; text-align: center; color: #a1aea3; font-size: 11px; pointer-events: none; text-shadow: 0 1px 3px #000; }
-@media (max-width: 1200px) { .decomp-selection-actions { gap: 6px; padding: 8px; } .decomp-selection-actions span { display: none; } .decomp-canvas-help { font-size: 10px; } }
+@media (max-width: 1200px) { .decomp-canvas-help { font-size: 10px; } }

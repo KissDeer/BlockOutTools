@@ -1,10 +1,23 @@
 import { z } from "zod";
-import { logicTopologySchema } from "./concept";
-import { blockSchema, finiteNumber, positiveNumber, rgba, transform, vec2, vec3 } from "./block-schema";
+import { logicTopologySchema, scopesOf } from "./concept";
+import { blockSchema, finiteNumber, positiveNumber, vec2, vec3 } from "./block-schema";
 
 export { blockSchema, vec2, vec3 };
 
+/**
+ * 项目文件的 schema。
+ *
+ * 模块层删除后，项目里只剩三样东西：身份与规范、一张逻辑拓扑（几何挂在节点上）、设计资料。
+ * 这里**没有** `modules` / `instances` / `connections` —— 旧项目文件不会再被静默读成
+ * "几何消失了"的半截项目，而是直接被 schema 挡下。数据层宁可拒绝，也不要假装读懂了。
+ */
 
+/**
+ * 一份节点底图：像素坐标 + 标定比例，用来把图上量到的点换算成厘米。
+ *
+ * 目前没有写入入口（FR-10 还挂起着），但 `DiagramReference` 类型已经在 `types.ts` 里，
+ * 校验口径放在这里，免得将来两处各写一套。
+ */
 export const referenceSchema = z.object({
   id: z.string().min(1), name: z.string().min(1),
   imageData: z.string().regex(/^data:image\/(png|jpeg|webp);base64,/).max(16_000_000),
@@ -13,36 +26,19 @@ export const referenceSchema = z.object({
   visible: z.boolean(), confirmed: z.boolean(), legend: z.string(),
 });
 
+/** 资料挂在**逻辑节点**上：`nodeIds` 为空 = 整个项目可见 */
 export const designMaterialSchema = z.object({
   id: z.string().min(1), name: z.string().min(1),
   kind: z.enum(["structure", "mood", "rules", "note"]),
   text: z.string(),
   imageData: z.string().max(16_000_000).refine((value) => !value || /^data:image\/(png|jpeg|webp);base64,/.test(value), "图片格式无效"),
-  moduleIds: z.array(z.string().min(1)),
+  nodeIds: z.array(z.string().min(1)),
 });
 
 export const projectSchema = z.object({
   schemaVersion: z.literal(2),
   projectId: z.string().min(1),
   name: z.string().min(1),
-  assemblyAnchorInstanceId: z.string().min(1).optional(),
-  modules: z.array(z.object({
-    id: z.string().min(1), name: z.string().min(1), revision: z.number().int().nonnegative(),
-    blocks: z.array(blockSchema), reference: referenceSchema.optional(), interpretation: z.record(z.string(), z.unknown()).optional(),
-    designBrief: z.object({ purpose: z.string(), goals: z.string() }).optional(),
-    shapeConfirmation: z.object({ digest: z.string().min(1), confirmedAt: z.string().datetime() }).optional(),
-  })),
-  instances: z.array(z.object({ id: z.string().min(1), definitionId: z.string().min(1), name: z.string().min(1), graphPosition: vec2, assemblyTransform: transform, scopePath: z.array(z.string().min(1)).optional() })),
-  connections: z.array(z.object({
-    id: z.string().min(1),
-    type: z.enum(["door", "one-way-door", "locked-door", "shortcut", "stairs", "spiral-stairs", "elevator", "one-way-elevator", "road", "drop"]),
-    sourceInstanceId: z.string().min(1),
-    sourcePortId: z.string().min(1),
-    targetInstanceId: z.string().min(1),
-    targetPortId: z.string().min(1),
-    waypoints: z.array(vec2),
-    spacing: z.object({ forward: finiteNumber, lateral: finiteNumber, vertical: finiteNumber }).optional(),
-  })),
   blockoutProfile: z.object({
     enabled: z.boolean(),
     enforceUeImport: z.boolean(),
@@ -60,31 +56,15 @@ export const projectSchema = z.object({
 }).superRefine((project, context) => {
   const fail = (message: string) => context.addIssue({ code: "custom", message });
   const unique = (ids: string[], label: string) => { if (new Set(ids).size !== ids.length) fail(`${label}身份重复`); };
-  unique(project.modules.map((item) => item.id), "模块");
-  unique(project.instances.map((item) => item.id), "实例");
-  unique(project.connections.map((item) => item.id), "连接");
-  unique(project.modules.flatMap((item) => item.blocks.map((block) => block.id)), "积木");
   unique(project.designContext?.materials.map((item) => item.id) ?? [], "设计资料");
-  for (const instance of project.instances) if (!project.modules.some((module) => module.id === instance.definitionId)) fail(`实例 ${instance.id} 引用了不存在的模块`);
-  if (project.assemblyAnchorInstanceId && !project.instances.some((item) => item.id === project.assemblyAnchorInstanceId)) fail("组装基准实例不存在");
-  const occupied = new Set<string>();
-  for (const connection of project.connections) {
-    if (connection.sourceInstanceId === connection.targetInstanceId) fail("连接两端必须属于不同实例");
-    for (const [instanceId, portId] of [[connection.sourceInstanceId, connection.sourcePortId], [connection.targetInstanceId, connection.targetPortId]]) {
-      const instance = project.instances.find((item) => item.id === instanceId);
-      const module = project.modules.find((item) => item.id === instance?.definitionId);
-      if (!module?.blocks.some((item) => item.id === portId && item.type === "port")) fail(`连接 ${connection.id} 的出入口引用无效`);
-      const key = JSON.stringify([instanceId, portId]);
-      if (occupied.has(key)) fail(`出入口 ${portId} 被重复连接`);
-      occupied.add(key);
-    }
-  }
-  for (const scope of project.concept ? [project.concept, ...project.concept.scopes] : []) {
-    for (const node of scope.nodes) {
-      if (node.moduleId && !project.modules.some((module) => module.id === node.moduleId)) fail(`作用域“${scope.name}”（${scope.id}）的逻辑节点“${node.name}”引用了不存在的模块`);
-    }
-    for (const group of scope.modules) {
-      if (group.moduleDefinitionId && !project.modules.some((module) => module.id === group.moduleDefinitionId)) fail(`作用域“${scope.name}”（${scope.id}）的拆解模块“${group.name}”引用了不存在的模块定义`);
-    }
-  }
+  /*
+   * 积木身份在**整份项目**里唯一，不只是在它那个节点里唯一。
+   * 校验结果、同步键、撤销都靠积木 id 指认"说的是哪一块"，
+   * 两个区域里各有一个 `block_1` 会让这些说法同时指向两块砖。
+   * 遍历必须走 `scopesOf`：池子里每个作用域都带一份 `scopes` 副本，直接展开会漏查或重复查。
+   */
+  const blocks = project.concept
+    ? scopesOf(project.concept).flatMap((scope) => scope.nodes.flatMap((node) => node.blocks ?? []))
+    : [];
+  unique(blocks.map((block) => block.id), "积木");
 });

@@ -1,6 +1,6 @@
 import { DecompositionCanvas } from "./DecompositionCanvas";
 
-/** A single canvas owns topology links, selection and module organization. */
+/** A single canvas owns topology nodes, links and selection. */
 export function ConceptCanvas() {
   return <DecompositionCanvas />;
 }

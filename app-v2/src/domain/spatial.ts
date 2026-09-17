@@ -1,4 +1,4 @@
-import type { Block, BlockoutProfile, BoxBlock, ModuleDefinition, StairsLinearBlock, Vec3 } from "./types";
+import type { Block, BlockoutProfile, BoxBlock, StairsLinearBlock, Vec3 } from "./types";
 
 /** Legacy boxes keep their bottom pivot. Surface boxes extend down from the walking plane. */
 export function blockBaseZ(block: Block): number {
@@ -17,7 +17,12 @@ export function containsXY(block: BoxBlock, point: Vec3, margin = 0): boolean {
     && Math.abs(x * Math.sin(angle) + y * Math.cos(angle)) <= block.parameters.BoxSize[1] / 2 + margin;
 }
 
-/** 可当楼板用的积木。只收窄到"有 blocks"就行：节点自己的几何与模块定义都能用 */
+/**
+ * 可当楼板用的积木。
+ *
+ * 只收窄到"有 blocks"这个形状：几何现在直接挂在逻辑节点上（`LogicNode.blocks`），
+ * 这里不去问它属于谁，规范检查与展平都按"一组积木在同一个局部坐标系里"来用。
+ */
 export function walkingSurfaces(holder: { blocks: Block[] }): BoxBlock[] {
   return holder.blocks.filter((block): block is BoxBlock => block.type === "box" && (block.role === "floor" || block.role === "landing"));
 }

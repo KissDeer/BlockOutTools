@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CircleAlert, Flag, Info, KeyRound, LayoutGrid, Plus, TriangleAlert, Unlink } from "lucide-react";
+import { CircleAlert, Flag, Info, KeyRound, LayoutGrid, Plus, TriangleAlert } from "lucide-react";
 import { LOGIC_KINDS, type LogicKind } from "../../domain/concept";
 import { topologyStats } from "../../domain/concept-commands";
 import { summarizeIssues, validateTopology, type ConceptIssue } from "../../domain/concept-validation";
@@ -28,10 +28,6 @@ export function ConceptSidebar() {
   const issues = useMemo(() => validateTopology(topology), [topology]);
   const summary = useMemo(() => summarizeIssues(issues), [issues]);
   const stats = useMemo(() => topologyStats(topology), [topology]);
-  const ungrouped = useMemo(() => {
-    const grouped = new Set(topology.modules.flatMap((module) => module.nodeIds));
-    return topology.nodes.filter((node) => !grouped.has(node.id));
-  }, [topology]);
 
   function focusIssue(issue: ConceptIssue) {
     if (issue.linkIds.length) selectLink(issue.linkIds[0]);
@@ -51,12 +47,7 @@ export function ConceptSidebar() {
           return <button type="button" key={kind} className={`logic-kind-chip ${logicKind === kind ? "is-active" : ""}`} onClick={() => setLogicKind(kind)} title={meta.directed ? `${meta.label}（天然单向）` : meta.label}><i style={{ background: meta.color }} />{meta.label}</button>;
         })}</div>
 
-        {/* 区域清单在层级树里；这里只提醒还有哪些没归类，指过去就好 */}
-        {ungrouped.length ? <>
-          <div className="concept-section-title">未归属区域 <em>{ungrouped.length}</em></div>
-          <p className="field-help"><Unlink size={11} /> 层级树里带此标记的区域还没归入模块：{ungrouped.map((node) => node.name).join("、")}。框选成组，或拖入已有模块。</p>
-        </> : <p className="field-help">所有区域已归入模块。</p>}
-
+        {/* 区域清单在层级树里；这里只放工具与检查 */}
         {topology.keys.length ? <><div className="concept-section-title">锁钥 <em>{stats.keys}</em></div><div className="logic-key-list">{topology.keys.map((key) => {
           const found = topology.nodes.find((node) => node.id === key.foundAt);
           const unlocks = key.unlocks.map((id) => topology.links.find((link) => link.id === id)?.label).filter(Boolean).join("、");

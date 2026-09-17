@@ -93,25 +93,12 @@ export interface LogicKey {
   note: string;
 }
 
-/** 拆解出的模块：一组逻辑节点的集合。模块间连接由拓扑链路推导，不另存一份。 */
-export interface LogicModule {
-  id: string;
-  name: string;
-  /** 属于这个模块的节点（LogicNode.id） */
-  nodeIds: string[];
-  /** 基础构型落成的阶段二模块定义（体块 + 端口）。展开成子作用域的模块没有自己的构型 */
-  moduleDefinitionId?: string;
-  /** 该模块局部坐标系原点在父级里的位置（厘米）—— 阶段二拼装时需要 */
-  relativeOrigin?: Vec2;
-  /**
-   * 展开：这个模块内部还有一层（游乐园 → 鬼屋）。
-   * 指向本拓扑 scopes 池里的一个作用域；同一个作用域可以被多个模块引用（复用）。
-   */
-  childScopeId?: string;
-  note: string;
-}
-
-/** 一个可编辑的作用域。根作用域就是拓扑本身，子作用域放在 LogicTopology.scopes 池里。 */
+/**
+ * 一个可编辑的作用域。根作用域就是拓扑本身，子作用域放在 `LogicTopology.scopes` 池里。
+ *
+ * **没有"模块"这一层**：节点直接持有几何（`LogicNode.blocks`），
+ * 内部还有一层时由节点自己的 `childScopeId` 指向池子里的作用域。
+ */
 export interface LogicScope {
   id: string;
   name: string;
@@ -121,21 +108,16 @@ export interface LogicScope {
   keys: LogicKey[];
   startNodeId: string | null;
   proposals: DecompositionProposal[];
-  /** 横向拆解：节点到模块的划分 */
-  modules: LogicModule[];
   note: string;
 }
 
 export interface LogicTopology extends LogicScope {
-  /**
-   * 全部子作用域（扁平池，可被任意层的模块复用）。
-   * 因为可以复用，环检测是必须的：作用域不能直接或间接包含自己。
-   */
+  /** 全部子作用域（扁平池，按 id 去重后使用；见 `scopesOf`） */
   scopes: LogicScope[];
 }
 
 export function createEmptyScope(id: string, name: string): LogicScope {
-  return { id, name, inputs: createEmptyInputs(), nodes: [], links: [], keys: [], startNodeId: null, proposals: [], modules: [], note: "" };
+  return { id, name, inputs: createEmptyInputs(), nodes: [], links: [], keys: [], startNodeId: null, proposals: [], note: "" };
 }
 
 export function createEmptyTopology(): LogicTopology {
@@ -301,16 +283,6 @@ export const logicKeySchema = z.object({
   note: z.string(),
 });
 
-export const logicModuleSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  nodeIds: z.array(z.string().min(1)),
-  moduleDefinitionId: z.string().min(1).optional(),
-  relativeOrigin: vec2.optional(),
-  childScopeId: z.string().min(1).optional(),
-  note: z.string(),
-});
-
 const logicScopeFields = {
   id: z.string().min(1),
   name: z.string().min(1),
@@ -320,7 +292,6 @@ const logicScopeFields = {
   keys: z.array(logicKeySchema),
   startNodeId: z.string().min(1).nullable(),
   proposals: z.array(decompositionProposalSchema).default([]),
-  modules: z.array(logicModuleSchema).default([]),
   note: z.string().default(""),
 };
 
@@ -345,15 +316,6 @@ export function collectLocalScopeIssues(topology: LogicScope): string[] {
     for (const unlock of key.unlocks) if (!linkIds.has(unlock)) fail(`钥匙“${key.name}”解锁了不存在的链路`);
   }
   if (topology.startNodeId && !nodeIds.has(topology.startNodeId)) fail("起点节点不存在");
-  if (new Set(topology.modules.map((module) => module.id)).size !== topology.modules.length) fail("模块身份重复");
-  const assigned = new Set<string>();
-  for (const module of topology.modules) {
-    for (const nodeId of module.nodeIds) {
-      if (!nodeIds.has(nodeId)) fail(`模块“${module.name}”引用了不存在的节点`);
-      if (assigned.has(nodeId)) fail(`节点被分到了多个模块`);
-      assigned.add(nodeId);
-    }
-  }
   return issues;
 }
 

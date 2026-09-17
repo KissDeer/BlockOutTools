@@ -19,7 +19,7 @@ export interface PreviewBlock {
   rotation: number;
 }
 
-export interface ModulePreviewModel {
+export interface NodePreviewModel {
   width: number;
   height: number;
   scale: number;
@@ -47,7 +47,7 @@ export function rotatedBlockBounds(block: Block): PlanBounds {
   };
 }
 
-function moduleBounds(blocks: Block[]): PlanBounds {
+function planBounds(blocks: Block[]): PlanBounds {
   if (blocks.length === 0) {
     const half = DEFAULT_WORLD_SIZE / 2;
     return { minX: -half, minY: -half, maxX: half, maxY: half, width: DEFAULT_WORLD_SIZE, height: DEFAULT_WORLD_SIZE };
@@ -61,12 +61,9 @@ function moduleBounds(blocks: Block[]): PlanBounds {
   return { minX, minY, maxX, maxY, width: Math.max(1, maxX - minX), height: Math.max(1, maxY - minY) };
 }
 
-/**
- * 俯视缩略图只关心积木。刻意收窄参数类型，让它既能画模块定义，
- * 也能画**节点自己的**几何 —— 同一份几何在哪儿画都长一样。
- */
-export function createModulePreviewModel(module: { blocks: Block[] }, width = 228, height = 116, padding = 8): ModulePreviewModel {
-  const bounds = moduleBounds(module.blocks);
+/** 俯视缩略图只关心积木：谁持有它都行（节点自己的几何，或旧模块定义） */
+export function createNodePreviewModel(holder: { blocks: Block[] }, width = 228, height = 116, padding = 8): NodePreviewModel {
+  const bounds = planBounds(holder.blocks);
   const drawableWidth = Math.max(1, width - padding * 2);
   const drawableHeight = Math.max(1, height - padding * 2);
   const scale = Math.min(drawableWidth / bounds.width, drawableHeight / bounds.height);
@@ -75,7 +72,7 @@ export function createModulePreviewModel(module: { blocks: Block[] }, width = 22
   const offsetX = (width - contentWidth) / 2;
   const offsetY = (height - contentHeight) / 2;
 
-  const blocks = module.blocks.map((block) => {
+  const blocks = holder.blocks.map((block) => {
     const [blockWidth, blockHeight] = blockPlanSize(block);
     return {
       block,

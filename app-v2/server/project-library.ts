@@ -5,9 +5,18 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Plugin } from "vite";
 import { projectSchema } from "../src/domain/project-schema";
 
+/**
+ * 本地项目库：一个项目一个目录，一份 JSON。
+ *
+ * 这里原本把**每个模块定义**按内容摘要单独存成一个不可变文件，清单只记文件名，
+ * 靠"内容寻址 + 清单原子替换"保证中断不产生半个项目。模块层删除之后没有可拆的粒度了，
+ * 于是退回整份项目一个文件 —— 原子性由临时文件 + rename 保证，与原来清单那一层一样。
+ */
+
 const encode = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");
 const keyFor = (id: string) => `project-${hash(id).slice(0, 24)}`;
+const PROJECT_FILE = "project.blockout.json";
 
 export class ProjectLibrary {
   private queue: Promise<unknown> = Promise.resolve();
@@ -34,22 +43,10 @@ export class ProjectLibrary {
 
   async read(key: string) {
     const directory = await this.directory(key);
-    const manifestPath = join(directory, "project.blockout.json");
-    if ((await lstat(manifestPath)).isSymbolicLink()) throw new Error("项目清单不能是链接");
-    const raw = await readFile(manifestPath, "utf8");
-    const manifest = JSON.parse(raw);
-    if (!Array.isArray(manifest.moduleFiles)) throw new Error("模块清单无效");
-    const modules = [];
-    const moduleContents: string[] = [];
-    for (const file of manifest.moduleFiles) {
-      if (typeof file !== "string" || !/^modules\/[a-f0-9]{64}\.blockout-module\.json$/.test(file)) throw new Error("模块路径无效");
-      const modulePath = join(directory, file);
-      if ((await lstat(join(directory, "modules"))).isSymbolicLink() || (await lstat(modulePath)).isSymbolicLink()) throw new Error("模块文件不能是链接");
-      const content = await readFile(modulePath, "utf8");
-      moduleContents.push(content);
-      modules.push(JSON.parse(content));
-    }
-    return { project: projectSchema.parse({ ...manifest, modules }), revision: hash(raw + moduleContents.join("")), key };
+    const path = join(directory, PROJECT_FILE);
+    if ((await lstat(path)).isSymbolicLink()) throw new Error("项目文件不能是链接");
+    const raw = await readFile(path, "utf8");
+    return { project: projectSchema.parse(JSON.parse(raw)), revision: hash(raw), key };
   }
 
   save(input: unknown, expectedRevision: string | null) {
@@ -57,34 +54,20 @@ export class ProjectLibrary {
       const project = projectSchema.parse(input);
       const key = keyFor(project.projectId);
       const directory = await this.directory(key);
+      const path = join(directory, PROJECT_FILE);
       let current: string | null = null;
       let exists = false;
-      try { await lstat(join(directory, "project.blockout.json")); exists = true; }
+      try { await lstat(path); exists = true; }
       catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
       if (exists) current = (await this.read(key)).revision;
       if (current !== expectedRevision) throw Object.assign(new Error("磁盘文件已被其他页面或 Git 修改。请重新打开并合并后保存。"), { statusCode: 409 });
-      const modulesPath = join(directory, "modules");
-      await mkdir(modulesPath, { recursive: true });
-      if ((await lstat(modulesPath)).isSymbolicLink()) throw new Error("模块目录不能是链接");
-      const moduleFiles: string[] = [];
-      for (const module of project.modules) {
-        const raw = encode(module);
-        const file = `modules/${hash(raw)}.blockout-module.json`;
-        // Immutable module blobs let the manifest switch atomically without partial projects.
-        try { await writeFile(join(directory, file), raw, { encoding: "utf8", flag: "wx" }); }
-        catch (error) {
-          if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
-          const storedPath = join(directory, file);
-          if ((await lstat(storedPath)).isSymbolicLink() || await readFile(storedPath, "utf8") !== raw) throw Object.assign(new Error("模块内容文件被外部改写，请先通过 Git 恢复或合并该文件"), { statusCode: 409 });
-        }
-        moduleFiles.push(file);
-      }
-      const { modules: _modules, ...metadata } = project;
-      const raw = encode({ ...metadata, moduleFiles });
+      await mkdir(directory, { recursive: true });
+      const raw = encode(project);
+      // 原子替换：先写临时文件再 rename，中断不会留下半个项目
       const temp = join(directory, `.save-${randomUUID()}.tmp`);
       await writeFile(temp, raw, { encoding: "utf8", flag: "wx" });
-      await rename(temp, join(directory, "project.blockout.json"));
-      return { key, revision: hash(raw + project.modules.map(encode).join("")), project };
+      await rename(temp, path);
+      return { key, revision: hash(raw), project };
     });
     this.queue = operation.catch(() => undefined);
     return operation;

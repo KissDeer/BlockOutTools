@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { collectScopeIssues, computeTopologyDigest, createEmptyTopology, logicTopologySchema, type LogicTopology } from "./concept";
-import { addLogicLink, addLogicNode, createLogicModule, updateLogicNode } from "./concept-commands";
+import { addLogicLink, addLogicNode, updateLogicNode } from "./concept-commands";
 import {
-  collapseModule,
-  expandModule,
-  flattenModules,
-  leafModules,
+  collapseNodeScope,
+  expandNodeScope,
+  flattenNodes,
+  leafNodes,
   levelPathOfNode,
   linkScope,
   nodeInterior,
@@ -17,20 +17,16 @@ import {
   scopeView,
   writeScopeView,
 } from "./concept-scopes";
-import { buildLocalUEDryRun } from "./ue-plan";
-import { createDemoProject } from "./demo-project";
-import type { BlockoutProject } from "./types";
 
-function base(): BlockoutProject {
-  const demo = createDemoProject();
-  return { ...demo, projectId: "test_project", name: "测试", modules: [], instances: [], connections: [], assemblyAnchorInstanceId: undefined, concept: undefined };
-}
-
-/** 根作用域放一个"游乐园"（展开），子作用域里放"马戏团"与"鬼屋"并各自成模块 */
+/**
+ * 根作用域放一个"游乐园"（展开出子层），子作用域里放"马戏团"与"鬼屋"。
+ *
+ * 全部用普通节点搭：老写法里的 `createLogicModule`（分组框）不参与几何与层级，
+ * 夹具里留着它只会让人以为作用域的归属还经过分组。
+ */
 function park(): {
-  topology: LogicTopology; parkModuleId: string; scopeId: string;
-  villageModuleId: string; villageNodeId: string;
-  parkNodeId: string; circusNodeId: string; houseNodeId: string;
+  topology: LogicTopology; scopeId: string;
+  villageNodeId: string; parkNodeId: string; circusNodeId: string; houseNodeId: string;
 } {
   let topology = createEmptyTopology();
   const outer = addLogicNode(topology, [0, 0], { name: "游乐园", role: "hub" });
@@ -41,18 +37,14 @@ function park(): {
   topology = updateLogicNode(topology, village.node.id, { relativePosition: [-4000, 0] });
   const linked = addLogicLink(topology, village.node.id, outer.node.id, "normal");
   topology = linked ? linked.topology : topology;
-  topology = createLogicModule(topology, "游乐园", [outer.node.id]).topology;
-  const villageModule = createLogicModule(topology, "小村", [village.node.id]);
-  topology = villageModule.topology;
 
-  const parkModuleId = topology.modules.find((module) => module.name === "游乐园")?.id as string;
-  // 展开收的是**节点 id**：子层现在挂在节点上，一个作用域只属于一个节点
-  const expanded = expandModule(topology, outer.node.id, "游乐园内部");
+  // 展开收的是**节点 id**：子层挂在节点上，一个作用域只属于一个节点
+  const expanded = expandNodeScope(topology, outer.node.id, "游乐园内部");
   if (!expanded) throw new Error("展开失败");
   topology = expanded.topology;
   const scopeId = expanded.scope.id;
 
-  // 子作用域内部：先放节点，再在**子作用域里**做拆解
+  // 子作用域内部：节点与链路都写在那一层里，再走唯一的写回路径
   let view = scopeView(topology, scopeId);
   const circus = addLogicNode(view, [0, 0], { name: "马戏团", role: "combat" });
   view = circus.topology;
@@ -62,13 +54,11 @@ function park(): {
   view = updateLogicNode(view, house.node.id, { relativePosition: [2000, 0] });
   const inner = addLogicLink(view, circus.node.id, house.node.id, "normal");
   view = inner ? inner.topology : view;
-  view = createLogicModule(view, "马戏团", [circus.node.id]).topology;
-  view = createLogicModule(view, "鬼屋", [house.node.id]).topology;
   topology = writeScopeView(topology, scopeId, view);
 
   return {
-    topology, parkModuleId, scopeId,
-    villageModuleId: villageModule.module.id, villageNodeId: village.node.id,
+    topology, scopeId,
+    villageNodeId: village.node.id,
     parkNodeId: outer.node.id, circusNodeId: circus.node.id, houseNodeId: house.node.id,
   };
 }
@@ -111,7 +101,7 @@ describe("层级：一张画布上的焦点路径", () => {
     const { topology, parkNodeId, circusNodeId } = park();
     // 把"鬼屋"再展开一层，做成三层
     const houseNodeId = topology.scopes[0].nodes.find((node) => node.name === "鬼屋")?.id as string;
-    const deeper = expandModule(topology, houseNodeId, "鬼屋内部");
+    const deeper = expandNodeScope(topology, houseNodeId, "鬼屋内部");
     expect(deeper).not.toBeNull();
     // 在鬼屋内部放一个区域
     const innerView = addLogicNode(scopeView(deeper!.topology, deeper!.scope.id), [0, 0], { name: "地下室", role: "secret" });
@@ -172,7 +162,6 @@ describe("嵌套：旧草稿兼容", () => {
       startNodeId: null,
       inputs: { revision: 2, items: [], digest: "abc", updatedAt: new Date(0).toISOString() },
       proposals: [],
-      modules: [{ id: "m1", name: "旧模块", nodeIds: [], note: "" }],
     };
     const parsed = logicTopologySchema.safeParse(legacy);
     expect(parsed.success).toBe(true);
@@ -181,7 +170,6 @@ describe("嵌套：旧草稿兼容", () => {
     expect(parsed.data.name).toBe("根作用域");
     expect(parsed.data.scopes).toEqual([]);
     // 旧数据本身必须原样保留
-    expect(parsed.data.modules).toHaveLength(1);
     expect(parsed.data.inputs.revision).toBe(2);
   });
 });
@@ -198,7 +186,7 @@ describe("嵌套：展开与收起", () => {
 
   it("收起只解除引用，作用域留在池子里", () => {
     const { topology, parkNodeId, scopeId } = park();
-    const collapsed = collapseModule(topology, parkNodeId);
+    const collapsed = collapseNodeScope(topology, parkNodeId);
     expect(collapsed.nodes.find((item) => item.id === parkNodeId)?.childScopeId).toBeUndefined();
     expect(collapsed.scopes.some((scope) => scope.id === scopeId)).toBe(true);
   });
@@ -212,7 +200,7 @@ describe("嵌套：展开与收起", () => {
 
   it("已经展开过的节点不能重复展开", () => {
     const { topology, parkNodeId } = park();
-    expect(expandModule(topology, parkNodeId)).toBeNull();
+    expect(expandNodeScope(topology, parkNodeId)).toBeNull();
   });
 });
 
@@ -247,15 +235,15 @@ describe("嵌套：自包含检测", () => {
 describe("嵌套：路径与展平", () => {
   it("展平会沿节点累积 relativePosition 并给出层级路径", () => {
     const { topology } = park();
-    const flat = flattenModules(topology);
+    const flat = flattenNodes(topology);
 
     // fixture 里直接标好了落位：小村 (-4000,0)、游乐园 (0,0)、鬼屋 (2000,0)
-    const village = flat.find((entry) => entry.module.name === "小村");
+    const village = flat.find((entry) => entry.node.name === "小村");
     expect(village?.origin).toEqual([-4000, 0]);
     expect(village?.path).toHaveLength(0);
 
     // 鬼屋 = 游乐园原点 (0,0) + 它自己的 (2000,0)
-    const house = flat.find((entry) => entry.module.name === "鬼屋");
+    const house = flat.find((entry) => entry.node.name === "鬼屋");
     expect(house?.origin).toEqual([2000, 0]);
     expect(house?.path).toHaveLength(1);
     expect(house?.path[0].scopeName).toBe("游乐园内部");
@@ -263,17 +251,17 @@ describe("嵌套：路径与展平", () => {
 
   it("展开的节点本身不再是叶子", () => {
     const { topology } = park();
-    const leaves = leafModules(topology);
-    expect(leaves.map((entry) => entry.module.name)).not.toContain("游乐园");
-    expect(new Set(leaves.map((entry) => entry.module.name))).toEqual(new Set(["小村", "马戏团", "鬼屋"]));
+    const leaves = leafNodes(topology);
+    expect(leaves.map((entry) => entry.node.name)).not.toContain("游乐园");
+    expect(new Set(leaves.map((entry) => entry.node.name))).toEqual(new Set(["小村", "马戏团", "鬼屋"]));
   });
 
   it("面包屑能指到子作用域，步长装的是节点身份", () => {
     const { topology, scopeId, parkNodeId } = park();
     const crumbs = scopeCrumbs(topology, scopeId);
     expect(crumbs).toHaveLength(1);
-    expect(crumbs[0].moduleId).toBe(parkNodeId);
-    expect(crumbs[0].moduleName).toBe("游乐园");
+    expect(crumbs[0].nodeId).toBe(parkNodeId);
+    expect(crumbs[0].nodeName).toBe("游乐园");
     expect(crumbs[0].scopeName).toBe("游乐园内部");
     expect(pathLabel(crumbs)).toBe("游乐园");
     expect(pathKey(crumbs)).toBe(parkNodeId);
@@ -282,7 +270,7 @@ describe("嵌套：路径与展平", () => {
   it("作用域不再能被第二个节点复用：展平只出一条分支", () => {
     const { topology, scopeId } = park();
     const second = addLogicNode(topology, [9000, 0], { name: "游乐园副本", childScopeId: scopeId });
-    expect(flattenModules(second.topology).filter((entry) => entry.module.name === "鬼屋")).toHaveLength(1);
+    expect(flattenNodes(second.topology).filter((entry) => entry.node.name === "鬼屋")).toHaveLength(1);
     expect(collectScopeIssues(second.topology).some((issue) => issue.includes("只能属于一个节点"))).toBe(true);
   });});
 

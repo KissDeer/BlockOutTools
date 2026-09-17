@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createEmptyTopology } from "./concept";
-import { addLogicNode, createLogicModule } from "./concept-commands";
-import { expandModule } from "./concept-scopes";
+import { addLogicNode } from "./concept-commands";
+import { expandNodeScope, scopeView, writeScopeView } from "./concept-scopes";
 import { createBlock } from "./catalog";
 import { buildLocalUEDryRun, buildNodeUEDryRun } from "./ue-plan";
 import { buildDeploymentGeometry, buildNodeDeploymentGeometry } from "./deployment-geometry";
@@ -17,41 +17,35 @@ import type { BlockoutProject } from "./types";
  *     └─ 子层「大区 内部」
  *          └─ 小屋（落位 [200, 0]）
  *               └─ 一块 100×100×40 的楼板
+ *
+ * 全部用**普通节点**搭：老写法里的"模块分组"（createLogicModule）已经不参与几何，
+ * 拿它当夹具只会让人以为几何还要经过分组。
  */
 function nestedProject(): { project: BlockoutProject; outerId: string; houseId: string } {
-  let topology = createEmptyTopology();
-  const outer = addLogicNode(topology, [0, 0], { name: "大区", role: "hub", relativePosition: [1000, 200], relativeRotation: 90 });
-  topology = outer.topology;
-  topology = createLogicModule(topology, "大区", [outer.node.id]).topology;
+  const outerFloor = { ...createBlock("box", [0, 0, 0]), id: "floor_outer", name: "大区楼板" };
+  const houseFloor = { ...createBlock("box", [0, 0, 0]), id: "floor_house", name: "小屋楼板" };
 
-  const expanded = expandModule(topology, outer.node.id, "大区 内部")!;
+  let topology = createEmptyTopology();
+  const outer = addLogicNode(topology, [0, 0], { name: "大区", role: "hub", relativePosition: [1000, 200], relativeRotation: 90, blocks: [outerFloor] });
+  topology = outer.topology;
+  const expanded = expandNodeScope(topology, outer.node.id, "大区 内部");
+  if (!expanded) throw new Error("展开失败");
   topology = expanded.topology;
 
-  let inner = createEmptyTopology();
-  const house = addLogicNode(inner, [0, 0], { name: "小屋", role: "reward", relativePosition: [200, 0] });
-  inner = house.topology;
-  const { scopes: _pool, ...scope } = inner;
-  topology.scopes = topology.scopes.map((item) => item.id === expanded.scope.id ? { ...item, nodes: scope.nodes } : item);
+  // 子层内容只能从作用域视图写回：池子里的作用域各带一份 scopes 副本，直接改会改到过期副本
+  const view = scopeView(topology, expanded.scope.id);
+  const house = addLogicNode(view, [0, 0], { name: "小屋", role: "reward", relativePosition: [200, 0], blocks: [houseFloor] });
+  topology = writeScopeView(topology, expanded.scope.id, house.topology);
 
   const project = createDemoProject();
-  project.modules = [];
-  project.instances = [];
-  project.connections = [];
   project.concept = topology;
-
-  const floor = { ...createBlock("box", [0, 0, 0]), id: "floor_outer", name: "大区楼板" };
-  const houseFloor = { ...createBlock("box", [0, 0, 0]), id: "floor_house", name: "小屋楼板" };
-  project.concept.nodes = project.concept.nodes.map((node) => node.id === outer.node.id ? { ...node, blocks: [floor] } : node);
-  project.concept.scopes = project.concept.scopes.map((scope) => scope.id === expanded.scope.id
-    ? { ...scope, nodes: scope.nodes.map((node) => node.id === house.node.id ? { ...node, blocks: [houseFloor] } : node) }
-    : scope);
 
   return { project, outerId: outer.node.id, houseId: house.node.id };
 }
 
 describe("节点几何展平", () => {
   it("沿层级累加每一级节点的 relativePosition，子层内容跟着父节点走", () => {
-    const { project, houseId } = nestedProject();
+    const { project, outerId, houseId } = nestedProject();
     const flat = flattenProjectGeometry(project);
     expect(flat.blocks.map((placed) => placed.block.id)).toEqual(["floor_outer", "floor_house"]);
 
@@ -61,7 +55,7 @@ describe("节点几何展平", () => {
     expect(house.position[0]).toBeCloseTo(1000);
     expect(house.position[1]).toBeCloseTo(400);
     expect(house.namePath).toEqual(["大区", "小屋"]);
-    expect(house.path).toEqual([flat.blocks[0].placementId, houseId]);
+    expect(house.path).toEqual([outerId, houseId]);
     expect(flat.unplaced).toEqual([]);
   });
 
@@ -100,7 +94,7 @@ describe("节点几何展平", () => {
     topology = first.topology;
     const second = addLogicNode(topology, [300, 0], { name: "未定 B", blocks: [other] });
     topology = second.topology;
-    const project = { ...createDemoProject(), modules: [], instances: [], connections: [], concept: topology };
+    const project = { ...createDemoProject(), concept: topology };
     const flat = flattenProjectGeometry(project);
     expect(flat.unplaced).toEqual(["未定 A", "未定 B"]);
     // 两块都落在原点：展平如实反映，界面负责报出来
@@ -120,11 +114,10 @@ describe("节点几何展平", () => {
 });
 
 describe("3D 预览与 UE 导出吃同一份展平几何", () => {
-  it("UE Actor 的位置来自节点落位，不再来自实例组装", () => {
+  it("UE Actor 的位置来自节点落位", () => {
     const { project } = nestedProject();
     const plan = buildLocalUEDryRun(project);
     expect(plan.actorCount).toBe(2);
-    expect(plan.assemblyIssues).toEqual([]);
     expect(plan.unplaced).toEqual([]);
 
     const outer = plan.actors.find((actor) => actor.label.includes("大区楼板"))!;
@@ -168,23 +161,5 @@ describe("3D 预览与 UE 导出吃同一份展平几何", () => {
     const outer = local.find((primitive) => primitive.syncKey.endsWith("floor_outer"))!;
     expect(outer.position[0]).toBe(0);
     expect(outer.position[1]).toBe(0);
-  });
-});
-
-describe("旧项目仍走实例摆放", () => {
-  it("没有拓扑的项目照旧按模块实例展平", () => {
-    const project = createDemoProject();
-    const flat = flattenProjectGeometry(project);
-    expect(flat.blocks.length).toBeGreaterThan(0);
-    expect(flat.placements.map((item) => item.id)).toEqual(project.instances.map((item) => item.id));
-    expect(buildDeploymentGeometry(project).length).toBeGreaterThan(0);
-  });
-
-  it("有节点几何时不再按实例重复算一遍", () => {
-    const { project } = nestedProject();
-    // 故意塞一个实例进去：有节点几何的项目应该完全忽略它
-    const withInstance = { ...project, instances: createDemoProject().instances, modules: createDemoProject().modules };
-    const flat = flattenProjectGeometry(withInstance);
-    expect(flat.blocks.map((placed) => placed.block.id)).toEqual(["floor_outer", "floor_house"]);
   });
 });

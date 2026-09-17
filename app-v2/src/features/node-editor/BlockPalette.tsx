@@ -10,7 +10,7 @@ const icons = {
 };
 const labels = { box: "盒体", doorway: "门洞", "stairs-linear": "直梯", port: "出入口" };
 
-export function ModulePalette() {
+export function BlockPalette() {
   const addBlock = useProjectStore((state) => state.addBlock);
   return (
     <div className="sidebar-content">

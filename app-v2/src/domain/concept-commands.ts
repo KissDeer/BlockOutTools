@@ -5,14 +5,12 @@ import {
   type LogicKey,
   type LogicKind,
   type LogicLink,
-  type LogicModule,
   type LogicNode,
   type LogicNodeRole,
   type LogicTopology,
 } from "./concept";
 import { createId } from "./ids";
 import { toRelativePosition, type RecognitionCandidate } from "./concept-candidate";
-import type { DecompositionCandidate } from "./concept-decomposition";
 import {
   computeInputsDigest,
   INPUT_KINDS,
@@ -330,115 +328,30 @@ export function dropProposals(topology: LogicTopology): LogicTopology {
   return next;
 }
 
-/* ---------------- 横向拆解 ---------------- */
+/* ---------------- 画布排版 ---------------- */
 
-export type DecompositionEdit = {
-  positions?: { nodeId: string; position: [number, number] }[];
-  assignments?: { nodeId: string; moduleId: string | null }[];
-};
-
-/** 一次拖放同时提交排版与归属；任何无效引用都拒绝整次操作。 */
-export function editDecomposition(topology: LogicTopology, edit: DecompositionEdit): LogicTopology {
-  const nodes = new Map(topology.nodes.map((node) => [node.id, node]));
-  const moduleIds = new Set(topology.modules.map((module) => module.id));
-  const positions = new Map<string, [number, number]>();
-  const assignments = new Map<string, string | null>();
-  for (const { nodeId, position } of edit.positions ?? []) {
-    if (!nodes.has(nodeId) || !position.every(Number.isFinite)) return topology;
-    positions.set(nodeId, position);
-  }
-  for (const { nodeId, moduleId } of edit.assignments ?? []) {
-    if (!nodes.has(nodeId) || (moduleId !== null && !moduleIds.has(moduleId))) return topology;
-    assignments.set(nodeId, moduleId);
-  }
-  for (const [nodeId, position] of positions) {
-    const current = nodes.get(nodeId)!.graphPosition;
-    if (current[0] === position[0] && current[1] === position[1]) positions.delete(nodeId);
-  }
-  for (const [nodeId, moduleId] of assignments) {
-    const owners = topology.modules.flatMap((module) => module.nodeIds.filter((id) => id === nodeId).map(() => module.id));
-    if ((moduleId === null && owners.length === 0) || (owners.length === 1 && owners[0] === moduleId)) assignments.delete(nodeId);
-  }
-  if (positions.size === 0 && assignments.size === 0) return topology;
-  const next = clone(topology);
-  for (const node of next.nodes) {
-    const position = positions.get(node.id);
-    if (position) node.graphPosition = [...position];
-  }
-  for (const [nodeId, moduleId] of assignments) assign(next, nodeId, moduleId);
-  return next;
-}
+export type NodePositionEdit = { nodeId: string; position: [number, number] };
 
 /**
- * 套用拆解提案：整体替换模块划分。
- * 这是有意为之 —— "用这份方案重新划分"本来就是一个整体决定，且整次提交可撤销。
+ * 把一批节点挪到新位置（画布拖放）。
+ *
+ * 只动 `graphPosition`，**不碰任何几何**：排版坐标无语义，改它不该影响 3D 或 UE。
+ * 任何无效引用都拒绝整次操作，避免一半拖放被提交上去。
  */
-export function applyDecomposition(topology: LogicTopology, candidate: DecompositionCandidate): { topology: LogicTopology; moduleIds: string[] } {
-  const next = clone(topology);
-  const moduleIds: string[] = [];
-  next.modules = candidate.modules.map((module) => {
-    const id = createId("lmodule");
-    moduleIds.push(id);
-    return { id, name: module.name.trim() || `模块 ${moduleIds.length}`, nodeIds: [...module.nodeIds], note: module.note };
-  });
-  return { topology: next, moduleIds };
-}
-
-export function createLogicModule(topology: LogicTopology, name: string, nodeIds: string[] = []): { topology: LogicTopology; module: LogicModule } {
-  const next = clone(topology);
-  const module: LogicModule = {
-    id: createId("lmodule"),
-    name: name.trim() || `模块 ${next.modules.length + 1}`,
-    nodeIds: [],
-    note: "",
-  };
-  next.modules.push(module);
-  for (const nodeId of nodeIds) assign(next, nodeId, module.id);
-  return { topology: next, module };
-}
-
-/** 把一个节点划到某个模块；传 null 表示取消分配。节点只会属于一个模块。 */
-export function setNodeModule(topology: LogicTopology, nodeId: string, moduleId: string | null): LogicTopology {
-  if (!topology.nodes.some((node) => node.id === nodeId)) return topology;
-  if (moduleId && !topology.modules.some((module) => module.id === moduleId)) return topology;
-  const next = clone(topology);
-  assign(next, nodeId, moduleId);
-  return next;
-}
-
-function assign(topology: LogicTopology, nodeId: string, moduleId: string | null): void {
-  for (const module of topology.modules) {
-    module.nodeIds = module.nodeIds.filter((id) => id !== nodeId);
+export function moveNodes(topology: LogicTopology, positions: NodePositionEdit[]): LogicTopology {
+  const nodes = new Map(topology.nodes.map((node) => [node.id, node]));
+  const moves = new Map<string, [number, number]>();
+  for (const { nodeId, position } of positions) {
+    if (!nodes.has(nodeId) || !position.every(Number.isFinite)) return topology;
+    const current = nodes.get(nodeId)!.graphPosition;
+    if (current[0] !== position[0] || current[1] !== position[1]) moves.set(nodeId, position);
   }
-  if (!moduleId) return;
-  topology.modules.find((module) => module.id === moduleId)?.nodeIds.push(nodeId);
-}
-
-export function updateLogicModule(topology: LogicTopology, moduleId: string, patch: Partial<Pick<LogicModule, "name" | "note">>): LogicTopology {
+  if (moves.size === 0) return topology;
   const next = clone(topology);
-  const module = next.modules.find((item) => item.id === moduleId);
-  if (!module) return topology;
-  Object.assign(module, structuredClone(patch));
-  return next;
-}
-
-/** 删除模块只解散分组，不删除区域本身 */
-export function removeLogicModule(topology: LogicTopology, moduleId: string): LogicTopology {
-  if (!topology.modules.some((module) => module.id === moduleId)) return topology;
-  const next = clone(topology);
-  next.modules = next.modules.filter((module) => module.id !== moduleId);
-  return next;
-}
-
-/** 确定性兜底：一个区域一个模块，得到一个合法但未合并的初始划分 */
-export function seedModulesFromNodes(topology: LogicTopology): LogicTopology {
-  const next = clone(topology);
-  next.modules = next.nodes.map((node, index) => ({
-    id: createId("lmodule"),
-    name: node.name || `模块 ${index + 1}`,
-    nodeIds: [node.id],
-    note: "",
-  }));
+  for (const node of next.nodes) {
+    const position = moves.get(node.id);
+    if (position) node.graphPosition = [...position];
+  }
   return next;
 }
 

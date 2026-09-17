@@ -15,16 +15,14 @@ import { NumberField } from "../../components/NumberField";
 import { SelectField } from "../../components/SelectField";
 import { TextField } from "../../components/TextField";
 import { useProjectStore } from "../../store/project-store";
-import { ModulePlanPreview } from "./ModulePlanPreview";
+import { NodePlanPreview } from "../node-preview/NodePlanPreview";
 import { useCurrentTopology } from "./use-current-topology";
-import { confirmModuleChange } from "./confirm-module-change";
 
 const LOGIC_OPTIONS = (Object.keys(LOGIC_KINDS) as LogicKind[]).map((kind) => ({ value: kind, label: LOGIC_KINDS[kind].label }));
 const ROLE_OPTIONS = (Object.keys(NODE_ROLES) as LogicNodeRole[]).map((role) => ({ value: role, label: NODE_ROLES[role] }));
 const TRAVERSAL_OPTIONS = (Object.keys(TRAVERSALS) as LogicTraversal[]).map((value) => ({ value, label: TRAVERSALS[value] }));
 
 export function ConceptInspector() {
-  const project = useProjectStore((state) => state.project);
   const topology = useCurrentTopology();
   const selectedNodeId = useProjectStore((state) => state.selectedLogicNodeId);
   const selectedLinkId = useProjectStore((state) => state.selectedLogicLinkId);
@@ -34,12 +32,9 @@ export function ConceptInspector() {
   const removeLink = useProjectStore((state) => state.removeLogicLink);
   const addLogicKey = useProjectStore((state) => state.addLogicKey);
   const setStartNode = useProjectStore((state) => state.setLogicStartNode);
-  const addLogicModule = useProjectStore((state) => state.addLogicModule);
   const enterNode = useProjectStore((state) => state.enterNode);
   const addNodeSubLevel = useProjectStore((state) => state.addNodeSubLevel);
-  const collapseLogicModule = useProjectStore((state) => state.collapseLogicModule);
-  const openLogicModule = useProjectStore((state) => state.openLogicModule);
-  const openModuleById = useProjectStore((state) => state.openModuleById);
+  const collapseSubLevel = useProjectStore((state) => state.collapseSubLevel);
   /** 根层的节点直接相对整张图；子层里的相对它父节点。只影响怎么跟人解释这个坐标 */
   const inRootScope = useProjectStore((state) => state.conceptScopeId === null);
   const [keyFoundAt, setKeyFoundAt] = useState("");
@@ -121,8 +116,6 @@ export function ConceptInspector() {
 
   /* ---------------- 选中区域 ---------------- */
   if (node) {
-    const ownerModule = topology.modules.find((item) => item.nodeIds.includes(node.id)) ?? null;
-    const module = project.modules.find((item) => item.id === (ownerModule?.moduleDefinitionId ?? node.moduleId)) ?? null;
     const isStart = topology.startNodeId === node.id;
     const relatedLinks = topology.links.filter((item) => item.from === node.id || item.to === node.id);
     const relatedIssues = issues.filter((issue) => issue.nodeIds.includes(node.id));
@@ -158,22 +151,12 @@ export function ConceptInspector() {
               ? "里面已经分出了子区域。进去后左边是子区域的逻辑图，右边是这个区域自己的体块。"
               : "进去拼这个区域自己的体块。需要再分一层子区域时，随时可以在里面加。"}
           </p>
-          {nodeBlocks.length ? <ModulePlanPreview module={{ id: node.id, name: node.name, revision: 0, blocks: nodeBlocks }} width={268} height={152} /> : null}
+          {nodeBlocks.length ? <NodePlanPreview blocks={nodeBlocks} name={node.name} width={268} height={152} /> : null}
           <button type="button" className="primary-command" onClick={() => enterNode(node.id)}><ExternalLink size={14} />进入「{node.name}」{hasSubLevel ? "（分屏）" : ""}</button>
           {hasSubLevel
-            ? <button type="button" className="secondary-command" onClick={() => collapseLogicModule(node.id)}>收掉子区域层（几何保留）</button>
+            ? <button type="button" className="secondary-command" onClick={() => collapseSubLevel(node.id)}>收掉子区域层（几何保留）</button>
             : <button type="button" className="secondary-command" onClick={() => addNodeSubLevel(node.id)}><Plus size={14} />在里面加一层子区域</button>}
         </section>
-
-        {ownerModule || module ? (
-          <details className="inspector-section">
-            <summary>这个区域在哪个分组里</summary>
-            <p className="field-help">分组只用来在画布上把相关区域框在一起，不再承载几何。删掉分组不会动任何体块。</p>
-            {ownerModule ? <button type="button" className="secondary-command" onClick={() => openLogicModule(ownerModule.id)}><ExternalLink size={14} />查看分组「{ownerModule.name}」</button>
-              : <button type="button" className="secondary-command" onClick={() => addLogicModule(`${node.name} 模块`, [node.id])}><Plus size={14} />此区域组成分组</button>}
-            {module ? <button type="button" className="secondary-command" onClick={() => openModuleById(module.id)}>打开旧版绑定模块</button> : null}
-          </details>
-        ) : null}
 
         <section className="inspector-section">
           <h3>落位与朝向</h3>
@@ -237,7 +220,7 @@ export function ConceptInspector() {
         ) : null}
 
         <div className="inspector-commands">
-          <button type="button" className="danger-command" onClick={() => { if (confirmModuleChange(project, topology, [node.id], null)) removeNode(node.id); }}><Trash2 size={14} />删除区域</button>
+          <button type="button" className="danger-command" onClick={() => removeNode(node.id)}><Trash2 size={14} />删除区域</button>
         </div>
       </div>
     );
