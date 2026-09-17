@@ -1,5 +1,5 @@
 import { blockPlanSize } from "../../domain/catalog";
-import type { Block, ModuleDefinition } from "../../domain/types";
+import type { Block } from "../../domain/types";
 
 export interface PlanBounds {
   minX: number;
@@ -61,7 +61,11 @@ function moduleBounds(blocks: Block[]): PlanBounds {
   return { minX, minY, maxX, maxY, width: Math.max(1, maxX - minX), height: Math.max(1, maxY - minY) };
 }
 
-export function createModulePreviewModel(module: ModuleDefinition, width = 228, height = 116, padding = 8): ModulePreviewModel {
+/**
+ * 俯视缩略图只关心积木。刻意收窄参数类型，让它既能画模块定义，
+ * 也能画**节点自己的**几何 —— 同一份几何在哪儿画都长一样。
+ */
+export function createModulePreviewModel(module: { blocks: Block[] }, width = 228, height = 116, padding = 8): ModulePreviewModel {
   const bounds = moduleBounds(module.blocks);
   const drawableWidth = Math.max(1, width - padding * 2);
   const drawableHeight = Math.max(1, height - padding * 2);

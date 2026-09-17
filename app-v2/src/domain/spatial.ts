@@ -17,8 +17,9 @@ export function containsXY(block: BoxBlock, point: Vec3, margin = 0): boolean {
     && Math.abs(x * Math.sin(angle) + y * Math.cos(angle)) <= block.parameters.BoxSize[1] / 2 + margin;
 }
 
-export function walkingSurfaces(module: ModuleDefinition): BoxBlock[] {
-  return module.blocks.filter((block): block is BoxBlock => block.type === "box" && (block.role === "floor" || block.role === "landing"));
+/** 可当楼板用的积木。只收窄到"有 blocks"就行：节点自己的几何与模块定义都能用 */
+export function walkingSurfaces(holder: { blocks: Block[] }): BoxBlock[] {
+  return holder.blocks.filter((block): block is BoxBlock => block.type === "box" && (block.role === "floor" || block.role === "landing"));
 }
 
 export function stairLandings(block: StairsLinearBlock): { lower: Vec3; upper: Vec3 } {

@@ -20,6 +20,7 @@ import { ConceptRecognitionBoard } from "./features/concept/ConceptRecognitionBo
 import { ConceptSidebar } from "./features/concept/ConceptSidebar";
 import { LevelBreadcrumb } from "./features/concept/LevelBreadcrumb";
 import { LevelTree } from "./features/concept/LevelTree";
+import { SplitPane } from "./components/SplitPane";
 import { resolveLevel } from "./domain/concept-scopes";
 import { createEmptyTopology } from "./domain/concept";
 import { summarizeIssues, validateTopology } from "./domain/concept-validation";
@@ -47,6 +48,9 @@ export function App() {
   const activeModuleId = useProjectStore((state) => state.activeModuleId);
   const detachedModuleId = useProjectStore((state) => state.detachedModuleId);
   const activeInstanceId = useProjectStore((state) => state.activeInstanceId);
+  const currentGeometry = useProjectStore((state) => state.currentGeometry);
+  const splitRatio = useProjectStore((state) => state.splitRatio);
+  const setSplitRatio = useProjectStore((state) => state.setSplitRatio);
   const selectedInstanceId = useProjectStore((state) => state.selectedInstanceId);
   const selectedConnectionId = useProjectStore((state) => state.selectedConnectionId);
   const moduleDraft = useProjectStore((state) => state.moduleDraft);
@@ -70,16 +74,25 @@ export function App() {
     () => resolveLevel(project.concept ?? createEmptyTopology(), levelPath),
     [project.concept, levelPath],
   );
-  // 几何层有两种来路：层级进到了某个节点内部，或者是没有逻辑节点的旧模块
-  const geometryLevel = level.kind === "geometry" || detachedModuleId !== null;
-  const auxiliary = !geometryLevel && (conceptPane === "inputs" || conceptPane === "recognition");
+  // 几何层有两种来路：进到了某个节点的内部，或者是没有逻辑节点的旧模块
+  const detachedLevel = detachedModuleId !== null;
+  const geometryOnly = level.kind === "geometry" || detachedLevel;
+  /**
+   * 分屏：现在站在一个有子逻辑的节点里。
+   *
+   * 节点同时装几何和子逻辑（2026-09-17 二次修订），所以这一层有**两面**：
+   * 左边是它内部的子区域与链路，右边是它自己的体块。两边同一个坐标系。
+   * 叶子节点（没有子层）不需要分屏，进去就是全宽拼接图。
+   */
+  const splitOpen = !detachedLevel && currentGeometry !== null;
+  const auxiliary = !geometryOnly && !splitOpen && (conceptPane === "inputs" || conceptPane === "recognition");
   const activeInstance = project.instances.find((item) => item.id === activeInstanceId);
   const activeModule = project.modules.find((item) => item.id === (activeModuleId ?? activeInstance?.definitionId));
   const selectedModuleId = project.instances.find((item) => item.id === selectedInstanceId)?.definitionId;
 
   useEffect(() => setNameDraft(project.name), [project.name]);
   useEffect(() => { setPlacementNotice(""); setUePlanOpen(false); }, [project.projectId, levelPath.join("/")]);
-  useEffect(() => { if (!geometryLevel) setAssemblyOpen(false); }, [geometryLevel]);
+  useEffect(() => { if (!geometryOnly) setAssemblyOpen(false); }, [geometryOnly]);
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target;
@@ -89,7 +102,7 @@ export function App() {
       const modifier = event.ctrlKey || event.metaKey;
       const key = event.key.toLowerCase();
       if (modifier && key === "z") { event.preventDefault(); event.shiftKey ? state.redo() : state.undo(); return; }
-      if (geometryLevel) {
+      if (geometryOnly) {
         if (modifier && key === "c") { event.preventDefault(); state.copySelectedBlocks(); }
         if (modifier && key === "v") { event.preventDefault(); state.pasteBlocks(); }
         if (modifier && key === "d") { event.preventDefault(); state.duplicateSelectedBlocks(); }
@@ -97,6 +110,7 @@ export function App() {
         if (!modifier && ["w", "e", "r"].includes(key)) state.setTransformMode(key === "w" ? "move" : key === "e" ? "rotate" : "scale");
         return;
       }
+      // 分屏时键盘归左边那半（逻辑图）：积木编辑要先点进右边，避免两边抢同一个 Delete
       if (state.conceptPane === "topology" && (key === "delete" || key === "backspace")) {
         event.preventDefault();
         if (state.selectedLogicLinkId) state.removeLogicLink(state.selectedLogicLinkId);
@@ -105,7 +119,7 @@ export function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [uePlanOpen, store, geometryLevel]);
+  }, [uePlanOpen, store, geometryOnly]);
 
   function placeActiveModule() {
     if (!activeModule) return;
@@ -127,32 +141,39 @@ export function App() {
             <IconButton label="重做" disabled={!futureCount || !!moduleDraft} onClick={() => store().redo()}><Redo2 size={17} /></IconButton>
           </div>
           <IssueIndicator />
-          {geometryLevel ? <button type="button" className={`text-command ${assemblyOpen ? "is-active" : ""}`} onClick={() => setAssemblyOpen((open) => !open)}>整体摆放</button> : null}
+          {detachedLevel ? <button type="button" className={`text-command ${assemblyOpen ? "is-active" : ""}`} onClick={() => setAssemblyOpen((open) => !open)}>整体摆放</button> : null}
           <button type="button" className={`text-command ${previewOpen ? "is-active" : ""}`} onClick={() => store().togglePreview()}><Box size={16} />3D 预览{previewDirty ? <i /> : null}</button>
           <IconButton label="刷新 3D 预览" onClick={() => store().refreshPreview()}><RefreshCw size={17} /></IconButton>
           <button type="button" className="text-command" onClick={() => setUePlanOpen((open) => !open)}>UE 计划</button>
         </div>
       </header>
       <div className="workflow-project-context"><ProjectContextBar /></div>
-      <aside className={`left-sidebar ${geometryLevel ? "module-reference-sidebar" : ""}`}>
+      <aside className={`left-sidebar ${geometryOnly || splitOpen ? "module-reference-sidebar" : ""}`}>
         {/* 层级树常驻：无论在逻辑层还是某个节点内部，都要能看见全局、随时跳走 */}
         <LevelTree />
-        {geometryLevel && activeModule ? <>
+        {detachedLevel && activeModule ? <>
           <ModuleContextPanel key={`${project.projectId}:${activeModule.id}`} moduleId={activeModule.id} />
           <fieldset className="module-palette-fieldset" disabled={!!moduleDraft}><ModulePalette /></fieldset>
-        </> : (auxiliary ? null : <ConceptSidebar />)}
+        </> : (geometryOnly || splitOpen) ? <fieldset className="module-palette-fieldset" disabled={!!moduleDraft}><ModulePalette /></fieldset> : (auxiliary ? null : <ConceptSidebar />)}
       </aside>
       <section className="workspace workflow-workspace">
         {placementNotice && <p className="workflow-notice" role="status">{placementNotice}</p>}
-        {geometryLevel && activeModule && <ModuleDraftPanel key={`${project.projectId}:${activeModule.id}`} moduleId={activeModule.id} />}
+        {detachedLevel && activeModule && <ModuleDraftPanel key={`${project.projectId}:${activeModule.id}`} moduleId={activeModule.id} />}
         <div className="workflow-canvas">
-          <CanvasBoundary key={`${project.projectId}:${level.kind}:${level.scopeId ?? "root"}:${level.nodeId ?? ""}:${conceptPane}`}>
+          <CanvasBoundary key={`${project.projectId}:${level.kind}:${level.scopeId ?? "root"}:${level.nodeId ?? ""}:${conceptPane}:${splitOpen ? currentGeometry?.id ?? "" : ""}`}>
             <Suspense fallback={<div className="workspace-loading">正在载入编辑工作面…</div>}>
               {auxiliary
                 ? (conceptPane === "inputs" ? <ConceptInputsBoard /> : <ConceptRecognitionBoard />)
-                : geometryLevel
-                  ? (assemblyOpen ? <AssemblyCanvas /> : activeModule ? <ModuleEditor /> : <div className="workspace-loading">这个节点还没有内部。</div>)
-                  : <ConceptCanvas />}
+                : splitOpen && currentGeometry
+                  ? <SplitPane
+                    ratio={splitRatio}
+                    onRatioChange={setSplitRatio}
+                    left={<ConceptCanvas />}
+                    right={<ModuleEditor geometry={currentGeometry} />}
+                  />
+                  : geometryOnly
+                    ? (assemblyOpen ? <AssemblyCanvas /> : currentGeometry ? <ModuleEditor geometry={currentGeometry} /> : <div className="workspace-loading">这个节点还没有内部。</div>)
+                    : <ConceptCanvas />}
             </Suspense>
           </CanvasBoundary>
         </div>
@@ -160,20 +181,24 @@ export function App() {
       <aside className="inspector">
         {auxiliary
           ? (conceptPane === "inputs" ? <ConceptInputInspector /> : <ConceptCandidateInspector />)
-          : geometryLevel
-            ? (assemblyOpen
-              ? <>{selectedConnectionId ? <ConnectionInspector /> : <InstanceInspector />}
-                {selectedModuleId && <details className="assembly-reference"><summary>所选模块资料与接口要求</summary><ModuleContextPanel key={`${project.projectId}:${selectedModuleId}`} moduleId={selectedModuleId} /></details>}</>
-              : <fieldset className="block-inspector-fieldset" disabled={!!moduleDraft}>{moduleDraft && <p className="workflow-notice">正在预览草案；采用或取消后继续编辑。</p>}<BlockInspector /></fieldset>)
-            : <UnifiedTopologyInspector />}
+          : splitOpen
+            ? <fieldset className="block-inspector-fieldset"><BlockInspector /><details className="inspector-section"><summary>这一层的逻辑</summary><UnifiedTopologyInspector /></details></fieldset>
+            : geometryOnly
+              ? (assemblyOpen
+                ? <>{selectedConnectionId ? <ConnectionInspector /> : <InstanceInspector />}
+                  {selectedModuleId && <details className="assembly-reference"><summary>所选模块资料与接口要求</summary><ModuleContextPanel key={`${project.projectId}:${selectedModuleId}`} moduleId={selectedModuleId} /></details>}</>
+                : <fieldset className="block-inspector-fieldset" disabled={!!moduleDraft}>{moduleDraft && <p className="workflow-notice">正在预览草案；采用或取消后继续编辑。</p>}<BlockInspector /></fieldset>)
+              : <UnifiedTopologyInspector />}
       </aside>
       {previewOpen && <Suspense fallback={<aside className="preview-panel loading-panel">正在载入 3D 预览…</aside>}><PreviewPanel /></Suspense>}
       {uePlanOpen && <UEDryRunPanel onClose={() => setUePlanOpen(false)} />}
       <footer className="statusbar">
-        <span>{geometryLevel
-          ? `${activeModule?.blocks.length ?? 0} 积木 · ${levelPath.at(-1) ? `${level.nodes.length + 1} 项中的 1 项` : ""}`
-          : `${level.nodes.length} 区域 · ${level.links.length} 链路 · ${level.scopeId ? "内部" : "整图"}`}</span>
-        <span>{geometryLevel ? "正在这个节点的内部使用局部厘米坐标" : "逻辑排版与空间坐标独立；节点内显示已拼好的内容"}</span>
+        <span>{splitOpen
+          ? `${level.nodes.length} 子区域 · ${level.links.length} 链路 ｜ ${currentGeometry?.blocks.length ?? 0} 积木`
+          : geometryOnly
+            ? `${currentGeometry?.blocks.length ?? 0} 积木 · ${levelPath.at(-1) ? `${level.nodes.length + 1} 项中的 1 项` : ""}`
+            : `${level.nodes.length} 区域 · ${level.links.length} 链路 · ${level.scopeId ? "内部" : "整图"}`}</span>
+        <span>{splitOpen ? "左右两边是同一个节点的两面：左边子区域，右边它自己的几何" : geometryOnly ? "正在这个节点的内部使用局部厘米坐标" : "逻辑排版与空间坐标独立；节点内显示已拼好的内容"}</span>
         <span className="status-warning">{moduleDraft ? "草案预览 · 尚未写入" : previewDirty ? "3D 需要刷新" : topologyIssues.error ? `${topologyIssues.error} 个逻辑错误` : "3D 已同步"}</span>
       </footer>
     </main>

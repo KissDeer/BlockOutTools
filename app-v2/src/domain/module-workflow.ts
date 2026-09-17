@@ -88,17 +88,22 @@ function scopePath(topology: LogicTopology, scopeId: string | null): string[] | 
 }
 
 /** Open a definition without instantiating or regenerating any existing geometry. */
-export function ensureLogicModule(project: BlockoutProject, logicModuleId: string): { project: BlockoutProject; module: ModuleDefinition | null; childScopeId?: string } {  const root = project.concept;
+export function ensureLogicModule(project: BlockoutProject, logicModuleId: string): { project: BlockoutProject; module: ModuleDefinition | null; childScopeId?: string } {
+  const root = project.concept;
   const found = root && findModule(root, logicModuleId);
   if (!root || !found) return { project, module: null };
   if (found.module.childScopeId) return { project, module: null, childScopeId: found.module.childScopeId };
   const existing = project.modules.find((module) => module.id === found.module.moduleDefinitionId);
   if (existing) return { project, module: existing };
   const module: ModuleDefinition = { id: createId("module"), name: found.module.name, revision: 0, blocks: [] };
+  // 分组上的绑定是旧数据形态；同时把节点上的 moduleId 也记上，
+  // 让"哪个节点产出这份几何"在新模型里也有据可查（flattenModules 读的就是它）。
+  const ownerNodeId = found.module.nodeIds[0];
   const view = scopeView(root, found.scopeId);
   const concept = writeScopeView(root, found.scopeId, {
     ...view,
     modules: view.modules.map((group) => group.id === logicModuleId ? { ...group, moduleDefinitionId: module.id } : group),
+    nodes: view.nodes.map((node) => node.id === ownerNodeId ? { ...node, moduleId: module.id } : node),
   });
   return { project: { ...project, concept, modules: [...project.modules, module], updatedAt: new Date().toISOString() }, module };
 }

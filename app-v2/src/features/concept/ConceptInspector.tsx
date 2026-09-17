@@ -9,6 +9,7 @@ import {
   type LogicTraversal,
 } from "../../domain/concept";
 import { topologyStats } from "../../domain/concept-commands";
+import { childScopeIdOf } from "../../domain/concept-scopes";
 import { validateTopology } from "../../domain/concept-validation";
 import { NumberField } from "../../components/NumberField";
 import { SelectField } from "../../components/SelectField";
@@ -34,6 +35,9 @@ export function ConceptInspector() {
   const addLogicKey = useProjectStore((state) => state.addLogicKey);
   const setStartNode = useProjectStore((state) => state.setLogicStartNode);
   const addLogicModule = useProjectStore((state) => state.addLogicModule);
+  const enterNode = useProjectStore((state) => state.enterNode);
+  const addNodeSubLevel = useProjectStore((state) => state.addNodeSubLevel);
+  const collapseLogicModule = useProjectStore((state) => state.collapseLogicModule);
   const openLogicModule = useProjectStore((state) => state.openLogicModule);
   const openModuleById = useProjectStore((state) => state.openModuleById);
   const [keyFoundAt, setKeyFoundAt] = useState("");
@@ -120,6 +124,8 @@ export function ConceptInspector() {
     const isStart = topology.startNodeId === node.id;
     const relatedLinks = topology.links.filter((item) => item.from === node.id || item.to === node.id);
     const relatedIssues = issues.filter((issue) => issue.nodeIds.includes(node.id));
+    const hasSubLevel = Boolean(childScopeIdOf(topology, node.id));
+    const nodeBlocks = node.blocks ?? [];
 
     return (
       <div className="inspector-content">
@@ -143,17 +149,29 @@ export function ConceptInspector() {
         </section>
 
         <section className="inspector-section">
-          <h3>所属模块</h3>
-          {ownerModule ? <>
-            <p className="field-help">{ownerModule.name} · {ownerModule.nodeIds.length} 个区域。拖入其他模块或使用画布上方“移动到”调整归属。</p>
-            {module?.blocks.length ? <ModulePlanPreview module={module} width={268} height={152} /> : null}
-            <button type="button" className="primary-command" onClick={() => openLogicModule(ownerModule.id)}><ExternalLink size={14} />搭建{ownerModule.name}</button>
-          </> : <>
-            <p className="field-help">框选相关区域组成模块，或将此区域拖入已有模块。其他模块未完成不影响当前搭建。</p>
-            <button type="button" className="secondary-command" onClick={() => addLogicModule(`${node.name} 模块`, [node.id])}><Plus size={14} />此区域组成模块</button>
-            {module ? <button type="button" className="secondary-command" onClick={() => openModuleById(module.id)}>打开旧版绑定模块</button> : null}
-          </>}
+          <h3>这个区域的内部</h3>
+          {/* 节点是唯一的容器：几何直接挂在它身上，不再需要先归到一个模块里 */}
+          <p className="field-help">
+            {hasSubLevel
+              ? "里面已经分出了子区域。进去后左边是子区域的逻辑图，右边是这个区域自己的体块。"
+              : "进去拼这个区域自己的体块。需要再分一层子区域时，随时可以在里面加。"}
+          </p>
+          {nodeBlocks.length ? <ModulePlanPreview module={{ id: node.id, name: node.name, revision: 0, blocks: nodeBlocks }} width={268} height={152} /> : null}
+          <button type="button" className="primary-command" onClick={() => enterNode(node.id)}><ExternalLink size={14} />进入「{node.name}」{hasSubLevel ? "（分屏）" : ""}</button>
+          {hasSubLevel
+            ? <button type="button" className="secondary-command" onClick={() => collapseLogicModule(node.id)}>收掉子区域层（几何保留）</button>
+            : <button type="button" className="secondary-command" onClick={() => addNodeSubLevel(node.id)}><Plus size={14} />在里面加一层子区域</button>}
         </section>
+
+        {ownerModule || module ? (
+          <details className="inspector-section">
+            <summary>这个区域在哪个分组里</summary>
+            <p className="field-help">分组只用来在画布上把相关区域框在一起，不再承载几何。删掉分组不会动任何体块。</p>
+            {ownerModule ? <button type="button" className="secondary-command" onClick={() => openLogicModule(ownerModule.id)}><ExternalLink size={14} />查看分组「{ownerModule.name}」</button>
+              : <button type="button" className="secondary-command" onClick={() => addLogicModule(`${node.name} 模块`, [node.id])}><Plus size={14} />此区域组成分组</button>}
+            {module ? <button type="button" className="secondary-command" onClick={() => openModuleById(module.id)}>打开旧版绑定模块</button> : null}
+          </details>
+        ) : null}
 
         <section className="inspector-section">
           <h3>标高要求</h3>

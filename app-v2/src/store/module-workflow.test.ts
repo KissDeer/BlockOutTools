@@ -32,24 +32,24 @@ describe("topology-driven module workflow", () => {
     expect(projectSchema.parse(result.project).concept?.modules[0].moduleDefinitionId).toBe(result.module?.id);
   });
 
-  it("retains module editor and return selection through edit undo and redo", () => {
-    const { project, group, node } = fixture();
+  it("retains the node's geometry and selection through edit undo and redo", () => {
+    const { project, node } = fixture();
     const store = useProjectStore.getState;
     store().replaceProject(project);
     store().setSelectedLogicNode(node.id);
-    store().openLogicModule(group.id);
-    const moduleId = store().activeModuleId;
-    // 进入节点内部 = 层级落在几何层，编辑的是这个节点的模块
-    expect(store()).toMatchObject({ levelPath: [node.id], activeModuleId: moduleId, activeInstanceId: null });
+    store().setLevelPath([node.id]);
+    // 进入没有子层的节点 = 几何层，编的是**这个节点自己的**积木
+    expect(store()).toMatchObject({ levelPath: [node.id], activeNodeId: node.id, activeInstanceId: null });
     store().addBlock("box");
+    expect(store().currentBlocks).toHaveLength(1);
     store().undo();
-    expect(store()).toMatchObject({ levelPath: [node.id], activeModuleId: moduleId });
-    expect(store().project.modules.find((module) => module.id === moduleId)?.blocks).toEqual([]);
+    expect(store()).toMatchObject({ levelPath: [node.id], activeNodeId: node.id });
+    expect(store().currentBlocks).toEqual([]);
     store().redo();
-    expect(store().project.modules.find((module) => module.id === moduleId)?.blocks).toHaveLength(1);
-    // 退回上一层：层级清空，回到整图，并恢复原来的选中
+    expect(store().currentBlocks).toHaveLength(1);
+    // 退回上一层：层级清空，回到整图
     store().returnFromModule();
-    expect(store()).toMatchObject({ levelPath: [], activeModuleId: null });
+    expect(store()).toMatchObject({ levelPath: [], activeNodeId: null, currentBlocks: [] });
   });
 
   it("places one module without resetting old instances, does not turn topology coordinates into space", () => {
@@ -66,9 +66,13 @@ describe("topology-driven module workflow", () => {
   it("renames a uniquely bound definition without losing references, but protects shared definition names", () => {
     const { project, group } = fixture();
     const store = useProjectStore.getState;
-    store().replaceProject(project);
-    store().openLogicModule(group.id);
-    const moduleId = store().activeModuleId!;
+    // 改名要能传给模块定义，前提是这个分组真的绑定了定义（旧数据形态）
+    const opened = ensureLogicModule(project, group.id);
+    const moduleId = opened.module!.id;
+    store().replaceProject(opened.project);
+    // 走遗留模块这条路：几何仍挂在模块定义上
+    store().openModuleById(moduleId);
+    expect(store().activeModuleId).toBe(moduleId);
     store().addBlock("box", [300, 600, 40]);
     const module = store().project.modules.find((item) => item.id === moduleId)!;
     const brief = { purpose: "回环探索", goals: "获得钥匙后返回主厅" };
@@ -77,6 +81,7 @@ describe("topology-driven module workflow", () => {
       { id: "module-reference", name: "结构说明", kind: "note", text: "中央挑空", imageData: "", moduleIds: [moduleId] },
     ] } });
     const blocks = store().project.modules.find((item) => item.id === moduleId)!.blocks;
+    expect(blocks).toHaveLength(1);
     const materials = store().project.designContext!.materials;
 
     store().updateLogicModule(group.id, { name: "教堂中庭" });
@@ -102,13 +107,33 @@ describe("topology-driven module workflow", () => {
     expect(projectSchema.safeParse(store().project).success).toBe(true);
   });
 
+  it("renaming a grouping no longer touches geometry: node blocks live on the node", () => {
+    const { project, group, node } = fixture();
+    const store = useProjectStore.getState;
+    store().replaceProject(project);
+    store().setLevelPath([node.id]);
+    expect(store().activeNodeId).toBe(node.id);
+    store().addBlock("box", [120, 340, 40]);
+    expect(store().currentBlocks).toHaveLength(1);
+    store().updateLogicModule(group.id, { name: "教堂中庭" });
+    // 分组只是画个框，已经不是几何的承载体
+    expect(store().project.concept?.modules.find((item) => item.id === group.id)?.name).toBe("教堂中庭");
+    expect(store().currentBlocks).toHaveLength(1);
+    expect(store().project.concept?.nodes[0].blocks).toHaveLength(1);
+  });
+
   it("preview and cancel write nothing; apply is one undo step and stale drafts are rejected", () => {
     const { project, group } = fixture();
     const store = useProjectStore.getState;
-    store().replaceProject(project); store().openLogicModule(group.id);
+    // 草案是针对**模块定义**的旧能力（节点几何没有草案），所以走遗留模块这条路
+    const opened = ensureLogicModule(project, group.id);
+    const moduleId = opened.module!.id;
+    store().replaceProject(opened.project);
+    store().openModuleById(moduleId);
+    expect(store().activeModuleId).toBe(moduleId);
     const before = store().project;
     const historyCount = store().past.length;
-    const draft = createQuickModuleDraft(before, store().activeModuleId!);
+    const draft = createQuickModuleDraft(before, moduleId);
     store().setModuleDraft(draft);
     store().addBlock("box");
     expect(store().project).toBe(before);
@@ -120,7 +145,7 @@ describe("topology-driven module workflow", () => {
     store().undo();
     expect(store().project).toBe(before);
     // 撤销不把人踢出当前层级
-    expect(store().activeModuleId).toBe(draft.moduleId);
+    expect(store().activeModuleId).toBe(moduleId);
     store().addBlock("box");
     store().setModuleDraft(draft);
     expect(store().applyModuleDraft().join()).toContain("几何");
@@ -129,10 +154,12 @@ describe("topology-driven module workflow", () => {
   it("refreshes an unplaced module locally without project writes, then returns to the overall snapshot", () => {
     const { project, group } = fixture();
     project.instances[0].assemblyTransform = { position: [9000, 12000, 600], rotation: 73 };
+    const opened = ensureLogicModule(project, group.id);
+    const moduleId = opened.module!.id;
     const store = useProjectStore.getState;
-    store().replaceProject(project);
-    store().openLogicModule(group.id);
-    const moduleId = store().activeModuleId!;
+    store().replaceProject(opened.project);
+    store().openModuleById(moduleId);
+    expect(store().activeModuleId).toBe(moduleId);
     store().addBlock("box", [760, 240, 30]);
     const currentProject = store().project;
     const history = store().past;

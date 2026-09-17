@@ -22,16 +22,12 @@ function hexToRgba(hex: string): Rgba {
 }
 
 export function BlockInspector() {
-  const project = useProjectStore((state) => state.project);
-  const activeInstanceId = useProjectStore((state) => state.activeInstanceId);
-  const activeModuleId = useProjectStore((state) => state.activeModuleId);
+  const profile = useProjectStore((state) => state.project.blockoutProfile);
+  const blocks = useProjectStore((state) => state.currentBlocks);
   const selectedIds = useProjectStore((state) => state.selectedBlockIds);
   const updateBlock = useProjectStore((state) => state.updateBlock);
   const remove = useProjectStore((state) => state.deleteSelectedBlocks);
-  const instance = project.instances.find((item) => item.id === activeInstanceId);
-  // 从阶段一的逻辑节点进入模块时没有实例，直接按 activeModuleId 解析
-  const module = project.modules.find((item) => item.id === activeModuleId) ?? project.modules.find((item) => item.id === instance?.definitionId);
-  const block = selectedIds.length === 1 ? module?.blocks.find((item) => item.id === selectedIds[0]) : null;
+  const block = selectedIds.length === 1 ? blocks.find((item) => item.id === selectedIds[0]) : null;
 
   if (!block) return <div className="empty-inspector"><span>{selectedIds.length > 1 ? `已选择 ${selectedIds.length} 个积木` : "未选择积木"}</span><small>选择一个积木编辑 Transform 和关键参数</small></div>;
   const info = typeInfo[block.type];
@@ -87,7 +83,7 @@ export function BlockInspector() {
           <>
             <Vector3Fields labels={["宽度 X", "进深 Y", "高度 Z"]} value={block.parameters.StairsSize} onCommit={(value) => patch((next) => { if (next.type === "stairs-linear") next.parameters.StairsSize = value; })} />
             <NumberField label="台阶数" value={block.parameters.NumberOfSteps} min={1} step={1} unit="级" onCommit={(value) => patch((next) => { if (next.type === "stairs-linear") next.parameters.NumberOfSteps = Math.round(value); })} />
-            <StairLandingFields key={block.id} block={block} module={module!} profile={project.blockoutProfile} onChange={updateBlock} />
+            <StairLandingFields key={block.id} block={block} blocks={blocks} profile={profile} onChange={updateBlock} />
             {block.parameters.StairsType !== "BOX" ? <p className="status-warning">{block.parameters.StairsType} 的 UE 形态尚未核实，预览仅显示 BOX 近似，请勿据此验收。</p> : null}
           </>
         ) : null}

@@ -1,7 +1,7 @@
 import { createBlock } from "./catalog";
 import { createId } from "./ids";
 import { nodesOfScope, findModule } from "./concept-scopes";
-import type { LogicTopology } from "./concept";
+import type { LogicNode, LogicTopology } from "./concept";
 import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
 
 function cloneProject(project: BlockoutProject): BlockoutProject {
@@ -82,6 +82,74 @@ export function addBlock(project: BlockoutProject, moduleId: string, type: Block
   module.blocks.push(block);
   module.revision += 1;
   return { project: touch(next), block };
+}
+
+/* ---------------- 节点自己的几何（2026-09-17 二次修订） ----------------
+ *
+ * 几何挂在**节点**上，坐标是节点局部厘米（原点 = 这个节点在父级里的落位）。
+ * 旧项目仍走上面的模块定义链，两条路并存到 1-F；调用方只认下面这组"目标"入口，
+ * 由 `store` 决定当前目标是节点还是遗留模块。
+ */
+
+function nodeIn(project: BlockoutProject, nodeId: string): LogicNode | null {
+  const topology = project.concept;
+  if (!topology) return null;
+  for (const scope of [topology, ...topology.scopes]) {
+    const node = scope.nodes.find((item) => item.id === nodeId);
+    if (node) return node;
+  }
+  return null;
+}
+
+export function addNodeBlock(project: BlockoutProject, nodeId: string, type: BlockType, position: [number, number, number] = [0, 0, 0]): { project: BlockoutProject; block: Block | null } {
+  const next = cloneProject(project);
+  const node = next.concept ? nodeIn(next, nodeId) : null;
+  if (!node) return { project, block: null };
+  const block = createBlock(type, position);
+  node.blocks = [...(node.blocks ?? []), block];
+  return { project: touch(next), block };
+}
+
+export function updateNodeBlock(project: BlockoutProject, nodeId: string, block: Block): BlockoutProject {
+  const next = cloneProject(project);
+  const node = next.concept ? nodeIn(next, nodeId) : null;
+  if (!node?.blocks) return project;
+  const index = node.blocks.findIndex((item) => item.id === block.id);
+  if (index < 0) return project;
+  const blocks = [...node.blocks];
+  blocks[index] = structuredClone(block);
+  node.blocks = blocks;
+  return touch(next);
+}
+
+export function removeNodeBlocks(project: BlockoutProject, nodeId: string, blockIds: string[]): BlockoutProject {
+  const next = cloneProject(project);
+  const node = next.concept ? nodeIn(next, nodeId) : null;
+  if (!node?.blocks) return project;
+  const ids = new Set(blockIds);
+  node.blocks = node.blocks.filter((item) => !ids.has(item.id));
+  return touch(next);
+}
+
+/**
+ * 几何编辑的**唯一裁决点**：当前这一刀落在节点上，还是落在遗留模块上。
+ * 新代码一律走节点；只有"没有对应逻辑节点的旧模块"才落到模块定义上。
+ */
+export type GeometryTarget = { kind: "node"; nodeId: string } | { kind: "module"; moduleId: string } | null;
+
+export function addBlockTo(project: BlockoutProject, target: GeometryTarget, type: BlockType, position: [number, number, number] = [0, 0, 0]): { project: BlockoutProject; block: Block | null } {
+  if (!target) return { project, block: null };
+  return target.kind === "module" ? addBlock(project, target.moduleId, type, position) : addNodeBlock(project, target.nodeId, type, position);
+}
+
+export function updateBlockIn(project: BlockoutProject, target: GeometryTarget, block: Block): BlockoutProject {
+  if (!target) return project;
+  return target.kind === "module" ? updateBlock(project, target.moduleId, block) : updateNodeBlock(project, target.nodeId, block);
+}
+
+export function removeBlocksFrom(project: BlockoutProject, target: GeometryTarget, blockIds: string[]): BlockoutProject {
+  if (!target) return project;
+  return target.kind === "module" ? removeBlocks(project, target.moduleId, blockIds) : removeNodeBlocks(project, target.nodeId, blockIds);
 }
 
 export function updateBlock(project: BlockoutProject, moduleId: string, block: Block): BlockoutProject {

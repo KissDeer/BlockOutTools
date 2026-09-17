@@ -9,8 +9,7 @@
 .workflow-shell .stage-switch { flex-shrink: 0; }
 
 /* ---- 层级导航：取代原来的两个顶层页签 ---- */
-.level-breadcrumb { display: flex; align-items: center; gap: 2px; flex: 1; min-width: 0; overflow: hidden; font-size: 11.5px; }
-.level-breadcrumb button { display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 11.5px; cursor: pointer; white-space: nowrap; }
+.level-breadcrumb { display: flex; align-items: center; gap: 2px; flex: 1; min-width: 0; overflow: hidden; font-size: 11.5px; }.level-breadcrumb button { display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 11.5px; cursor: pointer; white-space: nowrap; }
 .level-breadcrumb button:hover { color: var(--text); background: var(--surface-2); }
 .level-breadcrumb button.is-current { color: #0e1915; background: var(--accent); border-color: var(--accent); font-weight: 650; }
 .level-step { display: inline-flex; align-items: center; gap: 2px; color: var(--faint); }
@@ -70,3 +69,16 @@
 .workflow-module-card select { width: 100%; background: var(--surface); color: var(--text); padding: 4px; border: 1px solid var(--border); font-size: 10px; }
 .workflow-module-card .instance-choice { display: block; width: 100%; margin-top: 5px; padding: 5px; text-align: left; background: var(--surface); color: var(--muted); border: 1px solid transparent; border-radius: 3px; }
 .workflow-module-card .instance-choice[aria-pressed="true"] { border-color: var(--accent); color: var(--text); }
+
+/* ---- 分屏：进复合节点时左逻辑 / 右拼接，同一个坐标系的两面 ---- */
+.split-pane { display: grid; height: 100%; min-height: 0; }
+.split-pane-side { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+/* 画布与几何编辑器都靠 height:100% 撑满自己那一半 */
+.split-pane-side > * { height: 100%; }
+.split-pane-divider { position: relative; cursor: col-resize; background: var(--border-soft); touch-action: none; }
+.split-pane-divider::after { content: ""; position: absolute; inset: 0 -3px; }
+.split-pane-divider:hover, .split-pane-divider:focus-visible { background: var(--accent); outline: none; }
+body.is-resizing-split { cursor: col-resize; user-select: none; }
+/* 分屏时两个面板各自带标题，说清哪边是哪边 */
+.split-pane-side::before { content: attr(data-pane-label); position: absolute; top: 6px; left: 8px; z-index: 6; padding: 1px 6px; color: var(--faint); background: #0e1210cc; border-radius: 3px; font-size: 10px; pointer-events: none; }
+
