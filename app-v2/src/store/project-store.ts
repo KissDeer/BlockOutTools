@@ -5,7 +5,7 @@ import { pruneCandidate, type CandidateNode, type RecognitionCandidate } from ".
 import { editDecomposition as editDecompositionCommand, type DecompositionEdit } from "../domain/concept-commands";
 import type { DecompositionCandidate } from "../domain/concept-decomposition";
 import { createEmptyTopology } from "../domain/concept";
-import { expandModule as expandModuleCommand, childScopeIdOf, collapseModule as collapseModuleCommand, allModules, levelPathOfNode, resolveLevel, scopeView, scopesOf, writeScopeView } from "../domain/concept-scopes";
+import { expandModule as expandModuleCommand, childScopeIdOf, collapseModule as collapseModuleCommand, allModules, levelPathOfNode, resolveLevel, scopeView, scopesOf, writeScopeView, type ResolvedLevel } from "../domain/concept-scopes";
 import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
 import type { LogicKey, LogicKind, LogicLink, LogicModule, LogicNode, LogicTopology } from "../domain/concept";
 import { createDemoProject } from "../domain/demo-project";
@@ -331,6 +331,18 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     return id;
   }
 
+  /**
+   * 走进一个**叶子节点**时，顺手把它选中。
+   *
+   * 那时画布只看得到这一个区域，选中它不会挡住任何别的东西；而不选中的话，
+   * 右侧检查器会显示"这一层的逻辑"概览，人就没法给它填落位与朝向 ——
+   * 而落位正是 3D 与 UE 认的位置。复合节点不这么做：那一层还有别的区域要选。
+   */
+  function selectionForLevel(level: ResolvedLevel | null, settled: ResolvedLevel | null): Partial<ProjectStore> {
+    const nodeId = settled?.kind === "geometry" ? settled.nodeId : level?.kind === "geometry" ? level.nodeId : null;
+    return nodeId ? { selectedLogicNodeId: nodeId, selectedLogicLinkId: null } : { selectedLogicNodeId: null, selectedLogicLinkId: null };
+  }
+
   function currentTopology(): LogicTopology {
     const root = get().project.concept ?? createEmptyTopology();
     // 旧草稿可能缺字段（zod 已兜底，这里再防一手运行时）
@@ -388,8 +400,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       activeNodeId: activeNodeIdOf(topology, safePath),
       moduleDraft: null,
       selectedBlockIds: [],
-      selectedLogicNodeId: null,
-      selectedLogicLinkId: null,
+      ...selectionForLevel(level, settled),
       selectedInstanceId: null,
       selectedConnectionId: null,
     });
