@@ -40,6 +40,8 @@ export function ConceptInspector() {
   const collapseLogicModule = useProjectStore((state) => state.collapseLogicModule);
   const openLogicModule = useProjectStore((state) => state.openLogicModule);
   const openModuleById = useProjectStore((state) => state.openModuleById);
+  /** 根层的节点直接相对整张图；子层里的相对它父节点。只影响怎么跟人解释这个坐标 */
+  const inRootScope = useProjectStore((state) => state.conceptScopeId === null);
   const [keyFoundAt, setKeyFoundAt] = useState("");
 
   const issues = useMemo(() => validateTopology(topology), [topology]);
@@ -174,14 +176,40 @@ export function ConceptInspector() {
         ) : null}
 
         <section className="inspector-section">
+          <h3>落位与朝向</h3>
+          {/*
+            这里编的不是画布排版，而是**真实坐标**：节点在父级里的落位，
+            同时就是它自己那套坐标的原点。它的积木和子层内容全部相对这个点。
+          */}
+          <p className="field-help">
+            {inRootScope
+              ? "相对整张图的原点，单位厘米。这里的位置直接决定 3D 预览与 UE 导出落在哪里。"
+              : "相对它所在那一层（也就是它父节点）的原点，单位厘米。改这里会带着它内部的积木和子区域一起移动。"}
+          </p>
+          <label className="checkbox-field">
+            <input
+              type="checkbox"
+              checked={Boolean(node.relativePosition)}
+              onChange={(event) => updateNode(node.id, { relativePosition: event.target.checked ? [0, 0] : null })}
+            />已确定落位
+          </label>
+          {node.relativePosition ? <>
+            <div className="field-grid two-columns">
+              <NumberField label="X" unit="cm" value={node.relativePosition[0]} onCommit={(x) => updateNode(node.id, { relativePosition: [x, node.relativePosition?.[1] ?? 0] })} />
+              <NumberField label="Y" unit="cm" value={node.relativePosition[1]} onCommit={(y) => updateNode(node.id, { relativePosition: [node.relativePosition?.[0] ?? 0, y] })} />
+            </div>
+            <NumberField label="朝向" unit="°" value={node.relativeRotation ?? 0} step={15} onCommit={(rotation) => updateNode(node.id, { relativeRotation: rotation })} />
+          </> : <p className="status-warning">还没有落位：展平与导出会把它按原点处理，多个未落位的区域会叠在一起，看起来像少了几块。</p>}
+        </section>
+
+        <section className="inspector-section">
           <h3>标高要求</h3>
-          <p className="field-help">逻辑层号只作提示。确定的标高会成为模块搭建依据；未确定时可以留空。</p>
+          <p className="field-help">逻辑层号只作提示。确定的标高会成为搭建依据；未确定时可以留空。</p>
           <label className="checkbox-field"><input type="checkbox" checked={Boolean(node.elevation)} onChange={(event) => updateNode(node.id, { elevation: event.target.checked ? { base: 0, top: 400 } : null })} />已确定标高</label>
           {node.elevation ? <div className="field-grid two-columns">
             <NumberField label="底面标高" value={node.elevation.base} onCommit={(base) => updateNode(node.id, { elevation: { base, top: node.elevation?.top ?? base } })} />
             <NumberField label="顶面标高" value={node.elevation.top} onCommit={(top) => updateNode(node.id, { elevation: { base: node.elevation?.base ?? 0, top } })} />
           </div> : null}
-          {node.relativePosition ? <details><summary>保留的来源位置</summary><p className="field-help">({Math.round(node.relativePosition[0])}, {Math.round(node.relativePosition[1])}) cm；仅供旧资料追溯，不是进入模块的前置条件。</p></details> : null}
         </section>
 
         {relatedLinks.length ? (

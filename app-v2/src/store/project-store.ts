@@ -13,7 +13,8 @@ import { createId } from "../domain/ids";
 import { loadDraft, saveDraft } from "../domain/persistence";
 import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, DiagramReference, ModuleDefinition, Transform, Vec2 } from "../domain/types";
 import { ensureLogicModule, placeModuleDefinition } from "../domain/module-workflow";
-import { createModulePreviewProject } from "../domain/module-preview-project";
+import { createModulePreviewProject, createNodePreviewProject } from "../domain/module-preview-project";
+import { flattenProjectGeometry } from "../domain/node-geometry";
 import { applyModuleDraft as applyModuleDraftCommand, validateModuleDraft, type ModuleDraft } from "../domain/module-draft";
 
 /** concept = 阶段一 构想工作台；build = 阶段二 拼接与转化 */
@@ -132,7 +133,11 @@ interface ProjectStore {
   previewDirty: boolean;
   previewRevision: number;
   previewProject: BlockoutProject | null;
-  previewModuleId: string | null;
+  /**
+   * 刷新那一刻参与的摆放清单（节点或旧实例），供预览里按区域过滤。
+   * 几何本身由 `flattenProjectGeometry` 现算，这里只记"有哪些区域可挑"。
+   */
+  previewScope: { id: string; name: string }[];
   saveStatus: SaveStatus;
   past: BlockoutProject[];
   future: BlockoutProject[];
@@ -390,6 +395,9 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     });
     // 层级变了，当前几何目标也跟着变；在同一个 set 之后再算一次快照
     set(geometrySnapshot(state.project));
+    // 预览面板停在原地会显示上一次刷新的内容（上一层的几何），所以换层就标记需要刷新。
+    // 面板上写着"3D 需要刷新"，比悄悄给人看上一层的几何诚实。
+    set({ previewDirty: true, previewScope: [] });
   }
 
   function historySelection(project: BlockoutProject): Partial<ProjectStore> {
@@ -524,7 +532,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     previewDirty: true,
     previewRevision: 0,
     previewProject: null,
-    previewModuleId: null,
+    previewScope: [],
     saveStatus: "saved",
     past: [],
     future: [],
@@ -621,11 +629,18 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     togglePreview: () => set((state) => ({ previewOpen: !state.previewOpen })),
     refreshPreview: () => {
       const state = get();
-      // 站在某一层的几何里就看局部，站在逻辑层就看整体
+      // 站在某个节点里就看这个节点自己的几何；站在逻辑层就看整体
       const target = geometryTarget();
-      const moduleId = target?.kind === "module" ? target.moduleId : null;
-      set({ previewRevision: state.previewRevision + 1, previewProject: moduleId ? createModulePreviewProject(state.project, moduleId) : state.project,
-        previewModuleId: moduleId, previewDirty: false, previewOpen: true });
+      const project = target?.kind === "module" ? createModulePreviewProject(state.project, target.moduleId)
+        : target?.kind === "node" ? createNodePreviewProject(state.project, target.nodeId)
+          : state.project;
+      set({
+        previewRevision: state.previewRevision + 1,
+        previewProject: project,
+        previewScope: flattenProjectGeometry(project).placements.map((placed) => ({ id: placed.id, name: placed.namePath.at(-1) ?? placed.id })),
+        previewDirty: false,
+        previewOpen: true,
+      });
     },
     renameProject: (name) => commit(renameProject(get().project, name)),
     updateModule: (module) => commit(updateModule(get().project, module)),
@@ -818,7 +833,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
         selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, selectedInputId: null,
         conceptPane: "topology", conceptScopeId: null, candidate: null, candidateExcluded: [], selectedCandidateNodeId: null,
         decomposition: null,
-        past: [], future: [], previewDirty: true, previewProject: null, previewModuleId: null, previewRevision: 0, previewOpen: false,
+        past: [], future: [], previewDirty: true, previewProject: null, previewScope: [], previewRevision: 0, previewOpen: false,
       });
       scheduleSave(project, set);
     },

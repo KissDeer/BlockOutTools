@@ -45,7 +45,7 @@ function clone(topology: LogicTopology): LogicTopology {
 export function addLogicNode(
   topology: LogicTopology,
   graphPosition: Vec2,
-  patch: Partial<Pick<LogicNode, "name" | "role" | "floor" | "moduleId" | "note" | "relativePosition" | "elevation" | "childScopeId">> = {},
+  patch: Partial<Pick<LogicNode, "name" | "role" | "floor" | "moduleId" | "note" | "relativePosition" | "relativeRotation" | "elevation" | "childScopeId" | "blocks">> = {},
 ): { topology: LogicTopology; node: LogicNode } {
   const next = clone(topology);
   const node: LogicNode = {
@@ -60,6 +60,8 @@ export function addLogicNode(
     ...(patch.moduleId ? { moduleId: patch.moduleId } : {}),
     // 子层可以一开始就挂上（导入、迁移、复制整棵子树都用得上）
     ...(patch.childScopeId ? { childScopeId: patch.childScopeId } : {}),
+    ...(patch.relativeRotation === undefined ? {} : { relativeRotation: patch.relativeRotation }),
+    ...(patch.blocks ? { blocks: structuredClone(patch.blocks) } : {}),
   };
   next.nodes.push(node);
   next.startNodeId ??= node.id;

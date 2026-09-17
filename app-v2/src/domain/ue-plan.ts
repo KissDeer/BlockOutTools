@@ -1,8 +1,7 @@
 import { CATALOG, isDeployableBlock } from "./catalog";
 import { actorSyncKey } from "./ids";
-import { allModules } from "./concept-scopes";
-import { blockBaseZ } from "./spatial";
 import { resolveAssembly, type AssemblyConstraintIssue } from "./assembly-resolver";
+import { ancestorPath, flattenNodeGeometry, flattenProjectGeometry, type FlatGeometry } from "./node-geometry";
 import type { Block, BlockoutProject } from "./types";
 
 export interface UEActorPlan {
@@ -21,46 +20,51 @@ export interface UEDryRunPlan {
   actorCount: number;
   actors: UEActorPlan[];
   assemblyIssues: AssemblyConstraintIssue[];
+  /** 没有落位的区域名：它们按原点处理，必须报出来而不是静默叠在一起 */
+  unplaced: string[];
 }
 
-function rotate2d(x: number, y: number, degrees: number): [number, number] {
-  const radians = (degrees * Math.PI) / 180;
-  const cos = Math.cos(radians);
-  const sin = Math.sin(radians);
-  return [x * cos - y * sin, x * sin + y * cos];
-}
-
-export function buildLocalUEDryRun(project: BlockoutProject): UEDryRunPlan {
-  const modules = new Map(project.modules.map((module) => [module.id, module]));
+/**
+ * 展平几何 → UE Actor 计划。
+ *
+ * 与 3D 预览吃的是**同一份** `FlatGeometry`，所以不会出现"网页看着对、UE 不对"。
+ * 一个积木一个 Actor（楼梯不拆步）；同步键沿用
+ * `projectId / 摆放路径… / 摆放 id / blockId`，改名不影响键。
+ */
+export function buildUEDryRunFrom(project: BlockoutProject, geometry: FlatGeometry): UEDryRunPlan {
   const classPathByType = new Map(CATALOG.filter((item) => item.blueprintClassPath).map((item) => [item.type, item.blueprintClassPath as string]));
-  // 层级路径上的模块名，用于给人看的标签
-  const moduleNameById = new Map(project.concept ? allModules(project.concept).map(({ module }) => [module.id, module.name]) : []);
   const actors: UEActorPlan[] = [];
-  const resolution = resolveAssembly(project);
 
-  for (const instance of resolution.instances) {
-    const module = modules.get(instance.definitionId);
-    if (!module) continue;
-    const scopePath = instance.scopePath ?? [];
-    const prefix = scopePath.map((id) => moduleNameById.get(id) ?? id);
-    for (const block of module.blocks) {
-      if (!isDeployableBlock(block)) continue;
-      const [offsetX, offsetY] = rotate2d(block.transform.position[0], block.transform.position[1], instance.assemblyTransform.rotation);
-      actors.push({
-        syncKey: actorSyncKey(project.projectId, instance.id, block.id, scopePath),
-        label: [...prefix, instance.name, block.name].join(" / "),
-        blockType: block.type,
-        blueprintClassPath: classPathByType.get(block.type) ?? "",
-        location: [
-          instance.assemblyTransform.position[0] + offsetX,
-          -(instance.assemblyTransform.position[1] + offsetY),
-          instance.assemblyTransform.position[2] + blockBaseZ(block),
-        ],
-        rotation: [0, 0, -(instance.assemblyTransform.rotation + block.transform.rotation)],
-        parameters: structuredClone(block.parameters),
-      });
-    }
+  for (const placed of geometry.blocks) {
+    const block = placed.block;
+    if (!isDeployableBlock(block)) continue;
+    actors.push({
+      syncKey: actorSyncKey(project.projectId, placed.placementId, block.id, ancestorPath(placed)),
+      label: [...placed.namePath, block.name].join(" / "),
+      blockType: block.type,
+      blueprintClassPath: classPathByType.get(block.type) ?? "",
+      location: [placed.position[0], -placed.position[1], placed.position[2]],
+      rotation: [0, 0, -placed.rotation],
+      parameters: structuredClone(block.parameters),
+    });
   }
 
-  return { projectId: project.projectId, createdAt: new Date().toISOString(), actorCount: actors.length, actors, assemblyIssues: resolution.issues };
+  return {
+    projectId: project.projectId,
+    createdAt: new Date().toISOString(),
+    actorCount: actors.length,
+    actors,
+    assemblyIssues: resolveAssembly(project).issues,
+    unplaced: geometry.unplaced,
+  };
+}
+
+/** 整张图 */
+export function buildLocalUEDryRun(project: BlockoutProject): UEDryRunPlan {
+  return buildUEDryRunFrom(project, flattenProjectGeometry(project));
+}
+
+/** 某个节点内部（含子层），坐标是节点局部厘米 */
+export function buildNodeUEDryRun(project: BlockoutProject, nodeId: string): UEDryRunPlan {
+  return buildUEDryRunFrom(project, flattenNodeGeometry(project, nodeId));
 }

@@ -34,7 +34,7 @@ describe("module-local 3D snapshot", () => {
     expect(snapshot.designContext).toEqual(project.designContext);
     expect(snapshot.instances[0].assemblyTransform).toEqual({ position: [0, 0, 0], rotation: 0 });
     expect(snapshot.connections).toEqual([]);
-    expect(buildDeploymentGeometry(snapshot).every((primitive) => primitive.sourceInstanceId === "__preview_module__")).toBe(true);
+    expect(buildDeploymentGeometry(snapshot).every((primitive) => primitive.sourcePlacementId === "__preview_module__")).toBe(true);
     snapshot.modules[0].blocks[0].transform.position[0] = 99999;
     expect(project).toEqual(before);
   });

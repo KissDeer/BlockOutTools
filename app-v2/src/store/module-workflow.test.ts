@@ -168,7 +168,9 @@ describe("topology-driven module workflow", () => {
 
     store().refreshPreview();
     const localSnapshot = store().previewProject!;
-    expect(store()).toMatchObject({ previewModuleId: moduleId, previewOpen: true, previewDirty: false, previewRevision: 1 });
+    // 局部预览：只有这一个摆放可选，几何就是它自己的
+    expect(store()).toMatchObject({ previewOpen: true, previewDirty: false, previewRevision: 1 });
+    expect(store().previewScope.map((item) => item.id)).toEqual(["__preview_module__"]);
     expect(store().project).toBe(currentProject);
     expect(store().past).toBe(history);
     expect(store().past).toHaveLength(history.length);
@@ -182,9 +184,11 @@ describe("topology-driven module workflow", () => {
 
     store().showAssembly();
     store().refreshPreview();
-    expect(store()).toMatchObject({ previewModuleId: null, previewOpen: true, previewDirty: false, previewRevision: 2 });
+    // 回到整图：预览的是整个项目，可选的摆放就是已放置的模块实例
+    expect(store()).toMatchObject({ previewOpen: true, previewDirty: false, previewRevision: 2 });
     expect(store().previewProject).toBe(currentProject);
     expect(store().previewProject?.instances).toEqual(originalInstances);
+    expect(store().previewScope.map((item) => item.id)).toEqual(originalInstances.map((item) => item.id));
     expect(store().project).toBe(currentProject);
     expect(store().past).toBe(history);
   });
@@ -197,11 +201,12 @@ describe("topology-driven module workflow", () => {
     expect(store()).toMatchObject({ levelPath: [] });
     store().openModule(project.instances[0].id);
     store().refreshPreview();
-    expect(store()).toMatchObject({ previewModuleId: project.instances[0].definitionId, previewRevision: 1, previewOpen: true, previewDirty: false });
+    expect(store()).toMatchObject({ previewRevision: 1, previewOpen: true, previewDirty: false });
+    expect(store().previewScope.map((item) => item.id)).toEqual(["__preview_module__"]);
     expect(store().previewProject).not.toBeNull();
     store().setModuleDraft(createQuickModuleDraft(store().project, project.modules[0].id));
     store().replaceProject(createDemoProject());
     expect(store()).toMatchObject({ moduleDraft: null, activeModuleId: null, conceptScopeId: null, levelPath: [],
-      previewProject: null, previewModuleId: null, previewRevision: 0, previewOpen: false, previewDirty: true });
+      previewProject: null, previewScope: [], previewRevision: 0, previewOpen: false, previewDirty: true });
   });
 });

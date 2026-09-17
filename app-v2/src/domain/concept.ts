@@ -44,6 +44,12 @@ export interface LogicNode {
   graphPosition: Vec2;
   /** 依范围图标定换算出的相对位置（厘米，父级局部坐标）；未定位为 null */
   relativePosition: Vec2 | null;
+  /**
+   * 这个节点自己的朝向（度，绕 Z）。
+   * 它同时是自己那套坐标的朝向：节点的积木与子层内容都跟着它转。
+   * 缺省 0 = 与父级对齐。
+   */
+  relativeRotation?: number;
   /** 相对标高范围（厘米，父级局部坐标） */
   elevation: { base: number; top: number } | null;
   /** 绑定到模块定义后，可直接查看该模块内部体块与 3D 预览 */
@@ -264,6 +270,7 @@ export const logicNodeSchema = z.object({
   graphPosition: vec2,
   // 旧草稿没有这两个字段
   relativePosition: vec2.nullable().default(null),
+  relativeRotation: finiteNumber.optional(),
   elevation: z.object({ base: finiteNumber, top: finiteNumber }).nullable().default(null),
   moduleId: z.string().min(1).optional(),
   // 旧草稿的节点没有自己的几何
