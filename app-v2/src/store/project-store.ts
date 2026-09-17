@@ -1,11 +1,9 @@
 import { create } from "zustand";
-import { addBlock, addConnection, addModule, applyConfiguration as applyConfigurationCommand, createModuleForNode, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, setConcept, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform, updateModule, updateProjectSettings } from "../domain/commands";
+import { addBlock, addConnection, addModule, createModuleForNode, duplicateInstance, removeBlocks, removeConnection, removeInstance, renameProject, setConcept, updateBlock, updateConnection, updateInstanceGraph, updateInstanceTransform, updateModule, updateProjectSettings } from "../domain/commands";
 import { addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode, applyCandidate as applyCandidateCommand, applyDecomposition as applyDecompositionCommand, autoLayoutTopology, bindNodeModule, createLogicModule as createLogicModuleCommand, nextNodePosition, recordProposal as recordProposalCommand, removeInput as removeInputCommand, removeLogicKey, removeLogicLink, removeLogicModule as removeLogicModuleCommand, removeLogicNode, seedModulesFromNodes, setNodeModule as setNodeModuleCommand, setStartNode, updateInput as updateInputCommand, updateLogicKey, updateLogicLink, updateLogicModule as updateLogicModuleCommand, updateLogicNode, type InputDraft } from "../domain/concept-commands";
 import { pruneCandidate, type CandidateNode, type RecognitionCandidate } from "../domain/concept-candidate";
 import { editDecomposition as editDecompositionCommand, type DecompositionEdit } from "../domain/concept-commands";
 import type { DecompositionCandidate } from "../domain/concept-decomposition";
-import { generateConfiguration as generateConfigurationCommand, type ConfigurationCandidate } from "../domain/concept-configuration";
-import { generateAssembly as generateAssemblyCommand, type AssemblyGenerationResult } from "../domain/concept-assembly";
 import { createEmptyTopology } from "../domain/concept";
 import { expandModule as expandModuleCommand, collapseModule as collapseModuleCommand, allModules, levelPathOfNode, nodeScopeAndGroup, resolveLevel, scopeView, writeScopeView } from "../domain/concept-scopes";
 import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
@@ -83,19 +81,11 @@ interface ProjectStore {
   updateLogicModule: (moduleId: string, patch: Partial<Pick<LogicModule, "name" | "note">>) => void;
   removeLogicModule: (moduleId: string) => void;
   seedModules: () => void;
-  /** 基础构型：同样只存在于会话内 */
-  configuration: ConfigurationCandidate | null;
   /** 当前编辑的作用域（null = 根）。所有拓扑命令都作用在它上面 */
   conceptScopeId: string | null;
   setConceptScope: (scopeId: string | null) => void;
   expandLogicModule: (moduleId: string, scopeName?: string) => void;
   collapseLogicModule: (moduleId: string) => void;
-  setConfiguration: (candidate: ConfigurationCandidate | null) => void;
-  generateConfiguration: () => void;
-  applyConfigurationCandidate: () => void;
-  /** 概念 → 阶段二组装的结果摘要 */
-  assemblyResult: AssemblyGenerationResult | null;
-  generateAssembly: () => void;
   transformMode: TransformMode;
   connectionType: ConnectionType;
   logicKind: LogicKind;
@@ -376,8 +366,6 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     selectedCandidateNodeId: null,
     candidateExcluded: [],
     decomposition: null,
-    configuration: null,
-    assemblyResult: null,
     transformMode: "move",
     connectionType: "stairs",
     logicKind: "normal",
@@ -472,20 +460,6 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     },
     removeLogicModule: (moduleId) => commitTopology(removeLogicModuleCommand(currentTopology(), moduleId)),
     seedModules: () => commitTopology(seedModulesFromNodes(currentTopology())),
-    setConfiguration: (configuration) => set({ configuration }),
-    generateConfiguration: () => set({ configuration: generateConfigurationCommand(currentTopology()) }),
-    applyConfigurationCandidate: () => {
-      const candidate = get().configuration;
-      if (!candidate) return;
-      const result = applyConfigurationCommand(get().project, candidate);
-      commit(result.project);
-      set({ configuration: null });
-    },
-    generateAssembly: () => {
-      const result = generateAssemblyCommand(get().project);
-      commit(result.project);
-      set({ assemblyResult: result.result });
-    },
     setTransformMode: (transformMode) => set({ transformMode }),
     setConnectionType: (connectionType) => set({ connectionType }),
     togglePreview: () => set((state) => ({ previewOpen: !state.previewOpen })),
@@ -691,7 +665,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
         selectedInstanceId: project.instances[0]?.id ?? null, selectedConnectionId: null, selectedBlockIds: [],
         selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, selectedInputId: null,
         conceptPane: "topology", conceptScopeId: null, candidate: null, candidateExcluded: [], selectedCandidateNodeId: null,
-        decomposition: null, configuration: null, assemblyResult: null,
+        decomposition: null,
         past: [], future: [], previewDirty: true, previewProject: null, previewModuleId: null, previewRevision: 0, previewOpen: false,
       });
       scheduleSave(project, set);

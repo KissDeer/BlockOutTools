@@ -17,9 +17,6 @@ import {
   scopeView,
   writeScopeView,
 } from "./concept-scopes";
-import { generateConfiguration } from "./concept-configuration";
-import { generateAssembly } from "./concept-assembly";
-import { applyConfiguration } from "./commands";
 import { buildLocalUEDryRun } from "./ue-plan";
 import { createDemoProject } from "./demo-project";
 import type { BlockoutProject } from "./types";
@@ -238,18 +235,26 @@ describe("嵌套：自包含检测", () => {
 describe("嵌套：路径与展平", () => {
   it("展平会累积父级原点并给出层级路径", () => {
     const { topology } = park();
-    // 还没套用构型时模块没有自己的相对原点，累积结果就是父级原点
+    // 还没落成构型时模块没有自己的相对原点，累积结果就是父级原点
     const before = flattenModules(topology);
     expect(before.find((entry) => entry.module.name === "鬼屋")?.path).toHaveLength(1);
 
-    // 套用构型之后，每个模块有了自己的原点：游乐园(0,0) 内部 马戏团(0,0) / 鬼屋(2000,0)
-    const configured = applyConfiguration({ ...base(), concept: topology }, generateConfiguration(topology));
-    const flat = flattenModules(configured.project.concept as LogicTopology);
+    // 直接给模块标上相对原点（构型落成后就是这个状态），验证逐层累积
+    const withOrigins: LogicTopology = {
+      ...topology,
+      modules: topology.modules.map((module) => ({ ...module, relativeOrigin: module.name === "游乐园" ? [0, 0] : [-4900, -900] })),
+      scopes: topology.scopes.map((scope) => ({
+        ...scope,
+        modules: scope.modules.map((module) => ({ ...module, relativeOrigin: module.name === "鬼屋" ? [1000, -1000] : [-500, -900] })),
+      })),
+    };
+    const flat = flattenModules(withOrigins);
 
     const village = flat.find((entry) => entry.module.name === "小村");
     expect(village?.origin).toEqual([-4900, -900]);
     expect(village?.path).toHaveLength(0);
 
+    // 鬼屋 = 游乐园原点 (0,0) + 它自己的 (1000,-1000)
     const house = flat.find((entry) => entry.module.name === "鬼屋");
     expect(house?.origin).toEqual([1000, -1000]);
     expect(house?.path).toHaveLength(1);
@@ -285,77 +290,7 @@ describe("嵌套：路径与展平", () => {
   });
 });
 
-describe("嵌套：构型与组装", () => {
-  it("展开的模块不产出构型，几何由子层负责", () => {
-    const { topology } = park();
-    const candidate = generateConfiguration(topology);
-    const names = candidate.modules.map((entry) => topology.modules.concat(...topology.scopes.map((scope) => scope.modules)).find((module) => module.id === entry.moduleId)?.name);
-    expect(names).not.toContain("游乐园");
-    expect(names).toContain("鬼屋");
-  });
-
-  it("组装把嵌套模块放到累积位置上，并写入层级路径", () => {
-    const { topology } = park();
-    const configured = applyConfiguration({ ...base(), concept: topology }, generateConfiguration(topology));
-    const assembled = generateAssembly(configured.project);
-    const concept = assembled.project.concept as LogicTopology;
-
-    const houseInstance = assembled.project.instances.find((instance) => instance.name === "鬼屋");
-    const houseModule = concept.scopes[0].modules.find((module) => module.name === "鬼屋");
-    expect(houseInstance?.definitionId).toBe(houseModule?.moduleDefinitionId);
-    expect(houseInstance?.scopePath).toHaveLength(1);
-    // 鬼屋在子作用域 (2000,0)，reward 模板 2000×2000 → 模块局部原点 (1000,-1000)；
-    // 游乐园模块在根的原点也是 (0,0)（hub 3000×3000 但节点在 (0,0)）→ 累积 (1000,-1000)
-    expect(houseInstance?.assemblyTransform.position[0]).toBe(1000);
-    expect(houseInstance?.assemblyTransform.position[1]).toBe(-1000);
-  });
-
-  it("指向已展开模块的跨层链路会被报出来，而不是悄悄丢掉", () => {
-    const { topology } = park();
-    const configured = applyConfiguration({ ...base(), concept: topology }, generateConfiguration(topology));
-    const assembled = generateAssembly(configured.project);
-    // 小村 → 游乐园 这条链路的一端是展开的模块，没有单一实例可接
-    expect(assembled.result.skippedLinks.some((entry) => entry.includes("游乐园"))).toBe(true);
-    const next = generateAssembly(assembled.project);
-    expect(next.result.skippedLinks).toEqual(assembled.result.skippedLinks);
-    expect(generateAssembly(base()).result.skippedLinks).toEqual([]);
-  });
-
-  it("不同作用域的同名本地节点按所属模块取数，不串用名称或端口", () => {
-    const { topology, villageNodeId } = park();
-    const child = topology.scopes[0];
-    const previousId = child.nodes[0].id;
-    child.nodes[0].id = villageNodeId;
-    child.startNodeId = villageNodeId;
-    child.modules[0].nodeIds = [villageNodeId];
-    child.links = child.links.map((link) => ({ ...link, from: link.from === previousId ? villageNodeId : link.from }));
-    const configured = applyConfiguration({ ...base(), concept: topology }, generateConfiguration(topology)).project;
-    const village = configured.modules.find((module) => module.name === "小村")!;
-    const circus = configured.modules.find((module) => module.name === "马戏团")!;
-    expect(village.blocks.find((block) => block.type === "box")?.name).toBe("小村");
-    expect(circus.blocks.find((block) => block.type === "box")?.name).toBe("马戏团");
-    expect(village.blocks.find((block) => block.type === "port")?.name).toContain("小村");
-    expect(circus.blocks.find((block) => block.type === "port")?.name).toContain("马戏团");
-  });
-
-  it("同步键带路径段，两个分支的同名积木不会撞键", () => {
-    const { topology, scopeId } = park();
-    const reused = createLogicModule(topology, "游乐园副本", []);
-    const shared = linkScope(reused.topology, reused.module.id, scopeId);
-    const configured = applyConfiguration({ ...base(), concept: shared }, generateConfiguration(shared));
-    const assembled = generateAssembly(configured.project);
-
-    const plan = buildLocalUEDryRun(assembled.project);
-    const keys = plan.actors.map((actor) => actor.syncKey);
-    expect(new Set(keys).size).toBe(keys.length);
-
-    const houseActors = plan.actors.filter((actor) => actor.label.includes("鬼屋"));
-    expect(houseActors.length).toBeGreaterThanOrEqual(2);
-    // 两条分支的键不同，标签也带上了层级
-    expect(new Set(houseActors.map((actor) => actor.syncKey)).size).toBe(houseActors.length);
-    expect(houseActors[0].label.split(" / ").length).toBeGreaterThanOrEqual(3);
-  });
-
+describe("嵌套：指纹", () => {
   it("层级变化会让拓扑指纹变化（上游提案因此过期）", () => {
     const { topology, scopeId } = park();
     const before = computeTopologyDigest(topology);

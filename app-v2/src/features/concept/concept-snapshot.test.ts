@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { createEmptyScope, createEmptyTopology, type LogicScope, type LogicTopology } from "../../domain/concept";
+import { computeTopologyDigest, createEmptyScope, createEmptyTopology, type LogicScope, type LogicTopology } from "../../domain/concept";
 import { addLogicNode, createLogicModule } from "../../domain/concept-commands";
 import { createEmptyDecompositionCandidate, validateDecompositionCandidate } from "../../domain/concept-decomposition";
-import { generateConfiguration, validateConfiguration } from "../../domain/concept-configuration";
 import { scopeView } from "../../domain/concept-scopes";
 import { conceptSnapshot } from "./concept-snapshot";
 
@@ -46,13 +45,8 @@ describe("agent 的完整作用域快照", () => {
     const current = scopeView(root, "child");
     const snapshot = conceptSnapshot(root, "child");
     const active = snapshot.activeScope;
-    const configuration = generateConfiguration(current);
-    // 当前层也在共享池中，但不能因此重复生成同一份模块。
-    expect(configuration.modules).toHaveLength(1);
-    configuration.basedOnInputsDigest = active.inputsDigest;
-    configuration.basedOnTopologyDigest = active.topologyDigest;
-    configuration.basedOnDecompositionDigest = active.decompositionDigest;
-    expect(validateConfiguration(current, configuration).filter((issue) => issue.severity === "error")).toEqual([]);
+    // 当前层也在共享池中，快照要能对上它的指纹
+    expect(active.topologyDigest).toBe(computeTopologyDigest(current));
     const decomposition = createEmptyDecompositionCandidate(active.inputsDigest, active.topologyDigest);
     decomposition.modules = [{ tempId: "new", name: "大厅", nodeIds: [current.nodes[0].id], note: "" }];
     expect(validateDecompositionCandidate(decomposition, current).filter((issue) => issue.severity === "error")).toEqual([]);

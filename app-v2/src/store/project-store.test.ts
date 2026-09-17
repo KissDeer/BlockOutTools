@@ -3,7 +3,6 @@ import { createDemoProject } from "../domain/demo-project";
 import { createEmptyTopology } from "../domain/concept";
 import { createEmptyCandidate } from "../domain/concept-candidate";
 import { createEmptyDecompositionCandidate } from "../domain/concept-decomposition";
-import { createEmptyConfigurationCandidate } from "../domain/concept-configuration";
 import { addLogicKey, addLogicLink, addLogicNode, createLogicModule } from "../domain/concept-commands";
 import { expandModule, scopeView, writeScopeView } from "../domain/concept-scopes";
 
@@ -118,14 +117,13 @@ describe("project store clipboard actions", () => {
     const { useProjectStore } = await import("./project-store");
     useProjectStore.setState({
       conceptScopeId: "old-child", candidate: createEmptyCandidate("old", null), candidateExcluded: ["old-node"], selectedCandidateNodeId: "old-node",
-      decomposition: createEmptyDecompositionCandidate("old", "old"), configuration: createEmptyConfigurationCandidate(createEmptyTopology()),
-      assemblyResult: { instancesCreated: 1, instancesMoved: 0, connectionsCreated: 0, connectionsUpdated: 0, unplacedModules: [], missingPorts: [], skippedLinks: ["旧项目未接通链路"] },
+      decomposition: createEmptyDecompositionCandidate("old", "old"),
     });
     const incoming = createDemoProject();
     useProjectStore.getState().replaceProject(incoming);
     expect(useProjectStore.getState()).toMatchObject({
       project: incoming, conceptScopeId: null, candidate: null, candidateExcluded: [], selectedCandidateNodeId: null,
-      decomposition: null, configuration: null, assemblyResult: null,
+      decomposition: null,
     });
   });
 

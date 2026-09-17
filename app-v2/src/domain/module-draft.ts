@@ -1,5 +1,5 @@
 import { createBlock } from "./catalog";
-import { ROLE_TEMPLATES } from "./concept-configuration";
+import { ROLE_TEMPLATES } from "./role-templates";
 import { fingerprint } from "./fingerprint";
 import { createId } from "./ids";
 import { projectSchema } from "./project-schema";

@@ -1,6 +1,5 @@
 import { createBlock } from "./catalog";
 import { createId } from "./ids";
-import { moduleLocalLayout, type ConfigurationCandidate } from "./concept-configuration";
 import { nodesOfScope, findModule } from "./concept-scopes";
 import type { LogicTopology } from "./concept";
 import type { Block, BlockoutProject, BlockType, Connection, ConnectionType, ModuleDefinition, ModuleInstance, Transform, Vec2 } from "./types";
@@ -184,85 +183,3 @@ export function createModuleForNode(project: BlockoutProject, nodeId: string, gr
   return { project: touch(next), module, instance };
 }
 
-/**
- * 套用基础构型：把每个拆解模块落成一个阶段二模块定义（体块 + 端口）。
- * 坐标在这里统一换算：区域相对位置（父级厘米）→ 模块局部厘米（以包围盒左下角为原点）。
- * 已有绑定则更新该模块的积木，同源积木保留身份；移除端口时解除其关联连接。
- */
-export function applyConfiguration(project: BlockoutProject, candidate: ConfigurationCandidate): { project: BlockoutProject; moduleIds: string[]; blockCount: number } {
-  if (!project.concept) return { project, moduleIds: [], blockCount: 0 };
-  const next = cloneProject(project);
-  const concept = next.concept as LogicTopology;
-  const moduleIds: string[] = [];
-  let blockCount = 0;
-  for (const entry of candidate.modules) {
-    // 模块可能在任何一层作用域里
-    const found = findModule(concept, entry.moduleId);
-    if (!found || found.module.childScopeId) continue;
-    const logicModule = found.module;
-    const nodeById = new Map(nodesOfScope(concept, found.scopeId).map((node) => [node.id, node]));
-    const existing = logicModule.moduleDefinitionId ? next.modules.find((item) => item.id === logicModule.moduleDefinitionId) : null;
-    const layout = moduleLocalLayout(concept, entry);
-    const blocks: Block[] = [];
-
-    for (const box of layout.boxes) {
-      const block = createBlock("box", [box.center[0], box.center[1], box.base]);
-      if (block.type !== "box") continue;
-      const area = entry.areas.find((item) => item.nodeId === box.nodeId);
-      block.name = nodeById.get(box.nodeId)?.name ?? "区域";
-      block.role = area?.role === "floor" ? "floor" : "solid";
-      block.elevationReference = "bottom";
-      block.parameters.BoxSize = [box.size[0], box.size[1], box.size[2]];
-      // 出处：源 = 拆解模块，特征 = 逻辑区域。组装与回溯都靠它，不靠名字
-      block.provenance = { sourceId: logicModule.id, featureId: box.nodeId, status: "confirmed", note: area?.note ?? "" };
-      blocks.push(block);
-    }
-
-    for (const port of entry.ports) {
-      const node = nodeById.get(port.nodeId);
-      const box = layout.boxes.find((item) => item.nodeId === port.nodeId);
-      if (!node || !box) continue;
-      const block = createBlock("port", [box.center[0] + port.offset[0], box.center[1] + port.offset[1], box.base]);
-      if (block.type !== "port") continue;
-      block.name = `${node.name} · ${port.note || "出入口"}`;
-      block.transform.rotation = port.rotation;
-      block.parameters.width = port.width;
-      // 特征 = 拓扑链路 id：组装时据此把链路接到端口上
-      block.provenance = { sourceId: logicModule.id, featureId: port.linkId, status: "confirmed", note: port.note };
-      blocks.push(block);
-    }
-    blockCount += blocks.length;
-    // 记下模块局部原点在父级里的位置：阶段二拼装与平面图都要用
-    logicModule.relativeOrigin = layout.origin;
-
-    if (existing) {
-      // 特征身份只在本模块与积木类型内匹配，不按名称、顺序或位置猜测。
-      const previousByFeature = new Map(existing.blocks.filter((block) => block.provenance).map((block) => [
-        JSON.stringify([block.type, block.provenance!.sourceId, block.provenance!.featureId]), block.id,
-      ]));
-      for (const block of blocks) {
-        const key = JSON.stringify([block.type, block.provenance!.sourceId, block.provenance!.featureId]);
-        const previousId = previousByFeature.get(key);
-        if (previousId) block.id = previousId;
-        previousByFeature.delete(key);
-      }
-      const retainedPorts = new Set(blocks.filter((block) => block.type === "port").map((block) => block.id));
-      const removedPorts = new Set(existing.blocks.filter((block) => block.type === "port" && !retainedPorts.has(block.id)).map((block) => block.id));
-      const instanceIds = new Set(next.instances.filter((instance) => instance.definitionId === existing.id).map((instance) => instance.id));
-      next.connections = next.connections.filter((connection) =>
-        !(instanceIds.has(connection.sourceInstanceId) && removedPorts.has(connection.sourcePortId))
-        && !(instanceIds.has(connection.targetInstanceId) && removedPorts.has(connection.targetPortId)));
-      existing.name = logicModule.name;
-      existing.blocks = blocks;
-      existing.revision += 1;
-      moduleIds.push(existing.id);
-    } else {
-      const module: ModuleDefinition = { id: createId("module"), name: logicModule.name, revision: 1, blocks };
-      next.modules.push(module);
-      logicModule.moduleDefinitionId = module.id;
-      moduleIds.push(module.id);
-    }
-  }
-
-  return { project: touch(next), moduleIds, blockCount };
-}
