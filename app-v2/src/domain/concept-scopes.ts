@@ -1,11 +1,51 @@
 import { createId } from "./ids";
-import { createEmptyScope, type LogicModule, type LogicScope, type LogicTopology } from "./concept";
+import { createEmptyScope, nodesOfScope, scopeOwner, scopesOf, type LogicModule, type LogicNode, type LogicScope, type LogicTopology } from "./concept";
 import type { Vec2 } from "./types";
+
+/** 作用域取节点、取去重后的池：口径都在 `concept.ts`，这里转出去给历史调用方用 */
+export { nodesOfScope, scopesOf };
 
 /**
  * 子作用域：查询、展开/收起、路径推导与递归展平。
- * 作用域放在扁平池里、可被多个模块复用，所以"从根走到某个模块"的路径可能不止一条。
+ *
+ * 2026-09-17 二次修订：`childScopeId` 从 `LogicModule` 移到 `LogicNode`。
+ * 过渡期两套含义并存，所以**读取一律走 `childScopeIdOf`**，不要在各处写 `??`。
  */
+
+/**
+ * 一个节点内部的子逻辑层 —— 过渡期的**唯一裁决点**。
+ *
+ * 先认节点自己的 `childScopeId`（新模型），再回落 `LogicModule.childScopeId`（旧数据）。
+ * 1-F 删掉模块层时，把回落那一段删掉即可，调用方不用动。
+ */
+export function childScopeIdOf(topology: LogicTopology, nodeId: string): string | null {
+  const own = scopeOwner(topology, nodeId);
+  if (own) return own;
+  for (const scope of scopesOf(topology)) {
+    const node = scope.nodes.find((item) => item.id === nodeId);
+    if (!node) continue;
+    return scope.modules.find((group) => group.nodeIds.includes(nodeId))?.childScopeId ?? null;
+  }
+  return null;
+}
+
+/** 某个节点的几何：新模型在节点自己身上，旧数据挂在模块定义上 */
+export function nodeBlocksOf(topology: LogicTopology, nodeId: string): LogicNode["blocks"] {
+  for (const scope of scopesOf(topology)) {
+    const node = scope.nodes.find((item) => item.id === nodeId);
+    if (node) return node.blocks;
+  }
+  return undefined;
+}
+
+/** 拓扑里按 id 找节点，连同它所在的作用域 */
+export function nodeById(topology: LogicTopology, nodeId: string): { node: LogicNode; scopeId: string | null } | null {
+  for (const scope of scopesOf(topology)) {
+    const node = scope.nodes.find((item) => item.id === nodeId);
+    if (node) return { node, scopeId: scope.id === topology.id ? null : scope.id };
+  }
+  return null;
+}
 
 export interface ScopeStep {
   moduleId: string;
@@ -35,12 +75,6 @@ export function findModule(topology: LogicTopology, moduleId: string): { module:
     if (found) return { module: found, scopeId: scope.id };
   }
   return null;
-}
-
-/** 某个作用域自己的节点（根作用域与子作用域统一取法） */
-export function nodesOfScope(topology: LogicTopology, scopeId: string | null): LogicTopology["nodes"] {
-  if (scopeId === null) return topology.nodes;
-  return topology.scopes.find((scope) => scope.id === scopeId)?.nodes ?? [];
 }
 
 /**
@@ -80,95 +114,130 @@ export function writeScopeView(root: LogicTopology, scopeId: string | null, view
 
 /* ---------------- 展开与收起 ---------------- */
 
-export function expandModule(topology: LogicTopology, moduleId: string, scopeName?: string): { topology: LogicTopology; scope: LogicScope } | null {
-  const found = findModule(topology, moduleId);
-  if (!found || found.module.childScopeId) return null;
+/**
+ * 把一个节点展开成子逻辑层：给它挂一个新的空作用域。
+ *
+ * 现在收的是**节点 id**（原来收模块 id）。一个作用域只属于一个节点。
+ * 节点自己的 `blocks` 不动 —— 几何与子逻辑并存，展开不该让已有体块消失。
+ */
+export function expandModule(topology: LogicTopology, nodeId: string, scopeName?: string): { topology: LogicTopology; scope: LogicScope } | null {
+  const found = nodeById(topology, nodeId);
+  if (!found || childScopeIdOf(topology, nodeId)) return null;
   const next = structuredClone(topology);
-  const target = findModule(next, moduleId);
+  const target = nodeById(next, nodeId);
   if (!target) return null;
-  const scope = createEmptyScope(createId("scope"), scopeName?.trim() || `${target.module.name} 内部`);
+  const scope = createEmptyScope(createId("scope"), scopeName?.trim() || `${target.node.name} 内部`);
   next.scopes.push(scope);
-  target.module.childScopeId = scope.id;
-  // 展开之后这个模块自己不再产出构型，几何由子作用域里的模块负责
-  delete target.module.moduleDefinitionId;
-  delete target.module.relativeOrigin;
+  target.node.childScopeId = scope.id;
   return { topology: next, scope };
 }
 
-/** 收起：只解除引用，作用域留在池子里（可能还有别的模块在复用） */
-export function collapseModule(topology: LogicTopology, moduleId: string): LogicTopology {
-  const found = findModule(topology, moduleId);
-  if (!found?.module.childScopeId) return topology;
+/** 收起：只解除引用，作用域留在池子里（可能还要重新展开，也可能成为悬空项被校验指出） */
+export function collapseModule(topology: LogicTopology, nodeId: string): LogicTopology {
+  if (!childScopeIdOf(topology, nodeId)) return topology;
   const next = structuredClone(topology);
-  const target = findModule(next, moduleId);
-  if (target) delete target.module.childScopeId;
-  return next;
-}
-
-/** 从池子里移除作用域，并解除所有引用 */
-export function removeScope(topology: LogicTopology, scopeId: string): LogicTopology {
-  if (!topology.scopes.some((scope) => scope.id === scopeId)) return topology;
-  const next = structuredClone(topology);
-  next.scopes = next.scopes.filter((scope) => scope.id !== scopeId);
-  for (const module of next.modules) if (module.childScopeId === scopeId) delete module.childScopeId;
-  for (const scope of next.scopes) {
-    for (const module of scope.modules) if (module.childScopeId === scopeId) delete module.childScopeId;
+  const target = nodeById(next, nodeId);
+  if (target) delete target.node.childScopeId;
+  // 旧数据把引用记在模块上，一并清掉，否则收不起来
+  for (const scope of [next, ...next.scopes]) {
+    for (const group of scope.modules) if (group.nodeIds.includes(nodeId)) delete group.childScopeId;
   }
   return next;
 }
 
-/** 把作用域放进池子里（用于复用：新模块可以指向已有的作用域） */
-export function linkScope(topology: LogicTopology, moduleId: string, scopeId: string): LogicTopology {
+/** 从池子里移除作用域，并解除所有引用（节点上的与旧数据模块上的） */
+export function removeScope(topology: LogicTopology, scopeId: string): LogicTopology {
   if (!topology.scopes.some((scope) => scope.id === scopeId)) return topology;
-  const found = findModule(topology, moduleId);
-  if (!found) return topology;
   const next = structuredClone(topology);
-  const target = findModule(next, moduleId);
+  next.scopes = next.scopes.filter((scope) => scope.id !== scopeId);
+  for (const scope of [next, ...next.scopes]) {
+    for (const node of scope.nodes) if (node.childScopeId === scopeId) delete node.childScopeId;
+    for (const group of scope.modules) if (group.childScopeId === scopeId) delete group.childScopeId;
+  }
+  return next;
+}
+
+/** 把一个已有的作用域挂到某个节点内部（接收 nodeId；一个作用域只能属于一个节点） */
+export function linkScope(topology: LogicTopology, nodeId: string, scopeId: string): LogicTopology {
+  if (!topology.scopes.some((scope) => scope.id === scopeId)) return topology;
+  const next = structuredClone(topology);
+  const target = nodeById(next, nodeId);
   if (!target) return topology;
-  target.module.childScopeId = scopeId;
-  delete target.module.moduleDefinitionId;
-  delete target.module.relativeOrigin;
+  target.node.childScopeId = scopeId;
   return next;
 }
 
 /* ---------------- 路径与展平 ---------------- */
 
-/** 从根走到指定作用域的面包屑。作用域可复用时只给第一条通路 */
+/** 从根走到指定作用域的面包屑。作用域只属于一个节点，所以通路唯一 */
 export function scopeCrumbs(topology: LogicTopology, scopeId: string | null): ScopeStep[] {
   if (!scopeId) return [];
-  return search(topology, topology.modules, [], new Set(), 0, scopeId) ?? [];
+  return search(topology, nodesOfScope(topology, null), [], new Set(), 0, scopeId) ?? [];
 }
 
-function search(topology: LogicTopology, modules: LogicModule[], path: ScopeStep[], visiting: Set<string>, depth: number, targetId: string): ScopeStep[] | null {
+/**
+ * 沿着"节点的子作用域"往下找目标作用域。
+ * 步长里的 `moduleId` 现在装的是**节点 id** —— 字段名是历史遗留，但语义就是"进入这一步经过的那个节点"，
+ * 层级路径与同步键都只当它是不透明身份串用。
+ */
+function search(topology: LogicTopology, nodes: LogicNode[], path: ScopeStep[], visiting: Set<string>, depth: number, targetId: string): ScopeStep[] | null {
   if (depth > MAX_SCOPE_DEPTH) return null;
-  for (const module of modules) {
-    if (!module.childScopeId) continue;
-    const scope = topology.scopes.find((item) => item.id === module.childScopeId);
+  for (const node of nodes) {
+    const childScopeId = childScopeIdOf(topology, node.id);
+    if (!childScopeId) continue;
+    const scope = topology.scopes.find((item) => item.id === childScopeId);
     if (!scope || visiting.has(scope.id)) continue;
-    const step: ScopeStep = { moduleId: module.id, moduleName: module.name, scopeId: scope.id, scopeName: scope.name };
+    const step: ScopeStep = { moduleId: node.id, moduleName: node.name, scopeId: scope.id, scopeName: scope.name };
     if (scope.id === targetId) return [...path, step];
-    const deeper = search(topology, scope.modules, [...path, step], new Set([...visiting, scope.id]), depth + 1, targetId);
+    const deeper = search(topology, scope.nodes, [...path, step], new Set([...visiting, scope.id]), depth + 1, targetId);
     if (deeper) return deeper;
   }
   return null;
 }
 
-/** 从根展开所有模块：复合模块继续往下，叶子模块带着累积原点与路径返回 */
+/**
+ * 从根展开所有节点：有子作用域的继续往下，叶子节点带着累积原点与路径返回。
+ *
+ * 这里的 `origin` 是"节点原点在根坐标系里的位置"，沿路累加每一级节点的 `relativePosition`。
+ * 字段名 `moduleId` / `moduleName` 同 `ScopeStep`，装的是节点身份。
+ */
 export function flattenModules(topology: LogicTopology): FlatModule[] {
   const byId = new Map(topology.scopes.map((scope) => [scope.id, scope]));
   const result: FlatModule[] = [];
+  /**
+   * 一个作用域只能属于一个节点。这不是靠数据保证的（旧文件里可能出现两个节点指同一个），
+   * 所以展平时第一次用到谁就是谁，后面的当叶子处理 —— 与其展平出两份同样的子树、
+   * 让人以为有两栋房子，不如让它看起来是"一个子层 + 一个空节点"。
+   * 真正的错误由 `collectScopeIssues` 报出来。
+   */
+  const claimed = new Set<string>();
 
   const walk = (scope: LogicScope, scopeId: string | null, path: ScopeStep[], origin: Vec2, visiting: Set<string>, depth: number) => {
     if (depth > MAX_SCOPE_DEPTH) return;
-    for (const module of scope.modules) {
-      const moduleOrigin: Vec2 = [origin[0] + (module.relativeOrigin?.[0] ?? 0), origin[1] + (module.relativeOrigin?.[1] ?? 0)];
-      const child = module.childScopeId ? byId.get(module.childScopeId) : null;
+    for (const node of scope.nodes) {
+      const nodeOrigin: Vec2 = [origin[0] + (node.relativePosition?.[0] ?? 0), origin[1] + (node.relativePosition?.[1] ?? 0)];
+      const childScopeId = childScopeIdOf(topology, node.id);
+      const child = childScopeId ? byId.get(childScopeId) : null;
       // 已经访问过的分支不再进入：环检测是报错，这里只是不让它递归跑穿
-      if (child && !visiting.has(child.id)) {
-        const step: ScopeStep = { moduleId: module.id, moduleName: module.name, scopeId: child.id, scopeName: child.name };
-        walk(child, child.id, [...path, step], moduleOrigin, new Set([...visiting, child.id]), depth + 1);
+      if (child && !visiting.has(child.id) && !claimed.has(child.id)) {
+        claimed.add(child.id);
+        const step: ScopeStep = { moduleId: node.id, moduleName: node.name, scopeId: child.id, scopeName: child.name };
+        walk(child, child.id, [...path, step], nodeOrigin, new Set([...visiting, child.id]), depth + 1);
       } else {
-        result.push({ module, scopeId, path, origin: moduleOrigin });
+        // 新模型下节点的几何在它自己身上（`nodeBlocksOf`）；旧数据仍靠 moduleDefinitionId 找回模块定义
+        result.push({
+          module: {
+            id: node.id,
+            name: node.name,
+            nodeIds: [node.id],
+            moduleDefinitionId: node.moduleId,
+            relativeOrigin: node.relativePosition ?? undefined,
+            note: node.note,
+          },
+          scopeId,
+          path,
+          origin: nodeOrigin,
+        });
       }
     }
   };
@@ -220,9 +289,12 @@ export interface ResolvedLevel {
 /**
  * 把"进入了哪些节点"解析成当前层。
  *
- * 与拓扑对齐：**节点是唯一的容器**。节点内部要么是一层逻辑（有子作用域），
- * 要么是一份几何（没有子作用域）。所以层级路径只记节点 id，
- * 其余全部从拓扑推导，不另存一份状态 —— 拓扑改了，层级自己就跟着变。
+ * 与拓扑对齐：**节点是唯一的容器**。层级路径只记节点 id，其余全部从拓扑推导，
+ * 不另存一份状态 —— 拓扑改了，层级自己就跟着变。
+ *
+ * 节点可以**同时**有子作用域和自己的几何（2026-09-17 二次修订）。所以：
+ * 有子作用域 = 这一层接着画逻辑（几何在分屏的另一半里看）；
+ * 没有子作用域 = 这一层画它自己的几何，也就到底了。
  */
 export function resolveLevel(topology: LogicTopology, levelPath: string[]): ResolvedLevel {
   const steps: LevelStep[] = [];
@@ -230,15 +302,15 @@ export function resolveLevel(topology: LogicTopology, levelPath: string[]): Reso
   let geometryNodeId: string | null = null;
 
   for (const [index, nodeId] of levelPath.entries()) {
-    // 上一层已经是几何层，就不可能再往里进
+    // 上一层已经到底了，就不可能再往里进
     if (geometryNodeId) return { ...levelOf(topology, scopeId), steps, brokenAt: index };
     const scope = scopeFor(topology, scopeId);
     const node = scope?.nodes.find((item) => item.id === nodeId);
     if (!scope || !node) return { ...levelOf(topology, scopeId), steps, brokenAt: index };
-    const group = scope.modules.find((item) => item.nodeIds.includes(nodeId));
-    const childScopeId = group?.childScopeId && topology.scopes.some((entry) => entry.id === group.childScopeId) ? group.childScopeId : null;
-    steps.push({ nodeId, nodeName: node.name, kind: childScopeId ? "logic" : "geometry" });
-    if (childScopeId) scopeId = childScopeId;
+    const childScopeId = childScopeIdOf(topology, nodeId);
+    const scoped = childScopeId && topology.scopes.some((entry) => entry.id === childScopeId) ? childScopeId : null;
+    steps.push({ nodeId, nodeName: node.name, kind: scoped ? "logic" : "geometry" });
+    if (scoped) scopeId = scoped;
     else geometryNodeId = nodeId;
   }
 
@@ -257,13 +329,18 @@ function scopeFor(topology: LogicTopology, scopeId: string | null): LogicScope |
   return topology.scopes.find((scope) => scope.id === scopeId) ?? null;
 }
 
-/** 某个节点内部有什么：层级树与节点缩略图都用它 */
-export function nodeInterior(topology: LogicTopology, nodeId: string): { kind: "logic" | "geometry"; scopeId: string | null; childCount: number; linkCount: number } {
-  const found = nodeScopeAndGroup(topology, nodeId);
-  const childScopeId = found?.group?.childScopeId && topology.scopes.some((scope) => scope.id === found.group?.childScopeId) ? found.group.childScopeId : null;
-  if (!childScopeId) return { kind: "geometry", scopeId: null, childCount: 0, linkCount: 0 };
-  const scope = topology.scopes.find((item) => item.id === childScopeId);
-  return { kind: "logic", scopeId: childScopeId, childCount: scope?.nodes.length ?? 0, linkCount: scope?.links.length ?? 0 };
+/**
+ * 某个节点内部有什么：层级树、节点缩略图、以及分屏判断都用它。
+ *
+ * `blocks` 是**这个节点自己的**几何（节点局部厘米）；
+ * `childCount` / `linkCount` 是它子逻辑层里的内容。两者可以同时非空。
+ */
+export function nodeInterior(topology: LogicTopology, nodeId: string): { kind: "logic" | "geometry"; scopeId: string | null; blocks: LogicNode["blocks"]; childCount: number; linkCount: number } {
+  const blocks = nodeBlocksOf(topology, nodeId);
+  const childScopeId = childScopeIdOf(topology, nodeId);
+  const scope = childScopeId ? topology.scopes.find((item) => item.id === childScopeId) ?? null : null;
+  if (!scope) return { kind: "geometry", scopeId: null, blocks, childCount: 0, linkCount: 0 };
+  return { kind: "logic", scopeId: scope.id, blocks, childCount: scope.nodes.length, linkCount: scope.links.length };
 }
 
 /** 节点在哪一层、属于哪个分组 */
@@ -279,18 +356,17 @@ export function nodeScopeAndGroup(topology: LogicTopology, nodeId: string): { sc
 
 /** 从根到某节点的层级路径：层级树点一下就靠它 */
 export function levelPathOfNode(topology: LogicTopology, nodeId: string): string[] | null {
-  const walk = (scope: LogicScope, scopeId: string | null, path: string[], visiting: Set<string>, depth: number): string[] | null => {
+  const walk = (scope: LogicScope, path: string[], visiting: Set<string>, depth: number): string[] | null => {
     if (depth > MAX_SCOPE_DEPTH) return null;
     for (const node of scope.nodes) if (node.id === nodeId) return path;
-    for (const group of scope.modules) {
-      const child = group.childScopeId ? topology.scopes.find((item) => item.id === group.childScopeId) : null;
+    for (const node of scope.nodes) {
+      const childScopeId = childScopeIdOf(topology, node.id);
+      const child = childScopeId ? topology.scopes.find((item) => item.id === childScopeId) : null;
       if (!child || visiting.has(child.id)) continue;
-      const owner = group.nodeIds[0];
-      const nextPath = owner ? [...path, owner] : path;
-      const found = walk(child, child.id, nextPath, new Set([...visiting, child.id]), depth + 1);
+      const found = walk(child, [...path, node.id], new Set([...visiting, child.id]), depth + 1);
       if (found) return found;
     }
     return null;
   };
-  return walk(topology, null, [], new Set(), 0);
+  return walk(topology, [], new Set(), 0);
 }

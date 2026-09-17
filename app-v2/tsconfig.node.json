@@ -10,5 +10,5 @@
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true
   },
-  "include": ["vite.config.ts", "server/project-library.ts", "server/concept-bridge.ts", "server/module-draft-bridge.ts", "src/domain/module-draft-contract.ts", "src/domain/workflow-context.ts", "src/domain/stable-json.ts", "src/domain/project-schema.ts", "src/domain/block-schema.ts", "src/domain/concept.ts", "src/domain/concept-inputs.ts", "src/domain/concept-candidate.ts", "src/domain/concept-decomposition.ts", "src/domain/concept-configuration.ts", "src/domain/concept-scopes.ts", "src/domain/fingerprint.ts", "src/domain/ids.ts", "src/domain/types.ts"]
+  "include": ["vite.config.ts", "server/project-library.ts", "server/concept-bridge.ts", "server/module-draft-bridge.ts", "src/domain/module-draft-contract.ts", "src/domain/workflow-context.ts", "src/domain/stable-json.ts", "src/domain/project-schema.ts", "src/domain/block-schema.ts", "src/domain/block-types.ts", "src/domain/concept.ts", "src/domain/concept-inputs.ts", "src/domain/concept-candidate.ts", "src/domain/concept-decomposition.ts", "src/domain/concept-configuration.ts", "src/domain/concept-scopes.ts", "src/domain/fingerprint.ts", "src/domain/ids.ts", "src/domain/types.ts"]
 }

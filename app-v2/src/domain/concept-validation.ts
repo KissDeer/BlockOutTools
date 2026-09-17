@@ -1,4 +1,5 @@
-import { allowsBackward, collectLocalScopeIssues, collectScopeIssues, LOGIC_KINDS, type LogicScope, type LogicTopology } from "./concept";
+import { allowsBackward, collectLocalScopeIssues, collectScopeIssues, LOGIC_KINDS, nodesOfScope, scopesOf, type LogicScope, type LogicTopology } from "./concept";
+import { childScopeIdOf } from "./concept-scopes";
 
 export interface ConceptIssue {
   id: string;
@@ -234,7 +235,9 @@ export function summarizeIssues(issues: ConceptIssue[]): { error: number; warnin
 /** 交付门：本层和引用到的子层都没有错误；池中未被引用的草稿不参与交付。 */
 export function canDeliver(topology: LogicTopology): { ok: boolean; blockers: ConceptIssue[] } {
   const blockers: ConceptIssue[] = [];
-  const byId = new Map(topology.scopes.map((scope) => [scope.id, scope]));
+  // 池子里的作用域各带一份 `scopes` 副本，按 id 去重才不会校验到过期副本
+  const pool = scopesOf(topology).filter((scope) => scope.id !== topology.id);
+  const byId = new Map(pool.map((scope) => [scope.id, scope]));
   const visited = new Set<string>();
   const pending: LogicScope[] = [topology];
   while (pending.length) {
@@ -245,14 +248,17 @@ export function canDeliver(topology: LogicTopology): { ok: boolean; blockers: Co
       id: `structure:${index}`, severity: "error", rule: "TOPO_SCOPE_REFERENCE", message, nodeIds: [], linkIds: [],
     }));
     // 无效引用不进入图算法；合法草稿仍可保存，连通性只在交付时检查。
-    const errors = structural.length ? structural : validateTopology({ ...scope, scopes: topology.scopes }).filter((issue) => issue.severity === "error");
+    const errors = structural.length ? structural : validateTopology({ ...scope, scopes: pool }).filter((issue) => issue.severity === "error");
     blockers.push(...errors.map((issue) => ({ ...issue, id: `${scope.id}:${issue.id}`, message: `作用域“${scope.name}”（${scope.id}）：${issue.message}` })));
-    for (const module of scope.modules) {
-      const child = module.childScopeId ? byId.get(module.childScopeId) : undefined;
+    // 子层现在挂在**节点**上（2026-09-17 二次修订）。旧的 LogicModule.childScopeId 由
+    // childScopeIdOf 兜底读，所以这里两种数据都能走到。
+    for (const node of nodesOfScope(topology, scope.id === topology.id ? null : scope.id)) {
+      const childScopeId = childScopeIdOf(topology, node.id);
+      const child = childScopeId ? byId.get(childScopeId) : undefined;
       if (child) pending.push(child);
     }
   }
-  const reachable = { ...topology, scopes: topology.scopes.filter((scope) => visited.has(scope.id)) };
+  const reachable = { ...topology, scopes: pool.filter((scope) => visited.has(scope.id)) };
   blockers.push(...collectScopeIssues(reachable).map((message, index): ConceptIssue => ({
     id: `scope:${index}`, severity: "error", rule: "TOPO_SCOPE_STRUCTURE", message, nodeIds: [], linkIds: [],
   })));

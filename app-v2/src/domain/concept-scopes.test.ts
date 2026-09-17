@@ -46,7 +46,8 @@ function park(): {
   topology = villageModule.topology;
 
   const parkModuleId = topology.modules.find((module) => module.name === "游乐园")?.id as string;
-  const expanded = expandModule(topology, parkModuleId, "游乐园内部");
+  // 展开收的是**节点 id**：子层现在挂在节点上，一个作用域只属于一个节点
+  const expanded = expandModule(topology, outer.node.id, "游乐园内部");
   if (!expanded) throw new Error("展开失败");
   topology = expanded.topology;
   const scopeId = expanded.scope.id;
@@ -109,9 +110,8 @@ describe("层级：一张画布上的焦点路径", () => {
   it("多层嵌套逐层解析，每层各看各的内容", () => {
     const { topology, parkNodeId, circusNodeId } = park();
     // 把"鬼屋"再展开一层，做成三层
-    const houseModuleId = topology.scopes[0].modules.find((module) => module.name === "鬼屋")?.id as string;
     const houseNodeId = topology.scopes[0].nodes.find((node) => node.name === "鬼屋")?.id as string;
-    const deeper = expandModule(topology, houseModuleId, "鬼屋内部");
+    const deeper = expandModule(topology, houseNodeId, "鬼屋内部");
     expect(deeper).not.toBeNull();
     // 在鬼屋内部放一个区域
     const innerView = addLogicNode(scopeView(deeper!.topology, deeper!.scope.id), [0, 0], { name: "地下室", role: "secret" });
@@ -187,108 +187,104 @@ describe("嵌套：旧草稿兼容", () => {
 });
 
 describe("嵌套：展开与收起", () => {
-  it("展开会建立子作用域并解除自身构型", () => {
-    const { topology, parkModuleId, scopeId } = park();
-    const module = topology.modules.find((item) => item.id === parkModuleId);
-    expect(module?.childScopeId).toBe(scopeId);
+  it("展开会把子作用域挂到节点上，节点自己的几何不受影响", () => {
+    const { topology, parkNodeId, scopeId } = park();
+    const node = topology.nodes.find((item) => item.id === parkNodeId);
+    expect(node?.childScopeId).toBe(scopeId);
     expect(topology.scopes).toHaveLength(1);
-    expect(topology.scopes[0].nodes.map((node) => node.name)).toEqual(["马戏团", "鬼屋"]);
+    expect(topology.scopes[0].nodes.map((item) => item.name)).toEqual(["马戏团", "鬼屋"]);
     expect(collectScopeIssues(topology)).toHaveLength(0);
   });
 
-  it("收起只解除引用，作用域留在池子里（可能还有别的模块复用）", () => {
-    const { topology, parkModuleId, scopeId } = park();
-    const collapsed = collapseModule(topology, parkModuleId);
-    expect(collapsed.modules.find((item) => item.id === parkModuleId)?.childScopeId).toBeUndefined();
+  it("收起只解除引用，作用域留在池子里", () => {
+    const { topology, parkNodeId, scopeId } = park();
+    const collapsed = collapseModule(topology, parkNodeId);
+    expect(collapsed.nodes.find((item) => item.id === parkNodeId)?.childScopeId).toBeUndefined();
     expect(collapsed.scopes.some((scope) => scope.id === scopeId)).toBe(true);
   });
 
   it("移除作用域会解除全部引用", () => {
-    const { topology, parkModuleId, scopeId } = park();
+    const { topology, parkNodeId, scopeId } = park();
     const removed = removeScope(topology, scopeId);
     expect(removed.scopes).toHaveLength(0);
-    expect(removed.modules.find((item) => item.id === parkModuleId)?.childScopeId).toBeUndefined();
+    expect(removed.nodes.find((item) => item.id === parkNodeId)?.childScopeId).toBeUndefined();
+  });
+
+  it("已经展开过的节点不能重复展开", () => {
+    const { topology, parkNodeId } = park();
+    expect(expandModule(topology, parkNodeId)).toBeNull();
   });
 });
 
 describe("嵌套：自包含检测", () => {
   it("作用域直接或间接包含自己会被报出来", () => {
     const { topology, scopeId } = park();
-    // 在子作用域里再加一个模块，指回它自己
+    // 在子作用域里再加一个节点，指回这个作用域本身
     let view = scopeView(topology, scopeId);
-    const created = createLogicModule(view, "回环", []);
+    const created = addLogicNode(view, [5000, 0], { name: "回环" });
     view = created.topology;
-    const cyclic = linkScope(writeScopeView(topology, scopeId, view), created.module.id, scopeId);
+    const cyclic = linkScope(writeScopeView(topology, scopeId, view), created.node.id, scopeId);
     expect(collectScopeIssues(cyclic).some((issue) => issue.includes("包含了自己"))).toBe(true);
   });
 
   it("引用不存在的子作用域会被报出来", () => {
-    const { topology, parkModuleId } = park();
+    const { topology, parkNodeId } = park();
     const dangling: LogicTopology = {
       ...topology,
-      modules: topology.modules.map((module) => module.id === parkModuleId ? { ...module, childScopeId: "scope_missing" } : module),
+      nodes: topology.nodes.map((node) => node.id === parkNodeId ? { ...node, childScopeId: "scope_missing" } : node),
     };
     expect(collectScopeIssues(dangling).some((issue) => issue.includes("不存在的子作用域"))).toBe(true);
+  });
+
+  it("同一个作用域被两个节点抢会被报出来", () => {
+    const { topology, parkNodeId, scopeId } = park();
+    const second = addLogicNode(topology, [9000, 0], { name: "第二座游乐园", childScopeId: scopeId });
+    expect(collectScopeIssues(second.topology).some((issue) => issue.includes("只能属于一个节点"))).toBe(true);
+    expect(second.topology.nodes.some((node) => node.id === parkNodeId)).toBe(true);
   });
 });
 
 describe("嵌套：路径与展平", () => {
-  it("展平会累积父级原点并给出层级路径", () => {
+  it("展平会沿节点累积 relativePosition 并给出层级路径", () => {
     const { topology } = park();
-    // 还没落成构型时模块没有自己的相对原点，累积结果就是父级原点
-    const before = flattenModules(topology);
-    expect(before.find((entry) => entry.module.name === "鬼屋")?.path).toHaveLength(1);
+    const flat = flattenModules(topology);
 
-    // 直接给模块标上相对原点（构型落成后就是这个状态），验证逐层累积
-    const withOrigins: LogicTopology = {
-      ...topology,
-      modules: topology.modules.map((module) => ({ ...module, relativeOrigin: module.name === "游乐园" ? [0, 0] : [-4900, -900] })),
-      scopes: topology.scopes.map((scope) => ({
-        ...scope,
-        modules: scope.modules.map((module) => ({ ...module, relativeOrigin: module.name === "鬼屋" ? [1000, -1000] : [-500, -900] })),
-      })),
-    };
-    const flat = flattenModules(withOrigins);
-
+    // fixture 里直接标好了落位：小村 (-4000,0)、游乐园 (0,0)、鬼屋 (2000,0)
     const village = flat.find((entry) => entry.module.name === "小村");
-    expect(village?.origin).toEqual([-4900, -900]);
+    expect(village?.origin).toEqual([-4000, 0]);
     expect(village?.path).toHaveLength(0);
 
-    // 鬼屋 = 游乐园原点 (0,0) + 它自己的 (1000,-1000)
+    // 鬼屋 = 游乐园原点 (0,0) + 它自己的 (2000,0)
     const house = flat.find((entry) => entry.module.name === "鬼屋");
-    expect(house?.origin).toEqual([1000, -1000]);
+    expect(house?.origin).toEqual([2000, 0]);
     expect(house?.path).toHaveLength(1);
     expect(house?.path[0].scopeName).toBe("游乐园内部");
   });
 
-  it("展开的模块本身不再是叶子", () => {
+  it("展开的节点本身不再是叶子", () => {
     const { topology } = park();
     const leaves = leafModules(topology);
     expect(leaves.map((entry) => entry.module.name)).not.toContain("游乐园");
     expect(new Set(leaves.map((entry) => entry.module.name))).toEqual(new Set(["小村", "马戏团", "鬼屋"]));
   });
 
-  it("面包屑能指到子作用域，路径标签用模块名", () => {
-    const { topology, scopeId } = park();
+  it("面包屑能指到子作用域，步长装的是节点身份", () => {
+    const { topology, scopeId, parkNodeId } = park();
     const crumbs = scopeCrumbs(topology, scopeId);
     expect(crumbs).toHaveLength(1);
+    expect(crumbs[0].moduleId).toBe(parkNodeId);
     expect(crumbs[0].moduleName).toBe("游乐园");
     expect(crumbs[0].scopeName).toBe("游乐园内部");
     expect(pathLabel(crumbs)).toBe("游乐园");
-    expect(pathKey(crumbs)).toBe(crumbs[0].moduleId);
+    expect(pathKey(crumbs)).toBe(parkNodeId);
   });
 
-  it("同一个作用域被两个模块复用时，展平出两条独立分支", () => {
+  it("作用域不再能被第二个节点复用：展平只出一条分支", () => {
     const { topology, scopeId } = park();
-    // 根作用域再加一个模块，也指向同一个子作用域
-    const reused = createLogicModule(topology, "游乐园副本", []);
-    const shared = linkScope(reused.topology, reused.module.id, scopeId);
-    const flat = flattenModules(shared);
-    const houses = flat.filter((entry) => entry.module.name === "鬼屋");
-    expect(houses).toHaveLength(2);
-    expect(new Set(houses.map((entry) => pathKey(entry.path))).size).toBe(2);
-  });
-});
+    const second = addLogicNode(topology, [9000, 0], { name: "游乐园副本", childScopeId: scopeId });
+    expect(flattenModules(second.topology).filter((entry) => entry.module.name === "鬼屋")).toHaveLength(1);
+    expect(collectScopeIssues(second.topology).some((issue) => issue.includes("只能属于一个节点"))).toBe(true);
+  });});
 
 describe("嵌套：指纹", () => {
   it("层级变化会让拓扑指纹变化（上游提案因此过期）", () => {

@@ -1,66 +1,11 @@
 import type { LogicTopology } from "./concept";
+import type { Block, BlockType, Transform } from "./block-types";
+
+export type { Block, BlockType, Transform, BoxBlock, DoorwayBlock, StairsLinearBlock, PortBlock } from "./block-types";
 
 export type Vec2 = [number, number];
 export type Vec3 = [number, number, number];
 export type Rgba = [number, number, number, number];
-
-export type BlockType = "box" | "doorway" | "stairs-linear" | "port";
-
-export interface Transform {
-  position: Vec3;
-  rotation: number;
-}
-
-interface BlockBase {
-  id: string;
-  name: string;
-  type: BlockType;
-  transform: Transform;
-  provenance?: { sourceId: string; featureId: string; status: "estimated" | "confirmed"; note: string };
-}
-
-export interface BoxBlock extends BlockBase {
-  type: "box";
-  role?: "solid" | "floor" | "wall" | "edging" | "landing";
-  elevationReference?: "bottom" | "surface";
-  parameters: {
-    BoxSize: Vec3;
-    blockout_material_color: Rgba;
-    blockout_material_top_color: Rgba;
-  };
-}
-
-export interface DoorwayBlock extends BlockBase {
-  type: "doorway";
-  parameters: {
-    DoorwaySize: Vec3;
-    TopThickness: number;
-    SideThickness: number;
-    blockout_material_color: Rgba;
-    blockout_material_top_color: Rgba;
-  };
-}
-
-export interface StairsLinearBlock extends BlockBase {
-  type: "stairs-linear";
-  parameters: {
-    StairsSize: Vec3;
-    NumberOfSteps: number;
-    StairsType: "BOX" | "CLOSED" | "SLOPED";
-    blockout_material_color: Rgba;
-    blockout_material_top_color: Rgba;
-  };
-}
-
-export interface PortBlock extends BlockBase {
-  type: "port";
-  parameters: {
-    width: number;
-    depth: number;
-  };
-}
-
-export type Block = BoxBlock | DoorwayBlock | StairsLinearBlock | PortBlock;
 
 export interface DesignMaterial {
   id: string;

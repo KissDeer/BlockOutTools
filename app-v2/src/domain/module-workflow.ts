@@ -1,5 +1,6 @@
-import { findModule, flattenModules, nodeInterior, nodeScopeAndGroup, pathLabel, scopeView, writeScopeView } from "./concept-scopes";
+import { findModule, flattenModules, nodeInterior, nodeScopeAndGroup, pathLabel, scopeCrumbs, scopeView, scopesOf, writeScopeView } from "./concept-scopes";
 import { createId } from "./ids";
+import type { LogicTopology } from "./concept";
 import type { Block, BlockoutProject, ModuleDefinition, ModuleInstance, Vec2 } from "./types";
 
 /** Placement identity follows the existing instance parent-path convention. */
@@ -48,16 +49,42 @@ export function nodeInteriorPlan(project: BlockoutProject, nodeId: string): Node
   return { blocks, childCount: interior.childCount, linkCount: interior.linkCount, built: blocks.length > 0 };
 }
 
+/**
+ * 一个模块定义在拓扑里的所有落位路径。
+ *
+ * 2026-09-17 二次修订后几何应该挂在**节点**上，但旧数据仍把 `moduleDefinitionId`
+ * 记在模块分组里，所以两条链都要认：先看节点自己的 `moduleId`，再看分组的 `moduleDefinitionId`。
+ */
 export function modulePlacementPaths(project: BlockoutProject, moduleId: string): { path: string[]; label: string }[] {
-  if (!project.concept) return [];
+  const topology = project.concept;
+  if (!topology) return [];
   const unique = new Map<string, { path: string[]; label: string }>();
-  for (const entry of flattenModules(project.concept)) {
+  const remember = (path: string[], label: string) => {
+    const key = JSON.stringify(path);
+    if (!unique.has(key)) unique.set(key, { path, label });
+  };
+
+  for (const entry of flattenModules(topology)) {
     if (entry.module.moduleDefinitionId !== moduleId) continue;
     const path = entry.path.map((step) => step.moduleId);
-    const key = JSON.stringify(path);
-    if (!unique.has(key)) unique.set(key, { path, label: pathLabel(entry.path) || "根层" });
+    remember(path, pathLabel(entry.path) || "根层");
+  }
+  // 空分组不会进 flattenModules（那里只走节点），旧数据在根层挂定义就属于这种情况
+  for (const scope of scopesOf(topology)) {
+    const path = scopePath(topology, scope.id);
+    if (!path) continue;
+    for (const group of scope.modules) {
+      if (group.moduleDefinitionId === moduleId) remember(path, pathLabel(scopeCrumbs(topology, scope.id)) || "根层");
+    }
   }
   return [...unique.values()];
+}
+
+/** 从根走到某个作用域的模块 id 链（根层为 []）；走不到返回 null */
+function scopePath(topology: LogicTopology, scopeId: string | null): string[] | null {
+  if (!scopeId || scopeId === topology.id) return [];
+  const crumbs = scopeCrumbs(topology, scopeId);
+  return crumbs.length ? crumbs.map((step) => step.moduleId) : null;
 }
 
 /** Open a definition without instantiating or regenerating any existing geometry. */

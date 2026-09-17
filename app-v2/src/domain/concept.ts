@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Vec2 } from "./types";
+import type { Block } from "./block-types";
 import { fingerprint } from "./fingerprint";
 import {
   createEmptyInputs,
@@ -47,6 +48,17 @@ export interface LogicNode {
   elevation: { base: number; top: number } | null;
   /** 绑定到模块定义后，可直接查看该模块内部体块与 3D 预览 */
   moduleId?: string;
+  /**
+   * 这个节点自己的几何，坐标是**节点局部厘米**。
+   * 节点是唯一容器：几何挂在节点上，中间不再有承载体。
+   * 与 childScopeId **可以并存** —— 同一个区域既能拼体块，又能在里面分出子区域。
+   */
+  blocks?: Block[];
+  /**
+   * 这个节点内部的下一层逻辑拓扑。指向本拓扑 `scopes` 池里的一个作用域。
+   * 一个作用域只能属于一个节点（嵌套是一棵树，不是图）。
+   */
+  childScopeId?: string;
   note: string;
 }
 
@@ -124,6 +136,46 @@ export function createEmptyTopology(): LogicTopology {
   return { ...createEmptyScope("scope_root", "根作用域"), scopes: [] };
 }
 
+/** 某个作用域自己的节点（根作用域与子作用域统一取法） */
+export function nodesOfScope(topology: LogicTopology, scopeId: string | null): LogicNode[] {
+  if (scopeId === null) return topology.nodes;
+  return topology.scopes.find((scope) => scope.id === scopeId)?.nodes ?? [];
+}
+
+/**
+ * 拓扑池里真正要去查的那些作用域。
+ *
+ * 池子里的每个作用域都带一份自己的 `scopes` 数组（为了让每个作用域都能单独当一个可编辑拓扑用），
+ * 那份是**同一份池的副本**，不是权威数据。凡是"遍历所有作用域去找某个东西"的地方都必须走这里：
+ * 直接写 `[topology, ...topology.scopes]` 会摸到过期副本，展开、收起这类
+ * "先克隆再改"的操作就会看起来没生效。
+ */
+export function scopesOf(topology: LogicTopology): LogicScope[] {
+  const seen = new Set<string>([topology.id]);
+  const result: LogicScope[] = [topology];
+  for (const scope of topology.scopes) {
+    if (seen.has(scope.id)) continue;
+    seen.add(scope.id);
+    result.push(scope);
+  }
+  return result;
+}
+
+/**
+ * 一个节点内部的子逻辑层。
+ *
+ * **注意**：这里只认节点自己的 `childScopeId`。旧的 `LogicModule.childScopeId`
+ * 由 `concept-scopes.ts` 的 `childScopeIdOf` 兜底读——那是过渡期的唯一裁决点。
+ * 直接在各处写 `node.childScopeId ?? group.childScopeId` 迟早会漂移。
+ */
+export function scopeOwner(topology: LogicTopology, nodeId: string): string | undefined {
+  for (const scope of scopesOf(topology)) {
+    const node = scope.nodes.find((item) => item.id === nodeId);
+    if (node) return node.childScopeId;
+  }
+  return undefined;
+}
+
 /**
  * 拓扑内容指纹：只包含会改变"拆解含义"的字段，**覆盖全部子作用域**。
  * 用于发现"提案给出之后，拓扑已经被改过"。
@@ -193,6 +245,17 @@ export function allowsBackward(link: LogicLink): boolean {
 const finiteNumber = z.number().finite();
 const vec2 = z.tuple([finiteNumber, finiteNumber]);
 
+/**
+ * 节点内积木：这里**只做形状检查，不解析**，解析完原样交给 `Block` 类型。
+ *
+ * 原因有两个：
+ * 1. 每种积木的参数由 `block-schema.ts` 逐类校验，那是唯一口径。这里再写一套规则，
+ *    两处迟早漂移；而节点几何是新的写入目标，更不能有两套说法。
+ * 2. 用 `z.unknown()` 而不是 `z.object({...})`，是为了让**旧文件里的积木原样穿过去**，
+ *    而不是被这里悄悄剥掉未知字段。
+ */
+const nodeBlocksSchema = z.array(z.unknown()).optional() as unknown as z.ZodType<Block[] | undefined>;
+
 export const logicNodeSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -203,6 +266,10 @@ export const logicNodeSchema = z.object({
   relativePosition: vec2.nullable().default(null),
   elevation: z.object({ base: finiteNumber, top: finiteNumber }).nullable().default(null),
   moduleId: z.string().min(1).optional(),
+  // 旧草稿的节点没有自己的几何
+  blocks: nodeBlocksSchema,
+  // 旧草稿把这一层关系记在 LogicModule 上（过渡期由 concept-scopes 兜底读）
+  childScopeId: z.string().min(1).optional(),
   note: z.string(),
 });
 
@@ -304,24 +371,41 @@ export const logicTopologySchema = z.object({
 });
 
 /**
- * 子作用域的结构问题：身份重复、引用不存在、以及**自包含**。
- * 作用域是可复用的（同一个鬼屋用在两张地图里），所以必须能发现环。
+ * 子作用域的结构问题：身份重复、引用不存在、悬空作用域、被两个节点抢、以及**自包含**。
+ *
+ * 2026-09-17 二次修订后，一个作用域只能属于**一个节点**（嵌套是一棵树，不是图）。
+ * 原来的 `LogicModule.childScopeId` 支持多对一，移到节点上就自然收紧成一对一 ——
+ * 这里把"被抢"和"没人要"都报出来，避免静默留下对不上的导航。
  */
 export function collectScopeIssues(topology: LogicTopology): string[] {
   const issues: string[] = [];
   const ids = topology.scopes.map((scope) => scope.id);
   if (new Set(ids).size !== ids.length) issues.push("子作用域身份重复");
-  const byId = new Map(topology.scopes.map((scope) => [scope.id, scope]));
   const known = new Set(ids);
 
+  // 每个作用域引用它的那个节点，用于发现"被抢"
+  const owners = new Map<string, { nodeId: string; nodeName: string }[]>();
   const childScopeIdsOf = (scopeId: string | null): string[] => {
-    const modules = scopeId === null ? topology.modules : byId.get(scopeId)?.modules ?? [];
-    return modules.map((module) => module.childScopeId).filter((id): id is string => Boolean(id));
+    const found: string[] = [];
+    for (const node of nodesOfScope(topology, scopeId)) {
+      if (!node.childScopeId) continue;
+      found.push(node.childScopeId);
+      owners.set(node.childScopeId, [...(owners.get(node.childScopeId) ?? []), { nodeId: node.id, nodeName: node.name }]);
+    }
+    return found;
   };
+  // 先把根层的归属登记下来；环检测只从子作用域出发，不会顺带走到根层
+  childScopeIdsOf(null);
 
-  for (const scopeId of childScopeIdsOf(null)) if (!known.has(scopeId)) issues.push(`模块引用了不存在的子作用域：${scopeId}`);
-  for (const scope of topology.scopes) {
-    for (const scopeId of childScopeIdsOf(scope.id)) if (!known.has(scopeId)) issues.push(`模块引用了不存在的子作用域：${scopeId}`);
+  for (const scope of scopesOf(topology)) {
+    for (const node of scope.nodes) {
+      if (node.childScopeId && !known.has(node.childScopeId)) issues.push(`节点“${node.name}”引用了不存在的子作用域：${node.childScopeId}`);
+    }
+  }
+
+  for (const [scopeId, claimants] of owners) {
+    if (claimants.length < 2) continue;
+    issues.push(`子作用域 ${scopeId} 被 ${claimants.length} 个节点同时指定为内部：${claimants.map((item) => item.nodeName).join("、")}。一个作用域只能属于一个节点`);
   }
 
   // 环检测：从某个作用域出发往下走，能不能再走回它自己
@@ -337,6 +421,11 @@ export function collectScopeIssues(topology: LogicTopology): string[] {
       stack.push(...childScopeIdsOf(current));
     }
     if (cyclic) issues.push(`作用域“${scope.name}”直接或间接包含了自己`);
+  }
+
+  // 悬空：池子里有、但没有任何节点指向它。不是错误，但说出来免得它一直躺在文件里
+  for (const scope of topology.scopes) {
+    if (!owners.has(scope.id)) issues.push(`子作用域“${scope.name}”没有归属节点（悬空）`);
   }
   return issues;
 }

@@ -23,7 +23,8 @@ describe("decomposition history", () => {
     const linked = addLogicLink(second.topology, first.node.id, second.node.id, "locked-door", { sourceHandle: "right", targetHandle: "left" })!;
     const keyed = addLogicKey(linked.topology, first.node.id, linked.link.id)!;
     const grouped = createLogicModule(keyed.topology, "locked route", [first.node.id, second.node.id]);
-    const expanded = expandModule(grouped.topology, grouped.module.id)!;
+    // 展开收的是节点 id（子层挂在节点上）
+    const expanded = expandModule(grouped.topology, first.node.id)!;
     const before = { ...demo, concept: expanded.topology };
     useProjectStore.getState().replaceProject(before);
     useProjectStore.getState().removeLogicModule(grouped.module.id);
@@ -80,7 +81,7 @@ describe("decomposition history", () => {
     const { useProjectStore } = await import("./project-store");
     const outer = addLogicNode(createEmptyTopology(), [0, 0]);
     const parent = createLogicModule(outer.topology, "parent", [outer.node.id]);
-    const expanded = expandModule(parent.topology, parent.module.id)!;
+    const expanded = expandModule(parent.topology, outer.node.id)!;
     const inner = addLogicNode(scopeView(expanded.topology, expanded.scope.id), [20, 30]);
     const childModule = createLogicModule(inner.topology, "child");
     const topology = writeScopeView(expanded.topology, expanded.scope.id, childModule.topology);

@@ -15,8 +15,13 @@ function nested() {
   const { scopes: _pool, ...scope } = child;
   const root = createEmptyTopology();
   root.scopes.push(scope);
-  root.modules.push({ id: "parent", name: "游乐园", nodeIds: [], note: "", childScopeId: scope.id });
-  return root;
+  // 子层现在挂在**节点**上：一个作用域只能属于一个节点
+  return addLogicNode(root, [0, 0], { name: "游乐园", role: "hub", childScopeId: scope.id }).topology;
+}
+
+/** nested() 里那个拥有"鬼屋"子层的节点 */
+function scopeOwnerNode(root: LogicTopology) {
+  return root.nodes.find((node) => node.childScopeId === "child")!;
 }
 
 describe("嵌套拓扑的导入完整性", () => {
@@ -44,13 +49,29 @@ describe("嵌套拓扑的导入完整性", () => {
     expect(canDeliver(root).ok).toBe(false);
   });
 
-  it("合法共享子层和不同作用域的相同本地身份可保存", () => {
+  it("两个节点各自拥有一个子层可以保存：一个作用域只属于一个节点", () => {
     const root = nested();
-    root.modules.push({ ...root.modules[0], id: "parent_copy" });
     root.scopes.push({ ...structuredClone(root.scopes[0]), id: "other_child", name: "另一栋鬼屋" });
-    root.modules.push({ ...root.modules[0], id: "other_parent", childScopeId: "other_child" });
-    expect(projectSchema.safeParse({ ...createDemoProject(), concept: root }).success).toBe(true);
-    expect(canDeliver(root).ok).toBe(true);
+    const second = addLogicNode(root, [600, 0], { name: "第二座游乐园", role: "hub", childScopeId: "other_child" });
+    // 得从起点走得到它，否则交付门会因为"走不到"拦下（这与子层归属无关）
+    const linked = addLogicLink(second.topology, scopeOwnerNode(second.topology).id, second.node.id, "normal")!;
+    expect(projectSchema.safeParse({ ...createDemoProject(), concept: linked.topology }).success).toBe(true);
+    expect(canDeliver(linked.topology).ok).toBe(true);
+  });
+
+  it("同一个子层被两个节点同时指定为内部会被拦下", () => {
+    const root = nested();
+    const second = addLogicNode(root, [600, 0], { name: "第二座游乐园", role: "hub", childScopeId: "child" });
+    expect(canDeliver(second.topology).ok).toBe(false);
+    expect(canDeliver(second.topology).blockers.some((issue) => issue.rule === "TOPO_SCOPE_STRUCTURE" && issue.message.includes("只能属于一个节点"))).toBe(true);
+  });
+
+  it("节点引用了不存在的子作用域会被拦下", () => {
+    const root = nested();
+    scopeOwnerNode(root).childScopeId = "missing";
+    const result = logicTopologySchema.safeParse(root);
+    expect(result.success).toBe(false);
+    expect(canDeliver(root).blockers.some((issue) => issue.rule === "TOPO_SCOPE_STRUCTURE")).toBe(true);
   });
 
   it.each(["node", "module"])("子层的%s不能绑定不存在的阶段二模块", (kind) => {
@@ -64,23 +85,24 @@ describe("嵌套拓扑的导入完整性", () => {
 });
 
 describe("递归交付", () => {
-  it("子层死锁可以作为草稿保存，但阻止根层交付；复用分支只报一次", () => {
+  it("子层死锁可以作为草稿保存，但阻止根层交付", () => {
     const root = nested();
-    root.modules.push({ ...root.modules[0], id: "second_parent" });
     root.scopes[0].keys[0].foundAt = root.scopes[0].nodes[1].id;
     expect(projectSchema.safeParse({ ...createDemoProject(), concept: root }).success).toBe(true);
     const gate = canDeliver(root);
     expect(gate.ok).toBe(false);
     expect(gate.blockers.filter((issue) => issue.rule === "TOPO_KEY_DEADLOCK")).toHaveLength(1);
     expect(gate.blockers.every((issue) => issue.message.includes("鬼屋"))).toBe(true);
-    root.modules = [];
-    expect(canDeliver(root).ok).toBe(true);
   });
 
-  it("递归包含和缺失子层不能通过交付", () => {
+  it("递归包含不能通过交付", () => {
     const root = nested();
-    root.scopes[0].modules[0].childScopeId = "child";
+    root.scopes[0].nodes[0].childScopeId = "child";
     expect(canDeliver(root).blockers.some((issue) => issue.rule === "TOPO_SCOPE_STRUCTURE")).toBe(true);
+  });
+
+  it("作用域本身被移除后，节点的引用悬空，交付被拦下", () => {
+    const root = nested();
     root.scopes = [];
     expect(canDeliver(root).ok).toBe(false);
   });
