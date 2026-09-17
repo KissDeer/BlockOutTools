@@ -3,7 +3,7 @@
 > 每次开工先读这一页。每次收工前更新它。
 > 设计决策与理由在 `design-log/`，这里只记进度。
 
-**更新：2026-09-17（第二次）**
+**更新：2026-09-17（第三次）**
 
 ---
 
@@ -11,46 +11,57 @@
 
 | 日期 | 做了什么 | 提交 |
 |---|---|---|
-| 09-17 | **删掉退役的构型领域件 + 模块→实例生成器**（S2-1 过半） | 本次 |
+| 09-17 | **需求文档回正：范围冻结为五步主流程 + 新建 `NON_GOALS.md`** | 本次 |
+| 09-17 | 全项目扫描（只读）：查出主流程在界面上没有入口 | 本次 |
+| 09-17 | 删掉退役的构型领域件 + 模块→实例生成器（S2-1 过半） | `dbcd0e6` |
 | 09-17 | 工作记录机制建立 | `edeaddd` |
 | 09-17 | 删掉 4 个退役面板（拆解/构型的 Board 与 Inspector） | `25e3b8e` |
 | 09-17 | 一张画布 + 层级导航：取消两个顶层页签，进入节点 = 换焦点 | `639a8ea` |
 | 09-17 | 左侧栏合并：层级树成为区域清单的唯一出口 | `c2c4404` |
-| 09-17 | 删掉旧项目库（两个项目，35 个文件） | `968ca7a` |
-| 09-17 | 草案采用代价试算 + 同名资料去重 | `5b3820d` |
 
 ## 接下来干什么
 
-**主线：削掉模块层（第二步）**。方案与实测分析在
-[design-log/2026-09-17-削掉模块层与合并画布.md](../design-log/2026-09-17-削掉模块层与合并画布.md)。
+**范围已冻结。现行需求只看这三份，别的别读：**
 
-按"**每次都能编译**"的顺序，一次做一小步：
+- `docs/rebuild/PRODUCT_REQUIREMENTS.md`（Draft 2）
+- `docs/rebuild/NON_GOALS.md`（明确不做，与上面同级）
+- `docs/rebuild/FUNCTIONAL_REQUIREMENTS.md`（Draft 2，P0 八条）
 
-- [x] **S2-1a** 删 `concept-configuration`（退役的构型：候选/生成/校验）+ 它的测试
-- [x] **S2-1b** 删 `concept-assembly`（模块 → 实例的生成器）+ 它的测试
-- [x] **S2-1c** `ROLE_TEMPLATES` 挪到 `role-templates.ts`；删 `commands.applyConfiguration`、store 的构型/组装状态、`/api/concept/configuration` 三个端点
-- [ ] **S2-1d** 删 `module-preview-project`（模块局部 3D 预览），把 `PreviewPanel` 改成看整体或看节点
-- [ ] **S2-2** 改 B 堆的读取点（store → 显示层），一处一处来
-- [ ] **S2-3** 动 `DecompositionCanvas`（成组界面把模块框当画布节点画，最麻烦）
-- [ ] **S2-4** 删 `concept-decomposition` / `commands.ts` 的 ModuleDefinition，同时给 `LogicNode` 加 `blocks` / `childScopeId`，删 `LogicModule`
-- [ ] **S2-5** UE 导出改吃节点几何（标签名不变，值换成路径限定的节点放置 id）
-- [ ] **S2-6** 清 `instances` / `connections` / 磁盘分文件格式 / 素材 `moduleIds` / 草案 `moduleId`
+**主流程是五步：上传逻辑拓扑图 → 节点 → 节点里拼模型 → 3D 预览 → 导出 UE。没有"模块"这一步。**
 
-之后：`AssemblyCanvas` 的去向（用户说一会儿再说）。
+### 交付顺序（已定，别改顺序）
+
+核心约束：**先把主流程在节点模型上跑通，再删模块层。** 反过来做就会重演前两次回退。
+
+- [x] **1-A** 范围冻结（本次完成）
+- [ ] **1-B** `LogicNode` 加 `blocks` / `childScopeId`；`childScopeId` 从 `LogicModule` 移过来
+      —— 从调用方最多的文件倒着改：`concept-commands` → `workflow-context` → store → 显示层 → 最后 `concept.ts`
+- [ ] **1-C** **3D 预览 + UE 导出改吃展平节点几何** ← **最优先的一刀**
+      `PreviewPanel.tsx:59-61` 与 `ue-plan.ts:41-50` 现在都从 `resolveAssembly(instances)` 出发。改完，"删模块就白屏"的绑定永久解除
+- [ ] **1-D** 识别入口接上（FR-02）
+- [ ] **1-E** 节点嵌套导航打磨
+- [ ] **1-F** 模块层才删
 
 ## 当前状态
 
 - 类型：干净（`npx tsc -b` 0 错误）
-- 测试：**184 通过 / 24 文件**（原 213/26，降下来是删了构型与组装的测试）
-- 工作树：干净
-- 远端：见提交后同步
+- 测试：**184 通过 / 24 文件**
+- 工作树：见提交后同步
+- 本轮**没有动任何代码**
 
 ## 别忘的坑
 
-- **改文件前先停 dev server**，Vite 监听会锁文件（EBUSY）
-- **大重构不要一口气改**：前两次削模块都因为"改到一半发现预算不够"整轮回退。按上面 S2-x 走，每步都能跑测试
-- **删文件前查全仓库**，不只看 UI 层。上次删退役面板时连背后的领域件一起删了，结果画布编译不过——成组界面还在用
-- **删「退役功能」时先分清边界**：面板组件是死的，但面板背后的领域件可能还被别处（成组界面、模块草案）在用。这次构型能安全删，是因为查过引用只在 store 和测试里
-- 新增领域文件要加进 `app-v2/tsconfig.node.json` 的 `include`，否则报 TS6307
-- 用 .NET `File.ReadAllLines`/`WriteAllLines` 做批量行列编辑（`Set-Content -Encoding UTF8` 会毁掉中文）
+- **主流程在界面上没有入口**：`setConceptPane` 全仓库无调用者，`ConceptInputsBoard`（上传拓扑图）和 `ConceptRecognitionBoard`（识别候选）打不开。1-D 就是接线这件事，零件是齐的。
+- **3D 预览与 UE 导出挂在模块实例上**，不是挂在节点上。这是"改不动"的结构性原因，不是手艺问题。1-C 就是解这一个扣。
+- **不要在"删死代码"上顺手删领域件**。`DecompositionCanvas` 还在用 `concept-decomposition` 的领域件，删之前查全仓库。
+- **不要在一个回合里既删功能又换模型**。前两次回退都是这么来的。
+- **改文件前先停 dev server**，Vite 监听会锁文件（EBUSY）。
+- 新增领域文件要加进 `app-v2/tsconfig.node.json` 的 `include`，否则报 TS6307。
+- 用 .NET `File.ReadAllLines`/`WriteAllLines` 做批量行列编辑（`Set-Content -Encoding UTF8` 会毁掉中文）。
+- **过时文档已加横幅但没改写**：`INTERACTION_SPEC.md` 第 1 节、`DATA_UE_AI_CONTRACT.md` 多节、`TWO_STAGE_ARCHITECTURE.md` 全文、`WORKFLOW_UX_PROPOSAL.md` 全文。读到它们以横幅和 `NON_GOALS.md` 为准。改写是独立一步，别和改产品混在一起。
 
+## 还没做但量到的问题（等主流程跑通再管）
+
+- 参考图以 base64 存在项目 JSON 里，每次编辑防抖 350ms 序列化整份项目进 localStorage。图一多必卡。
+- `scripts/export-ue-actors.mjs` 与 `ue-plan.ts` 各有一套连接求解，靠注释约定一致，没有测试锁住。
+- `ConceptPane` 类型里还留着已删页签的幽灵值 `"decomposition" | "configuration"`。

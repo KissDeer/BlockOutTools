@@ -1,8 +1,13 @@
 # 数据、UE 与 AI 契约
 
-状态：`已确认需求 · 2026-09-16 同步拓扑驱动搭建 A+B`
+状态：`Draft 2 · 2026-09-17 · 部分章节待改写`
 
-当前主流程、持久化扩展和 agent 桥接以第 10 节为准。UE Apply/回读以及第 8 节通用命令全集是后续目标；本轮实现不代表这些接口可用。
+> **⚠️ 本文件按"模块定义 / 模块实例"写的章节已过时**（第 1 节顶层对象、第 3 节稳定身份中的 `moduleDefinitionId` / `moduleInstanceId`、第 4 节模块文件与合并、第 6 节 UE 增量同步、第 10 节的 `moduleId` 锚点）。
+> 现行模型：**节点是唯一容器**（`LogicNode.blocks` + `childScopeId`）。见 [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md) §4。
+>
+> **改数据契约时先改这里，再改代码**（AGENTS.md 约定）。
+>
+> 仍然有效的部分：第 5 节参数化积木 Schema、第 7 节坐标与单位、第 9 节旧数据迁移、第 10 节的**预览/采用/指纹/同名资料**机制（锚点从模块改为节点）。
 
 当前实现补充（2026-09-10）：本地库保存到 `data/projects-v2/project-<身份摘要>/`。清单引用 `modules/<内容摘要>.blockout-module.json`，旧模块版本保留，清单最后原子替换；不是下文建议的按显示名称覆盖模块文件。保存版本由清单和引用模块内容共同计算，外部变更拒绝覆盖。三方合并支持独立字段，同字段冲突仍由 Git 处理。新增可选字段 `assemblyAnchorInstanceId`、连接 `spacing`、Box `role/elevationReference`、模块 `reference/interpretation` 和积木 `provenance`；旧 V2 数据保持原有底面坐标语义。
 
