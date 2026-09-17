@@ -1,12 +1,11 @@
 import { create } from "zustand";
 import { addNodeBlock, removeNodeBlocks, renameProject, setConcept, updateNodeBlock, updateProjectSettings } from "../domain/commands";
 import {
-  addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode, applyCandidate as applyCandidateCommand,
+  addInput as addInputCommand, addLogicKey, addLogicLink, addLogicNode,
   autoLayoutTopology, nextNodePosition, recordProposal as recordProposalCommand, removeInput as removeInputCommand,
   removeLogicKey, removeLogicLink, removeLogicNode, setStartNode, updateInput as updateInputCommand, updateLogicKey,
   updateLogicLink, updateLogicNode, moveNodes, type InputDraft,
 } from "../domain/concept-commands";
-import { pruneCandidate, type CandidateNode, type RecognitionCandidate } from "../domain/concept-candidate";
 import { createEmptyTopology } from "../domain/concept";
 import { collapseNodeScope as collapseNodeScopeCommand, childScopeIdOf, expandNodeScope as expandNodeScopeCommand, levelPathOfNode, resolveLevel, scopeView, scopesOf, writeScopeView, type ResolvedLevel } from "../domain/concept-scopes";
 import { createEmptyInputs, type LogicInputItem } from "../domain/concept-inputs";
@@ -29,8 +28,8 @@ export interface EditableGeometry {
   blocks: Block[];
 }
 
-/** 现在只剩一个工作面：一张画布上的逻辑拓扑（输入与识别各自是一块辅助面板） */
-export type ConceptPane = "topology" | "inputs" | "recognition";
+/** 两个工作面：一张画布上的逻辑拓扑，以及放参考材料的地方 */
+export type ConceptPane = "topology" | "inputs";
 export type TransformMode = "move" | "rotate" | "scale";
 export type SaveStatus = "saved" | "saving" | "error";
 
@@ -75,16 +74,6 @@ interface ProjectStore {
   selectedInputId: string | null;
   conceptPane: ConceptPane;
   setConceptPane: (pane: ConceptPane) => void;
-  /** 识别候选：只存在于会话内，不写进项目文件 */
-  candidate: RecognitionCandidate | null;
-  selectedCandidateNodeId: string | null;
-  /** 人工从候选里排除的条目（tempId）；排除节点会连带排除挂它的链路 */
-  candidateExcluded: string[];
-  setCandidate: (candidate: RecognitionCandidate | null) => void;
-  setSelectedCandidateNode: (tempId: string | null) => void;
-  updateCandidateNode: (tempId: string, patch: Partial<CandidateNode>) => void;
-  toggleCandidateItem: (tempId: string) => void;
-  applyRecognitionCandidate: () => void;
   /** 当前编辑的作用域（null = 根）。所有拓扑命令都作用在它上面 */
   conceptScopeId: string | null;
   setConceptScope: (scopeId: string | null) => void;
@@ -339,9 +328,6 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     selectedInputId: null,
     conceptPane: "topology",
     conceptScopeId: null,
-    candidate: null,
-    selectedCandidateNodeId: null,
-    candidateExcluded: [],
     transformMode: "move",
     logicKind: "normal",
     setLogicKind: (logicKind) => set({ logicKind }),
@@ -374,22 +360,6 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
     setConceptPane: (conceptPane) => set({ conceptPane }),
     setConceptScope: (conceptScopeId) => set({ conceptScopeId, selectedLogicNodeId: null, selectedLogicLinkId: null }),
     setSelectedInput: (selectedInputId) => set({ selectedInputId }),
-    setCandidate: (candidate) => set({ candidate, selectedCandidateNodeId: null, candidateExcluded: [] }),
-    setSelectedCandidateNode: (selectedCandidateNodeId) => set({ selectedCandidateNodeId }),
-    toggleCandidateItem: (tempId) => set((state) => ({
-      candidateExcluded: state.candidateExcluded.includes(tempId)
-        ? state.candidateExcluded.filter((id) => id !== tempId)
-        : [...state.candidateExcluded, tempId],
-    })),
-    updateCandidateNode: (tempId, patch) => set((state) => {
-      if (!state.candidate) return {};
-      return {
-        candidate: {
-          ...state.candidate,
-          nodes: state.candidate.nodes.map((node) => (node.tempId === tempId ? { ...node, ...structuredClone(patch) } : node)),
-        },
-      };
-    }),
 
     expandSubLevel: (nodeId, scopeName) => {
       const result = expandNodeScopeCommand(currentTopology(), nodeId, scopeName);
@@ -537,17 +507,6 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
       const result = recordProposalCommand(currentTopology(), note ?? "");
       commitTopology(result.topology);
     },
-    applyRecognitionCandidate: () => {
-      const state = get();
-      const candidate = state.candidate;
-      if (!candidate) return;
-      // 先按人工排除裁剪，再把"套用 + 登记"合并成一次提交，撤销时一起回退
-      const pruned = pruneCandidate(candidate, state.candidateExcluded);
-      const applied = applyCandidateCommand(currentTopology(), pruned);
-      const recorded = recordProposalCommand(applied.topology, `套用候选：${pruned.name}`);
-      commitTopology(recorded.topology);
-      set({ candidate: null, selectedCandidateNodeId: null, candidateExcluded: [], conceptPane: "topology" });
-    },
 
     undo: () => {
       const state = get();
@@ -568,7 +527,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => {
         project, levelPath: [], activeNodeId: null, ...initialGeometry,
         selectedBlockIds: [],
         selectedLogicNodeId: project.concept?.nodes[0]?.id ?? null, selectedLogicLinkId: null, selectedInputId: null,
-        conceptPane: "topology", conceptScopeId: null, candidate: null, candidateExcluded: [], selectedCandidateNodeId: null,
+        conceptPane: "topology", conceptScopeId: null,
         past: [], future: [], previewDirty: true, previewScope: [], previewRevision: 0, previewOpen: false,
       });
       scheduleSave(project, set);

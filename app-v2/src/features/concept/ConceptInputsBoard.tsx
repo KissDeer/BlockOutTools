@@ -56,7 +56,7 @@ export function ConceptInputsBoard() {
 
   function addText(kind: LogicInputKind) {
     const count = inputs.items.filter((item) => item.kind === kind).length + 1;
-    addLogicInput({ kind, name: kind === "rules" ? `拆分规范 ${count}` : `补充说明 ${count}` });
+    addLogicInput({ kind, name: kind === "rules" ? `${INPUT_KINDS.rules.label} ${count}` : `补充说明 ${count}` });
   }
 
   return (
@@ -75,25 +75,25 @@ export function ConceptInputsBoard() {
 
       <header className={`inputs-summary is-${completeness.ok ? "ok" : "blocked"}`}>
         <div className="inputs-summary-main">
-          <strong>输入上下文包</strong>
+          <strong>参考资料</strong>
           <span className="rev">rev {inputs.revision}</span>
-          <code className="digest" title="全部输入内容的指纹">digest {inputs.digest}</code>
+          <code className="digest" title="全部参考材料内容的指纹">digest {inputs.digest}</code>
         </div>
         <div className="inputs-summary-state">
           {completeness.ok
-            ? <span className="state-ok">材料齐全，可以去「识别候选」读图了</span>
-            : <span className="state-blocked"><CircleAlert size={13} />缺少 {completeness.missing.map((kind) => INPUT_KINDS[kind].label).join("、")}，识别会被拒绝</span>}
+            ? <span className="state-ok">必需项齐了；画的时候对着这些材料看</span>
+            : <span className="state-blocked"><CircleAlert size={13} />缺少 {completeness.missing.map((kind) => INPUT_KINDS[kind].label).join("、")}，补齐前不能登记基准</span>}
         </div>
       </header>
 
       <section className="inputs-proposal">
         <div className="proposal-row">
           <Stamp size={14} />
-          {state === "none" ? <span>还没有登记识别结果。</span> : null}
-          {state === "current" ? <span className="state-ok">识别结果与当前输入一致（基于 rev {proposal?.basedOnInputsRevision} · {proposal?.nodeCount} 区域 / {proposal?.linkCount} 链路）。</span> : null}
+          {state === "none" ? <span>还没有登记过基准。</span> : null}
+          {state === "current" ? <span className="state-ok">基准与当前材料一致（登记于 rev {proposal?.basedOnInputsRevision} · 当时 {proposal?.nodeCount} 区域 / {proposal?.linkCount} 链路）。</span> : null}
           {state === "stale" ? (
             <span className="state-blocked">
-              <TriangleAlert size={13} />输入已变更，识别结果需要重新核对（登记于 rev {proposal?.basedOnInputsRevision}，当前 rev {inputs.revision}）。
+              <TriangleAlert size={13} />参考资料已变更，这条基准已过期（登记于 rev {proposal?.basedOnInputsRevision}，当前 rev {inputs.revision}）。
             </span>
           ) : null}
         </div>
@@ -102,10 +102,10 @@ export function ConceptInputsBoard() {
             type="button"
             className="primary-command"
             disabled={!completeness.ok}
-            title={completeness.ok ? "把当前逻辑拓扑登记为一次识别结果" : "缺少必需输入"}
+            title={completeness.ok ? "把当前参考资料的指纹与此刻的拓扑规模登记成一条基准" : "缺少必需项"}
             onClick={() => recordProposal()}
           >
-            <Stamp size={14} />{state === "none" ? "登记识别结果" : "重新登记"}
+            <Stamp size={14} />{state === "none" ? "登记基准" : "重新登记"}
           </button>
           {state === "stale" ? (
             <button type="button" className="secondary-command" onClick={() => selectInput(null)}>
@@ -144,7 +144,7 @@ export function ConceptInputsBoard() {
                 </button>
               </div>
               {items.length === 0 ? (
-                <p className="inputs-group-empty">{meta.required ? "还没有提供，识别会被拒绝" : "还没有提供（可选）"}</p>
+                <p className="inputs-group-empty">{meta.required ? "还没有提供；补齐前不能登记基准" : "还没有提供（可选）"}</p>
               ) : (
                 <div className="inputs-cards">
                   {items.map((item) => (

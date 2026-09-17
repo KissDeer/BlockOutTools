@@ -1,14 +1,23 @@
 import type { BlockoutProject } from "./types";
-import { projectSchema } from "./project-schema";
+import { assertNotLegacyProject, projectSchema } from "./project-schema";
 
 const DRAFT_KEY = "blockout-tools-v2:draft:1";
 
+/**
+ * 唯一的读入口。两道门都要走：
+ * 1. 旧格式先给人话原因（`assertNotLegacyProject`），否则拿到的只是一串 Zod 路径；
+ * 2. 剩下的交给 schema，`concept` 必填 —— 缺几何的项目在这里就被挡下，不会静默变成空项目。
+ */
+function parseProject(raw: unknown): BlockoutProject {
+  assertNotLegacyProject(raw);
+  return projectSchema.parse(raw);
+}
+
 export function loadDraft(): BlockoutProject | null {
   try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    if (!raw) return null;
-    const parsed = projectSchema.safeParse(JSON.parse(raw));
-    return parsed.success ? parsed.data : null;
+    const stored = localStorage.getItem(DRAFT_KEY);
+    if (!stored) return null;
+    return parseProject(JSON.parse(stored));
   } catch {
     return null;
   }
@@ -23,7 +32,7 @@ export function archiveDraft(project: BlockoutProject): void {
 }
 
 export function parseProjectFile(text: string): BlockoutProject {
-  return projectSchema.parse(JSON.parse(text));
+  return parseProject(JSON.parse(text));
 }
 
 export function downloadProject(project: BlockoutProject): void {

@@ -23,21 +23,6 @@ export interface DesignContext {
   materials: DesignMaterial[];
 }
 
-/** 节点内部用的底图：像素坐标 + 标定比例，用来把图上量到的点换算成厘米 */
-export interface DiagramReference {
-  id: string;
-  name: string;
-  imageData: string;
-  pixelSize: Vec2;
-  origin: Vec2;
-  cmPerPixel: number;
-  rotation: number;
-  opacity: number;
-  visible: boolean;
-  confirmed: boolean;
-  legend: string;
-}
-
 export interface BlockoutProfile {
   enabled: boolean;
   enforceUeImport: boolean;

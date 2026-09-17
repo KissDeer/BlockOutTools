@@ -10,7 +10,6 @@ import {
   type LogicTopology,
 } from "./concept";
 import { createId } from "./ids";
-import { toRelativePosition, type RecognitionCandidate } from "./concept-candidate";
 import {
   computeInputsDigest,
   INPUT_KINDS,
@@ -179,10 +178,6 @@ export function setStartNode(topology: LogicTopology, nodeId: string | null): Lo
   return { ...clone(topology), startNodeId: nodeId };
 }
 
-export function bindNodeModule(topology: LogicTopology, nodeId: string, moduleId: string | undefined): LogicTopology {
-  return updateLogicNode(topology, nodeId, { moduleId });
-}
-
 /**
  * 为新节点挑一个空位。
  * 必须在 store 里基于最新拓扑调用：如果在组件里用渲染时的 nodes.length 推算，
@@ -302,8 +297,8 @@ export function removeInput(topology: LogicTopology, inputId: string): LogicTopo
 }
 
 /**
- * 登记一次拆解结果：记录它依据的输入 digest。
- * 之后输入一变，这条提案立刻可被判为过期，而不是悄悄沿用旧结论。
+ * 登记一条基准：把"此刻这批参考材料的指纹"和"此刻的拓扑规模"绑成一条记录。
+ * 之后材料一变，这条基准立刻可被判为过期，而不是悄悄沿用旧结论。
  */
 export function recordProposal(topology: LogicTopology, note = ""): { topology: LogicTopology; proposal: DecompositionProposal } {
   const proposal: DecompositionProposal = {
@@ -355,104 +350,3 @@ export function moveNodes(topology: LogicTopology, positions: NodePositionEdit[]
   return next;
 }
 
-/* ---------------- 套用识别候选 ---------------- */
-
-export interface AppliedCandidateSummary {
-  nodeIds: string[];
-  linkIds: string[];
-  keyIds: string[];
-  placed: number;
-}
-
-/**
- * 把范围图上的像素点等比映射到画布区域。
- * 画布坐标只是排版，不能直接拿相对位置（厘米，动辄上千）当画布坐标用 ——
- * 两套坐标系混用会把已有节点挤成看不见的小点。
- */
-function scopeMapLayout(points: Vec2[]): ((point: Vec2) => Vec2) | null {
-  if (points.length === 0) return null;
-  const xs = points.map((point) => point[0]);
-  const ys = points.map((point) => point[1]);
-  const minX = Math.min(...xs);
-  const minY = Math.min(...ys);
-  const width = Math.max(1, Math.max(...xs) - minX);
-  const height = Math.max(1, Math.max(...ys) - minY);
-  const scale = Math.min(900 / width, 600 / height, 1.4);
-  return (point) => [160 + (point[0] - minX) * scale, 140 + (point[1] - minY) * scale];
-}
-
-/**
- * 把识别候选套用成真实拓扑。整体是一次可撤销事务；只新增，不删除已有内容。
- * 范围图像素在这里按标定换算成父级局部厘米，换算方式与图纸导入完全一致。
- */
-export function applyCandidate(topology: LogicTopology, candidate: RecognitionCandidate): { topology: LogicTopology; applied: AppliedCandidateSummary } {
-  let next = topology;
-  const scopeMap = candidate.scopeMapInputId ? topology.inputs.items.find((item) => item.id === candidate.scopeMapInputId) ?? null : null;
-  const calibration = scopeMap?.calibration ?? null;
-  const layout = scopeMapLayout(candidate.nodes.map((node) => node.scopeMapPoint).filter((point): point is Vec2 => Boolean(point)));
-
-  const nodeIdByTemp = new Map<string, string>();
-  const linkIdByTemp = new Map<string, string>();
-  const keyIdByTemp = new Map<string, string>();
-  let placed = 0;
-
-  for (const candidateNode of candidate.nodes) {
-    const relativePosition = candidateNode.scopeMapPoint ? toRelativePosition(candidateNode.scopeMapPoint, calibration) : null;
-    if (relativePosition) placed += 1;
-    // 画布排版用范围图像素的等比映射；相对位置另存，不参与排版
-    const graphPosition: Vec2 = (candidateNode.scopeMapPoint && layout?.(candidateNode.scopeMapPoint)) || nextNodePosition(next);
-    const result = addLogicNode(next, graphPosition, {
-      name: candidateNode.name,
-      role: candidateNode.role,
-      floor: candidateNode.floor,
-      note: candidateNode.note,
-      relativePosition,
-      elevation: candidateNode.elevation,
-    });
-    next = result.topology;
-    nodeIdByTemp.set(candidateNode.tempId, result.node.id);
-  }
-
-  for (const candidateLink of candidate.links) {
-    const from = nodeIdByTemp.get(candidateLink.from);
-    const to = nodeIdByTemp.get(candidateLink.to);
-    if (!from || !to) continue;
-    const result = addLogicLink(next, from, to, candidateLink.logic);
-    if (!result) continue;
-    // 标签必须唯一：沿用 addLogicLink 分配的新标签，把图上的标注记进备注以便回溯
-    next = updateLogicLink(result.topology, result.link.id, {
-      traversal: candidateLink.traversal,
-      note: [candidateLink.note, candidateLink.label ? `图上标注 ${candidateLink.label}` : ""].filter(Boolean).join(" · "),
-    });
-    linkIdByTemp.set(candidateLink.tempId, result.link.id);
-  }
-
-  for (const candidateKey of candidate.keys) {
-    const foundAt = nodeIdByTemp.get(candidateKey.foundAt);
-    const firstUnlock = candidateKey.unlocks.map((tempId) => linkIdByTemp.get(tempId)).find(Boolean);
-    if (!foundAt || !firstUnlock) continue;
-    const result = addLogicKey(next, foundAt, firstUnlock, candidateKey.name);
-    if (!result) continue;
-    next = result.topology;
-    keyIdByTemp.set(candidateKey.tempId, result.key.id);
-  }
-
-  // 锁钥门的 requires 以候选为准（一把钥匙可能解锁多条链路）
-  for (const candidateLink of candidate.links) {
-    if (!candidateLink.requiresKey) continue;
-    const linkId = linkIdByTemp.get(candidateLink.tempId);
-    const keyId = keyIdByTemp.get(candidateLink.requiresKey);
-    if (!linkId || !keyId) continue;
-    next = updateLogicLink(next, linkId, { requires: keyId });
-  }
-
-  return {
-    topology: next,
-    applied: {
-      nodeIds: [...nodeIdByTemp.values()],
-      linkIds: [...linkIdByTemp.values()],
-      keyIds: [...keyIdByTemp.values()],
-      placed,
-    },
-  };
-}

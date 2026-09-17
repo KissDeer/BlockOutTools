@@ -52,7 +52,11 @@ export interface LogicNode {
   relativeRotation?: number;
   /** 相对标高范围（厘米，父级局部坐标） */
   elevation: { base: number; top: number } | null;
-  /** 绑定到模块定义后，可直接查看该模块内部体块与 3D 预览 */
+  /**
+   * 模块层删除后**没有任何读取方**：几何现在挂在节点自己的 `blocks` 上。
+   * 字段与 schema 都留着，是因为它已被写进磁盘上的项目与浏览器草稿里，删它要迁移；
+   * 新代码不要再写它。
+   */
   moduleId?: string;
   /**
    * 这个节点自己的几何，坐标是**节点局部厘米**。
@@ -107,6 +111,7 @@ export interface LogicScope {
   links: LogicLink[];
   keys: LogicKey[];
   startNodeId: string | null;
+  /** 基准登记：记下某次参考材料的指纹与当时的拓扑规模（见 concept-inputs.ts） */
   proposals: DecompositionProposal[];
   note: string;
 }
@@ -165,8 +170,8 @@ export function scopeOwner(topology: LogicTopology, nodeId: string): string | un
 }
 
 /**
- * 拓扑内容指纹：只包含会改变"拆解含义"的字段，**覆盖全部子作用域**。
- * 用于发现"提案给出之后，拓扑已经被改过"。
+ * 拓扑内容指纹：只包含会改变"连通含义"的字段，**覆盖全部子作用域**。
+ * 用于发现"基准登记之后，拓扑已经被改过"。
  */
 export function computeTopologyDigest(topology: LogicTopology): string {
   const scopeSignature = (scope: LogicScope): string => {

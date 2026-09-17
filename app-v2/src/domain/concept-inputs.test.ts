@@ -17,8 +17,8 @@ function withRequiredInputs(): LogicTopology {
   return addInput(topology.topology, { kind: "scope-map", name: "范围图.png", imageData: "data:image/png;base64,BBB", pixelSize: [900, 700] }).topology;
 }
 
-describe("输入上下文包：指纹", () => {
-  it("空输入包的指纹是稳定的", () => {
+describe("参考资料：指纹", () => {
+  it("空材料清单的指纹是稳定的", () => {
     expect(createEmptyInputs().digest).toBe(computeInputsDigest([]));
   });
 
@@ -52,15 +52,15 @@ describe("输入上下文包：指纹", () => {
   });
 });
 
-describe("输入上下文包：完整性", () => {
-  it("缺少必需输入时报出缺项", () => {
+describe("参考资料：完整性", () => {
+  it("缺少必需项时报出缺项", () => {
     const result = checkInputsCompleteness(createEmptyInputs());
     expect(result.ok).toBe(false);
     expect(result.missing).toEqual(["logic-topology", "scope-map"]);
     expect(INPUT_KINDS["logic-topology"].required).toBe(true);
   });
 
-  it("补齐必需输入后通过", () => {
+  it("补齐必需项后通过", () => {
     const result = checkInputsCompleteness(withRequiredInputs().inputs);
     expect(result.ok).toBe(true);
     expect(result.missing).toHaveLength(0);
@@ -78,7 +78,7 @@ describe("输入上下文包：完整性", () => {
     const calibrated = updateInput(topology, scopeMap.id, { calibration: { cmPerPixel: 2.5, origin: [0, 0], rotation: 0, confirmed: true } });
     const result = checkInputsCompleteness(calibrated.inputs);
     expect(result.warnings.some((warning) => warning.message.includes("范围图"))).toBe(false);
-    expect(result.warnings.some((warning) => warning.message.includes("拆分规范"))).toBe(true);
+    expect(result.warnings.some((warning) => warning.message.includes("规则与规范"))).toBe(true);
   });
 
   it("警告身份唯一：同名文件的同类问题不会撞 key", () => {
@@ -92,20 +92,20 @@ describe("输入上下文包：完整性", () => {
   });
 });
 
-describe("输入上下文包：拆解结果的过期判定", () => {
+describe("参考资料：基准登记的过期判定", () => {
   it("没有登记时状态为 none", () => {
     expect(proposalState(createEmptyInputs(), null)).toBe("none");
   });
 
-  it("登记后与输入一致，补充输入后立刻过期", () => {
+  it("登记后与材料一致，补充材料后立刻过期", () => {
     const topology = withRequiredInputs();
-    const recorded = recordProposal(topology, "初次拆解");
+    const recorded = recordProposal(topology, "初次登记");
     const proposal = latestProposal(recorded.topology.proposals);
     expect(proposal).not.toBeNull();
     expect(proposalState(recorded.topology.inputs, proposal)).toBe("current");
 
-    // 后续补充一条规范 → 旧提案必须被判为过期，而不是静默沿用
-    const supplemented = addInput(recorded.topology, { kind: "rules", name: "拆分规范 1", text: "每层不超过 6 个区域" });
+    // 后续补充一条规范 → 旧基准必须被判为过期，而不是静默沿用
+    const supplemented = addInput(recorded.topology, { kind: "rules", name: "规则与规范 1", text: "每层不超过 6 个区域" });
     expect(proposalState(supplemented.topology.inputs, proposal)).toBe("stale");
     expect(supplemented.topology.inputs.revision).toBeGreaterThan(recorded.topology.inputs.revision);
   });

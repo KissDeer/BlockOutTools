@@ -1,20 +1,23 @@
 # BlockOutTools 重做版需求索引
 
-状态：`Draft 2 · 2026-09-17 · 范围已冻结`
-取代：`2026-09-16 拓扑驱动搭建 A+B` 基线
+状态：`Draft 3 · 2026-09-17 · 范围已冻结`
+取代：`Draft 2（五步，含识图）`
 
 本目录是需求单一来源。产品范围、交互、数据结构、AI 和 UE 行为应首先在这里修改，再进入实现。
 
 ## 现行基线
 
-主流程是**五步**：
+主流程是**四步**：
 
 ```
-上传逻辑拓扑图 → 节点 → 节点里拼模型 → 3D 预览 → 导出 UE
+画布上摆区域、连路线 → 节点里拼模型 → 3D 预览 → 导出 UE
 ```
 
-节点是唯一的容器：内部要么是一份几何（叶子），要么是一张逻辑拓扑（复合）。
-**"模块"这个词在产品里不存在。** 模块定义、模块实例、拆解页、构型页整体删除。
+- **节点是唯一的容器**：内部可以是一份几何、一张逻辑拓扑，也可以两者同时（进去是分屏）。
+- **"模块"这个词在产品里不存在。** 模块定义、模块实例、拆解页、构型页整体删除。
+- **"识图"也不存在了。** Draft 2 的第 1 步"上传拓扑图 → 识别出节点"整条删除：
+  它要求工具猜方位与比例，而猜出来的东西人还得核对一遍，比直接画更慢。
+  见 [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md) §3.1 与 [NON_GOALS.md](NON_GOALS.md) 二·补。
 
 ## 文档优先级
 
@@ -32,9 +35,10 @@
 
 - [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md)：产品定义、主流程、成功标准、核心概念口径、原则。
 - [NON_GOALS.md](NON_GOALS.md)：明确不做的事，含每条"重新评估的条件"。**与产品需求同级。**
-- [FUNCTIONAL_REQUIREMENTS.md](FUNCTIONAL_REQUIREMENTS.md)：P0 八条 + 后续范围，含旧 FR 的处置对照表。
+- [FUNCTIONAL_REQUIREMENTS.md](FUNCTIONAL_REQUIREMENTS.md)：P0 清单（FR-02 已删除）+ 后续范围，含旧 FR 的处置对照表。
 - [REBUILD_PLAN.md](REBUILD_PLAN.md)：技术边界、目录边界、按节点模型重排的实施阶段、质量门槛。
 - [NON_FUNCTIONAL_REQUIREMENTS.md](NON_FUNCTIONAL_REQUIREMENTS.md)：性能、可靠性、安全、兼容和可维护性。
+- [UE_PARAMETRIC_BLOCKS_CONTRACT.md](UE_PARAMETRIC_BLOCKS_CONTRACT.md)：积木参数契约，仍然有效。
 
 **部分过时，改动前先对照 NON_GOALS**
 
@@ -46,7 +50,9 @@
 
 - [WORKFLOW_UX_PROPOSAL.md](WORKFLOW_UX_PROPOSAL.md)：2026-09-16 的 A/B/C 批次方案。A+B 实现的是"模块化搭建"，已被取代。
 - [TWO_STAGE_ARCHITECTURE.md](TWO_STAGE_ARCHITECTURE.md)：两阶段架构与递归 Scope 提案。递归嵌套的思想仍在用，模块定义/实例的实现路径已废。
-- [DIAGRAM_INPUT.md](DIAGRAM_INPUT.md)、[UE_PARAMETRIC_BLOCKS_CONTRACT.md](UE_PARAMETRIC_BLOCKS_CONTRACT.md)
+- [DIAGRAM_INPUT.md](DIAGRAM_INPUT.md)：每模块底图 + 解释 JSON 生成器。**实现它的文件已在 1-F 删除**
+  （`diagram-import.ts`、`ReferenceTools.tsx`、`generate-diagram-project.mjs`），
+  "节点底图"作为 P1 能力（FR-10）将来会以别的形态回来。
 
 > **待办**：上列"部分过时"的文档尚未逐份改写。范围冻结之后应作为独立一步处理，不要在改产品的同一回合里顺手改。
 

@@ -3,8 +3,11 @@ import type { Vec2 } from "./types";
 import { fingerprint } from "./fingerprint";
 
 /**
- * 输入上下文包：识别前必须看全的材料。
- * digest 是"这次识别到底依据了哪些输入"的指纹；输入一变，旧提案立刻可判为过期。
+ * 参考资料：开工前要看的图和文字。
+ *
+ * 工具**不读**这些材料，也不从它们推出任何东西 —— 区域、链路与几何都由人照着材料自己摆。
+ * digest 是"这批材料此刻是什么内容"的指纹；材料一变，登记过的基准立刻可判为过期。
+ * （识图那条路线已于 2026-09-17 删除，这里的 key 名沿用当时的叫法，改它要迁移已存在的草稿。）
  */
 
 export type LogicInputKind = "logic-topology" | "scope-map" | "mood" | "rules" | "note";
@@ -12,20 +15,27 @@ export type LogicInputKind = "logic-topology" | "scope-map" | "mood" | "rules" |
 export interface InputKindMeta {
   label: string;
   hint: string;
-  /** 缺少时不允许开始识别 */
+  /** 缺少时会显式报缺，并且不允许登记基准 */
   required: boolean;
   /** 是否承载图片 */
   image: boolean;
 }
 
 export const INPUT_KINDS: Record<LogicInputKind, InputKindMeta> = {
-  "logic-topology": { label: "逻辑拓扑图", hint: "节点、单向门、锁钥门、连通链路", required: true, image: true },
-  "scope-map": { label: "范围图", hint: "空间范围与分区，给相对位置提供参照系", required: true, image: true },
-  mood: { label: "氛围图", hint: "基调与风格参考", required: false, image: true },
-  rules: { label: "规则与规范", hint: "拆分规范、命名约定、硬性约束", required: false, image: false },
+  "logic-topology": { label: "连通关系参考图", hint: "手绘或软件画的连通草图：谁和谁相连、哪里有单向门与锁钥门；照着它摆区域和链路", required: true, image: true },
+  "scope-map": { label: "空间范围参考图", hint: "平面图或分区草图：空间怎么分区、各个区域大致在哪儿；照着它定范围与相对位置", required: true, image: true },
+  mood: { label: "氛围图", hint: "基调与风格参考，拼几何时对着看", required: false, image: true },
+  rules: { label: "规则与规范", hint: "命名约定、尺度底线、硬性约束", required: false, image: false },
   note: { label: "补充说明", hint: "临时补充的要求，后续可继续追加", required: false, image: false },
 };
 
+/**
+ * 图上像素与实际厘米的换算比例。
+ *
+ * 工具**不消费**它做任何换算（识图已删）：这里只是把比例记在旁边，人照着图量尺寸时有个依据。
+ * origin / rotation 是旧识图链路留下的参照字段，现在只会是 [0,0] / 0；
+ * 保留是为了不改动已存在的草稿格式，别拿它们当"还能自动换算"的信号。
+ */
 export interface LogicInputCalibration {
   cmPerPixel: number;
   origin: Vec2;
@@ -46,7 +56,7 @@ export interface LogicInputItem {
   text: string;
   note: string;
   addedAt: string;
-  /** 需要比例参照的输入（范围图、拓扑图）在此标定 */
+  /** 图上比例由人自己标定；只有承载图片的输入会有 */
   calibration: LogicInputCalibration | null;
 }
 
@@ -57,7 +67,10 @@ export interface LogicInputs {
   updatedAt: string;
 }
 
-/** 识别结果登记：绑定它依据的输入指纹 */
+/**
+ * 基准登记：把"此刻这批参考材料的指纹"和"此刻的拓扑规模"绑成一条记录。
+ * 之后材料一改，这条记录立刻可判为过期，而不是悄悄沿用旧结论。
+ */
 export interface DecompositionProposal {
   id: string;
   basedOnInputsDigest: string;
@@ -105,17 +118,17 @@ export interface InputsCompleteness {
   warnings: InputsWarning[];
 }
 
-/** 识别前的完整性核对：缺项必须显式报告，不允许"凭印象认" */
+/** 材料清单核对：缺项必须显式报告，不允许"凭印象开工" */
 export function checkInputsCompleteness(inputs: LogicInputs): InputsCompleteness {
   const kinds = new Set(inputs.items.map((item) => item.kind));
   const missing = (Object.keys(INPUT_KINDS) as LogicInputKind[]).filter((kind) => INPUT_KINDS[kind].required && !kinds.has(kind));
   const warnings: InputsWarning[] = [];
   for (const item of inputs.items) {
     if (item.kind !== "scope-map" && item.kind !== "logic-topology") continue;
-    if (!item.calibration) warnings.push({ id: `${item.id}:uncalibrated`, message: `“${item.name}”还没有比例标定，相对位置只能按 estimated 处理` });
+    if (!item.calibration) warnings.push({ id: `${item.id}:uncalibrated`, message: `“${item.name}”还没有比例标定，照着它量出来的尺寸没法换算成厘米` });
     else if (!item.calibration.confirmed) warnings.push({ id: `${item.id}:unconfirmed`, message: `“${item.name}”的比例尚未确认` });
   }
-  if (!kinds.has("rules")) warnings.push({ id: "rules:missing", message: "还没有提供拆分规范；规则后续补充会让已有识别结果需要重新核对" });
+  if (!kinds.has("rules")) warnings.push({ id: "rules:missing", message: "还没有提供规则与规范；后续补充会让已登记的基准需要重新核对" });
   return { ok: missing.length === 0, missing, warnings };
 }
 

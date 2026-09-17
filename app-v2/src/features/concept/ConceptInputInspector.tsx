@@ -60,11 +60,11 @@ export function ConceptInputInspector() {
               className="input-textarea"
               rows={10}
               value={textDraft}
-              placeholder={item.kind === "rules" ? "把拆分规范、命名约定、硬性约束写在这里；后续补充会让已登记的拆解结果标为过期。" : "补充说明…"}
+              placeholder={item.kind === "rules" ? "把命名约定、尺度底线、硬性约束写在这里；后续补充会让已登记的基准标为过期。" : "补充说明…"}
               onChange={(event) => setTextDraft(event.target.value)}
               onBlur={() => { if (textDraft !== item.text) updateInput(item.id, { text: textDraft }); }}
             />
-            <p className="field-help">内容参与 digest 计算，改动会递增 rev 并使已登记的拆解结果过期。</p>
+            <p className="field-help">内容参与 digest 计算，改动会递增 rev 并使已登记的基准过期。</p>
           </section>
         ) : null}
 
@@ -76,7 +76,7 @@ export function ConceptInputInspector() {
                 {calibration.cmPerPixel.toFixed(4)} cm/px · {calibration.confirmed ? "已确认" : "待确认"}
               </p>
             ) : (
-              <p className="field-help" style={{ marginTop: 0 }}>还没有标定比例。没有比例时，拆解给出的相对位置只能按 estimated 处理。</p>
+              <p className="field-help" style={{ marginTop: 0 }}>还没有标定比例。没有比例时，照着这张图量出来的尺寸没法换算成厘米。</p>
             )}
             <div className="field-grid two-columns">
               <NumberField label="已知线段像素长度" value={pixelDistance} min={0.01} unit="px" onCommit={setPixelDistance} />
@@ -104,7 +104,7 @@ export function ConceptInputInspector() {
         ) : null}
 
         <div className="inspector-commands">
-          <button type="button" className="danger-command" onClick={() => removeInput(item.id)}><Trash2 size={14} />移除这份输入</button>
+          <button type="button" className="danger-command" onClick={() => removeInput(item.id)}><Trash2 size={14} />移除这份材料</button>
         </div>
       </div>
     );
@@ -113,18 +113,18 @@ export function ConceptInputInspector() {
   return (
     <div className="inspector-content">
       <header className="inspector-heading">
-        <span>输入上下文包</span>
+        <span>参考资料</span>
         <strong>{inputs.items.length} 份材料 · rev {inputs.revision}</strong>
-        <small>拆解前必须看全这里的所有输入</small>
+        <small>开工前先确认这里的材料都在；工具不读它们，区域和路线由你自己摆</small>
       </header>
 
       <section className="inspector-section">
         <h3>完整性</h3>
         {completeness.ok ? (
-          <p className="field-help" style={{ marginTop: 0 }}>必需输入齐全，可以开始拆解。</p>
+          <p className="field-help" style={{ marginTop: 0 }}>必需项齐全。</p>
         ) : (
           <>
-            <p className="field-help" style={{ marginTop: 0 }}>缺少必需输入，拆解会被拒绝：</p>
+            <p className="field-help" style={{ marginTop: 0 }}>缺少必需项：</p>
             {completeness.missing.map((kind) => (
               <div key={kind} className="logic-issue is-error"><CircleAlert size={13} /><span>{INPUT_KINDS[kind].label} —— {INPUT_KINDS[kind].hint}</span></div>
             ))}
@@ -134,11 +134,11 @@ export function ConceptInputInspector() {
       </section>
 
       <section className="inspector-section">
-        <h3>拆解结果</h3>
-        {state === "none" ? <p className="field-help" style={{ marginTop: 0 }}>还没有登记。登记后，输入一旦变化就会自动标为过期。</p> : null}
+        <h3>基准登记</h3>
+        {state === "none" ? <p className="field-help" style={{ marginTop: 0 }}>还没有登记。登记后，参考资料一旦变化就会自动标为过期。</p> : null}
         {state === "current" ? (
           <dl className="summary-list">
-            <div><dt>状态</dt><dd>与输入一致</dd></div>
+            <div><dt>状态</dt><dd>与材料一致</dd></div>
             <div><dt>依据 rev</dt><dd>{proposal?.basedOnInputsRevision}</dd></div>
             <div><dt>区域 / 链路</dt><dd>{proposal?.nodeCount} / {proposal?.linkCount}</dd></div>
           </dl>
@@ -146,19 +146,19 @@ export function ConceptInputInspector() {
         {state === "stale" ? (
           <div className="logic-issue is-warning">
             <Stamp size={13} />
-            <span>登记于 rev {proposal?.basedOnInputsRevision}，当前 rev {inputs.revision}：输入已变更，请重新核对后再交付。</span>
+            <span>登记于 rev {proposal?.basedOnInputsRevision}，当前 rev {inputs.revision}：参考资料已变更，请重新核对后再交付。</span>
           </div>
         ) : null}
         <button type="button" className="primary-command" style={{ marginTop: 8 }} disabled={!completeness.ok} onClick={() => recordProposal()}>
-          <Stamp size={14} />{state === "none" ? "登记拆解结果" : "重新登记"}
+          <Stamp size={14} />{state === "none" ? "登记基准" : "重新登记"}
         </button>
       </section>
 
       <section className="inspector-section">
         <h3>怎么用</h3>
         <p className="field-help" style={{ marginTop: 0 }}>
-          <FileText size={12} /> 逻辑拓扑图与范围图是必需项；规范与说明可以后续补充。<br />
-          补充或修改任何输入后，已登记的拆解结果会自动标为过期，不会被静默沿用。
+          <FileText size={12} /> 连通关系参考图与空间范围参考图是必需项；规则与说明可以后续补充。<br />
+          登记基准会把当前材料的指纹与此刻的拓扑规模一起记下来；之后补充或修改任何材料，这条基准都会自动标为过期，不会被静默沿用。
         </p>
       </section>
     </div>

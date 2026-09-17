@@ -31,27 +31,19 @@
 .level-tree-row.is-here small { color: #0e191599; }
 .level-tree-row em { margin-left: auto; padding: 0 5px; color: var(--warning); background: #2a2419; border-radius: 8px; font-size: 9.5px; font-style: normal; }
 .level-tree-row em.is-built { color: var(--accent); background: #17251f; }
-.level-tree-row em.is-ungrouped { color: var(--faint); background: transparent; }
-.level-tree-row.is-ungrouped span { color: var(--muted); }
 .level-tree-row.is-here em { color: #0e1915; background: #0e191522; }
 .level-tree-foot { display: flex; align-items: center; gap: 5px; margin: 8px 0 0; color: var(--faint); font-size: 9.5px; }
 .workflow-workspace { display: flex; flex-direction: column; }
 .workflow-navigation { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 10px; border-bottom: 1px solid var(--border-soft); background: var(--surface); font-size: 11px; }
 .workflow-navigation > strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .workflow-navigation > span { color: var(--muted); margin-right: auto; font-size: 10px; }
-.workflow-navigation .text-command, .workflow-navigation .back-button { flex-shrink: 0; font-size: 11px; }
-/* 入口栏上的小圆点：这一格已经有内容（有材料 / 有候选） */
+.workflow-navigation .text-command { flex-shrink: 0; font-size: 11px; }
+/* 入口栏上的小圆点：这一格已经有内容（有材料） */
 .workflow-navigation .stage-dot { display: inline-block; width: 5px; height: 5px; margin-left: 5px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
 .workflow-navigation .stage-switch button.is-active .stage-dot { background: #0e1915; }
 .workflow-canvas { position: relative; flex: 1; min-height: 180px; }
 .workflow-canvas > * { height: 100%; }
-.workflow-tools { position: relative; margin-left: auto; color: var(--muted); }
-.workflow-tools summary, .assembly-reference summary { padding: 6px; cursor: pointer; }
-.workflow-tools > div { position: absolute; right: 0; top: 30px; z-index: 20; width: 170px; padding: 6px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; box-shadow: 0 8px 20px #0005; }
-.workflow-tools button { display: block; width: 100%; text-align: left; padding: 8px; border: 0; background: transparent; cursor: pointer; }
-.workflow-tools button:hover { background: var(--surface-3); }
 .module-reference-sidebar { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-.module-reference-sidebar > .module-context-panel { flex: 1; min-height: 0; overflow-y: auto; }
 .module-palette-fieldset, .block-inspector-fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .module-palette-fieldset { flex: 0 0 auto; border-top: 1px solid var(--border); background: var(--surface); }
 .module-palette-fieldset .sidebar-content { height: auto; }
@@ -61,17 +53,6 @@
 .module-palette-fieldset .palette-icon { width: 28px; height: 28px; }
 .module-palette-fieldset .block-palette small, .module-palette-fieldset .sidebar-footnote { display: none; }
 .workflow-notice { margin: 0; padding: 8px 10px; background: #d8a84e15; color: var(--warning); font-size: 11px; line-height: 1.6; }
-.assembly-reference { border-top: 1px solid var(--border); font-size: 11px; }
-.workflow-module-list { overflow: auto; flex: 1; padding: 8px; }
-.workflow-module-card { padding: 10px; margin-bottom: 8px; border: 1px solid var(--border-soft); border-radius: 5px; background: var(--surface-2); }
-.workflow-module-card.is-selected { border-color: var(--accent); }
-.workflow-module-card strong { font-size: 12px; }
-.workflow-module-card p { color: var(--muted); font-size: 10px; line-height: 1.7; margin: 6px 0; }
-.workflow-module-card .module-card-actions { display: flex; gap: 5px; margin-top: 8px; }
-.workflow-module-card button { min-height: 26px; font-size: 11px; }
-.workflow-module-card select { width: 100%; background: var(--surface); color: var(--text); padding: 4px; border: 1px solid var(--border); font-size: 10px; }
-.workflow-module-card .instance-choice { display: block; width: 100%; margin-top: 5px; padding: 5px; text-align: left; background: var(--surface); color: var(--muted); border: 1px solid transparent; border-radius: 3px; }
-.workflow-module-card .instance-choice[aria-pressed="true"] { border-color: var(--accent); color: var(--text); }
 
 /* ---- 分屏：进复合节点时左逻辑 / 右拼接，同一个坐标系的两面 ---- */
 .split-pane { display: grid; height: 100%; min-height: 0; }

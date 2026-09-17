@@ -10,26 +10,5 @@
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true
   },
-  "include": [
-    "vite.config.ts",
-    "server/project-library.ts",
-    "server/concept-bridge.ts",
-    "src/domain/stable-json.ts",
-    "src/domain/project-schema.ts",
-    "src/domain/block-schema.ts",
-    "src/domain/block-types.ts",
-    "src/domain/catalog.ts",
-    "src/domain/spatial.ts",
-    "src/domain/node-geometry.ts",
-    "src/domain/concept.ts",
-    "src/domain/concept-inputs.ts",
-    "src/domain/concept-candidate.ts",
-    "src/domain/concept-commands.ts",
-    "src/domain/concept-scopes.ts",
-    "src/domain/validation.ts",
-    "src/domain/fingerprint.ts",
-    "src/domain/ids.ts",
-    "src/domain/commands.ts",
-    "src/domain/types.ts"
-  ]
+  "include": ["vite.config.ts", "server/**/*.ts", "src/domain/**/*.ts"]
 }

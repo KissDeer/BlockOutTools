@@ -9,10 +9,8 @@ import { UEDryRunPanel } from "./features/ue/UEDryRunPanel";
 import { IssueIndicator } from "./features/validation/IssueIndicator";
 import { ConceptCanvas } from "./features/concept/ConceptCanvas";
 import { UnifiedTopologyInspector } from "./features/concept/UnifiedTopologyInspector";
-import { ConceptCandidateInspector } from "./features/concept/ConceptCandidateInspector";
 import { ConceptInputInspector } from "./features/concept/ConceptInputInspector";
 import { ConceptInputsBoard } from "./features/concept/ConceptInputsBoard";
-import { ConceptRecognitionBoard } from "./features/concept/ConceptRecognitionBoard";
 import { ConceptSidebar } from "./features/concept/ConceptSidebar";
 import { LevelBreadcrumb } from "./features/concept/LevelBreadcrumb";
 import { LevelTree } from "./features/concept/LevelTree";
@@ -43,9 +41,8 @@ export function App() {
   const currentGeometry = useProjectStore((state) => state.currentGeometry);
   const splitRatio = useProjectStore((state) => state.splitRatio);
   const setSplitRatio = useProjectStore((state) => state.setSplitRatio);
-  /** 入口栏的两个小圆点：这一格有没有东西可看 */
+  /** 入口栏的小圆点：这一格有没有东西可看 */
   const inputCount = useProjectStore((state) => state.project.concept?.inputs.items.length ?? 0);
-  const candidate = useProjectStore((state) => state.candidate);
   const previewOpen = useProjectStore((state) => state.previewOpen);
   const previewDirty = useProjectStore((state) => state.previewDirty);
   const pastCount = useProjectStore((state) => state.past.length);
@@ -75,7 +72,7 @@ export function App() {
    */
   const splitOpen = currentGeometry !== null;
   const activeGeometry = currentGeometry;
-  const auxiliary = !geometryOnly && !splitOpen && (conceptPane === "inputs" || conceptPane === "recognition");
+  const auxiliary = !geometryOnly && !splitOpen && conceptPane === "inputs";
 
   useEffect(() => setNameDraft(project.name), [project.name]);
   useEffect(() => { setUePlanOpen(false); }, [project.projectId, levelPath.join("/")]);
@@ -133,28 +130,25 @@ export function App() {
       </aside>
       <section className="workspace workflow-workspace">
         {/*
-          主流程的入口。上传拓扑图与识别候选两块的零件一直都在，但在此之前**没有任何按钮能走到**
-          （`setConceptPane` 全仓库没有调用者）—— 这正是"面板存在 ≠ 已实现"那条的实例。
+          两个工作面。曾经还有第三格"识别候选"，那一步连同它的面板一起删掉了 ——
+          工具不猜方位与比例，区域和路线由人自己摆（见 PRODUCT_REQUIREMENTS §3.1）。
         */}
         {!geometryOnly && (
           <nav className="workflow-navigation" aria-label="逻辑拓扑工作面">
             <div className="stage-switch" role="tablist" aria-label="工作面">
               <button type="button" role="tab" aria-selected={conceptPane === "topology"} className={conceptPane === "topology" ? "is-active" : ""} onClick={() => store().setConceptPane("topology")}>逻辑拓扑</button>
-              <button type="button" role="tab" aria-selected={conceptPane === "inputs"} className={conceptPane === "inputs" ? "is-active" : ""} onClick={() => store().setConceptPane("inputs")}>输入上下文{inputCount ? <i className="stage-dot" /> : null}</button>
-              <button type="button" role="tab" aria-selected={conceptPane === "recognition"} className={conceptPane === "recognition" ? "is-active" : ""} onClick={() => store().setConceptPane("recognition")}>识别候选{candidate ? <i className="stage-dot" /> : null}</button>
+              <button type="button" role="tab" aria-selected={conceptPane === "inputs"} className={conceptPane === "inputs" ? "is-active" : ""} onClick={() => store().setConceptPane("inputs")}>参考资料{inputCount ? <i className="stage-dot" /> : null}</button>
             </div>
             <span>{conceptPane === "topology"
               ? "画布位置只用于排版；节点的真实落位在右侧检查器的「落位与朝向」里填。"
-              : conceptPane === "inputs"
-                ? "图片与文字材料只作一次性入口，采用之后不再维护第二份状态。"
-                : "先同步输入给本地服务，再拉取候选逐个核对。"}</span>
+              : "放在这里的图与文字只是参考；工具不解析它们，区域和路线由人自己摆。"}</span>
           </nav>
         )}
         <div className="workflow-canvas">
           <CanvasBoundary key={`${project.projectId}:${level.kind}:${level.scopeId ?? "root"}:${level.nodeId ?? ""}:${conceptPane}:${activeGeometry?.id ?? ""}`}>
             <Suspense fallback={<div className="workspace-loading">正在载入编辑工作面…</div>}>
               {auxiliary
-                ? (conceptPane === "inputs" ? <ConceptInputsBoard /> : <ConceptRecognitionBoard />)
+                ? <ConceptInputsBoard />
                 : activeGeometry
                   ? (splitOpen
                     ? <SplitPane
@@ -172,7 +166,7 @@ export function App() {
       </section>
       <aside className="inspector">
         {auxiliary
-          ? (conceptPane === "inputs" ? <ConceptInputInspector /> : <ConceptCandidateInspector />)
+          ? <ConceptInputInspector />
           : splitOpen
             ? <fieldset className="block-inspector-fieldset"><BlockInspector /><details className="inspector-section"><summary>这一层的逻辑</summary><UnifiedTopologyInspector /></details></fieldset>
             : geometryOnly
