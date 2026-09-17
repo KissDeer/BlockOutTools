@@ -15,13 +15,15 @@
 | FR-01 | 项目文件与草稿 | 已实现 |
 | FR-02 | 拓扑图识别导入 | **未实现**（核心缺口） |
 | FR-03 | 逻辑拓扑编辑 | 已实现 |
-| FR-04 | 节点几何 | **未实现**（数据模型未就位） |
-| FR-05 | 节点嵌套 | 部分实现 |
-| FR-06 | 3D 预览 | 已实现，但挂在旧模型上 |
+| FR-04 | 节点几何 | **已实现**（节点直接持有 `blocks`） |
+| FR-05 | 节点嵌套 | 已实现（两级跑通、分屏、展开入口已接） |
+| FR-06 | 3D 预览 | **已实现**（读展平节点几何） |
 | FR-07 | UE 导出 | 部分实现（本地计划，不含 Apply） |
 | FR-08 | 规范检查 | 已实现 |
 
-**FR-06 / FR-07 标注"已实现"是有条件的**：它们当前读的是模块实例与组装求解器，而模块层要删。FR-04 落地时这两条必须改吃节点几何，否则一删模块就同时失去预览和导出——这是前两次重构回退的直接原因。
+**FR-06 / FR-07 曾经标注"已实现是有条件的"**：它们当时读的是模块实例与组装求解器，而模块层要删。
+2026-09-17 的 1-C 已经把两者改成读**同一份展平节点几何**（`node-geometry.ts`），
+"删模块就白屏"的绑定已解除。`resolveAssembly` 只保留给端口约束检查。
 
 ---
 
@@ -80,11 +82,11 @@ store:392    setConceptPane: (conceptPane) => set({ conceptPane }),
 
 ---
 
-## FR-04 节点几何（P0，未实现）★ 模型改动
+## FR-04 节点几何（P0，已实现）
 
-- **节点直接持有几何**：`LogicNode.blocks: Block[]`。不再有 `moduleId` 指针。
+- **节点直接持有几何**：`LogicNode.blocks: Block[]`。不再有 `moduleId` 指针（旧数据靠回落读，1-F 删）。
 - 双击节点进入其内部；已有几何直接打开，不重建、不重置。**复合节点进去是分屏**（左逻辑图 / 右拼接图，见 FR-05），叶子节点是全宽拼接图。
-- 节点内部的 `relativePosition` **同时就是它在父级里的落位**（不再需要单独的模块原点），也是节点自己这套坐标的原点。
+- 节点内部的 `relativePosition` **同时就是它在父级里的落位**，也是节点自己这套坐标的原点；`relativeRotation` 是它自己那套坐标的朝向。两者都能在区域检查器的「落位与朝向」里直接改。
 - UE 参数化积木目录（Box / Doorway / Stairs Linear / Port）与参数 Schema 不变。
 - 支持单选、多选、框选、移动、旋转、缩放、复制、粘贴、删除、对齐、分布。
 - `W/E/R` 切换移动、旋转、缩放；网格吸附可临时关闭；数值输入只提交一个历史命令。
@@ -92,7 +94,8 @@ store:392    setConceptPane: (conceptPane) => set({ conceptPane }),
 
 **验收**：连续执行 20 个混合操作后逐步撤销到初始状态，再完整重做，数据和画面一致。
 
-**开工纪律**（前两次失败的反面教材）：先加 `blocks` / `childScopeId` 字段并保持编译通过，**从调用方最多的文件倒着改**（`concept-commands` → `workflow-context` → store → 显示层），最后才是 `concept.ts` 本身。**不要在一个回合里既删功能又换模型。**
+**落地情况（2026-09-17）**：字段、几何编辑、落位编辑、展平都已经在节点上跑通。
+**没有落位的节点会被报出来**（状态栏与 UE 面板点名），因为不报的话多个区域会叠在原点，看起来像少了几块。
 
 ---
 
@@ -118,7 +121,7 @@ store:392    setConceptPane: (conceptPane) => set({ conceptPane }),
 
 ---
 
-## FR-06 3D 预览（P0，已实现但挂错模型）
+## FR-06 3D 预览（P0，已实现）
 
 - 右侧可收起窗口，默认收起；只有用户显式点击刷新才重建场景，普通编辑只标记"需要刷新"。
 - 支持轨道旋转、平移、缩放、聚焦选择、重置视图、平面剖切。
@@ -128,15 +131,10 @@ store:392    setConceptPane: (conceptPane) => set({ conceptPane }),
 
 **验收**：相同项目的 3D 包围盒、层高、朝向与 UE 计划在容差内一致。
 
-**必须改的地方**：`PreviewPanel.tsx:59-61` 现在这样取几何——
-
-```ts
-const resolution = resolveAssembly(snapshot);           // 走模块实例
-const instances = resolution.instances.filter(...);
-const primitives = buildDeploymentGeometry(snapshot, instances);
-```
-
-`resolveAssembly` 解析的是 `modules + instances + connections`。FR-04 之后要改成从**递归展平的节点几何**取。这一刀是解除"删模块就白屏"的关键，**优先级高于删模块本身**。
+**落地情况（2026-09-17）**：几何已经改成从 `flattenProjectGeometry(snapshot)` 取，
+再交给 `buildDeploymentGeometryFrom`。`resolveAssembly` 只用来数端口约束残差 ——
+那是**组装**的检查，与几何来源无关。换层时面板会标记"3D 需要刷新"，
+不再继续显示上一层的几何。
 
 ---
 
@@ -150,7 +148,8 @@ const primitives = buildDeploymentGeometry(snapshot, instances);
 
 **验收**：同一项目连续导出两次结果一致；重命名节点后同步键不变。
 
-**必须改的地方**：`ue-plan.ts:41-50` 同样从 `resolution.instances` 出发，与 FR-06 是同一处绑定，应一并改。
+**落地情况（2026-09-17）**：`buildUEDryRunFrom(project, geometry)` 与 3D 预览吃同一份 `FlatGeometry`。
+**没有落位的区域会在面板上被点名**，因为它们会被按原点处理、叠在一起。
 
 **一致性风险**：`scripts/export-ue-actors.mjs` 自带一整套 `CONNECTION_RULES` 和求解函数，注释写"与 app 内 ue-plan.ts 语义一致"，但**没有测试锁住这个一致性**。要么合并成一份，要么补一个交叉校验测试。
 
