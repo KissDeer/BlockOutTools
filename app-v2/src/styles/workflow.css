@@ -40,6 +40,9 @@
 .workflow-navigation > strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .workflow-navigation > span { color: var(--muted); margin-right: auto; font-size: 10px; }
 .workflow-navigation .text-command, .workflow-navigation .back-button { flex-shrink: 0; font-size: 11px; }
+/* 入口栏上的小圆点：这一格已经有内容（有材料 / 有候选） */
+.workflow-navigation .stage-dot { display: inline-block; width: 5px; height: 5px; margin-left: 5px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
+.workflow-navigation .stage-switch button.is-active .stage-dot { background: #0e1915; }
 .workflow-canvas { position: relative; flex: 1; min-height: 180px; }
 .workflow-canvas > * { height: 100%; }
 .workflow-tools { position: relative; margin-left: auto; color: var(--muted); }

@@ -3,8 +3,8 @@ import type { Vec2 } from "./types";
 import { fingerprint } from "./fingerprint";
 
 /**
- * 输入上下文包：拆解前必须看全的材料。
- * digest 是"这次拆解到底依据了哪些输入"的指纹；输入一变，旧提案立刻可判为过期。
+ * 输入上下文包：识别前必须看全的材料。
+ * digest 是"这次识别到底依据了哪些输入"的指纹；输入一变，旧提案立刻可判为过期。
  */
 
 export type LogicInputKind = "logic-topology" | "scope-map" | "mood" | "rules" | "note";
@@ -12,7 +12,7 @@ export type LogicInputKind = "logic-topology" | "scope-map" | "mood" | "rules" |
 export interface InputKindMeta {
   label: string;
   hint: string;
-  /** 缺少时不允许开始拆解 */
+  /** 缺少时不允许开始识别 */
   required: boolean;
   /** 是否承载图片 */
   image: boolean;
@@ -57,7 +57,7 @@ export interface LogicInputs {
   updatedAt: string;
 }
 
-/** 拆解结果登记：绑定它依据的输入指纹 */
+/** 识别结果登记：绑定它依据的输入指纹 */
 export interface DecompositionProposal {
   id: string;
   basedOnInputsDigest: string;
@@ -105,7 +105,7 @@ export interface InputsCompleteness {
   warnings: InputsWarning[];
 }
 
-/** 拆解前的完整性核对：缺项必须显式报告，不允许"凭印象拆" */
+/** 识别前的完整性核对：缺项必须显式报告，不允许"凭印象认" */
 export function checkInputsCompleteness(inputs: LogicInputs): InputsCompleteness {
   const kinds = new Set(inputs.items.map((item) => item.kind));
   const missing = (Object.keys(INPUT_KINDS) as LogicInputKind[]).filter((kind) => INPUT_KINDS[kind].required && !kinds.has(kind));
@@ -115,7 +115,7 @@ export function checkInputsCompleteness(inputs: LogicInputs): InputsCompleteness
     if (!item.calibration) warnings.push({ id: `${item.id}:uncalibrated`, message: `“${item.name}”还没有比例标定，相对位置只能按 estimated 处理` });
     else if (!item.calibration.confirmed) warnings.push({ id: `${item.id}:unconfirmed`, message: `“${item.name}”的比例尚未确认` });
   }
-  if (!kinds.has("rules")) warnings.push({ id: "rules:missing", message: "还没有提供拆分规范；规则后续补充会让已有拆解结果需要重新核对" });
+  if (!kinds.has("rules")) warnings.push({ id: "rules:missing", message: "还没有提供拆分规范；规则后续补充会让已有识别结果需要重新核对" });
   return { ok: missing.length === 0, missing, warnings };
 }
 

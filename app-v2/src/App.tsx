@@ -51,6 +51,9 @@ export function App() {
   const currentGeometry = useProjectStore((state) => state.currentGeometry);
   const splitRatio = useProjectStore((state) => state.splitRatio);
   const setSplitRatio = useProjectStore((state) => state.setSplitRatio);
+  /** 入口栏的两个小圆点：这一格有没有东西可看 */
+  const inputCount = useProjectStore((state) => state.project.concept?.inputs.items.length ?? 0);
+  const candidate = useProjectStore((state) => state.candidate);
   const selectedInstanceId = useProjectStore((state) => state.selectedInstanceId);
   const selectedConnectionId = useProjectStore((state) => state.selectedConnectionId);
   const moduleDraft = useProjectStore((state) => state.moduleDraft);
@@ -159,6 +162,24 @@ export function App() {
       <section className="workspace workflow-workspace">
         {placementNotice && <p className="workflow-notice" role="status">{placementNotice}</p>}
         {detachedLevel && activeModule && <ModuleDraftPanel key={`${project.projectId}:${activeModule.id}`} moduleId={activeModule.id} />}
+        {/*
+          主流程的入口。上传拓扑图与识别候选两块的零件一直都在，但在此之前**没有任何按钮能走到**
+          （`setConceptPane` 全仓库没有调用者）—— 这正是"面板存在 ≠ 已实现"那条的实例。
+        */}
+        {!geometryOnly && (
+          <nav className="workflow-navigation" aria-label="逻辑拓扑工作面">
+            <div className="stage-switch" role="tablist" aria-label="工作面">
+              <button type="button" role="tab" aria-selected={conceptPane === "topology"} className={conceptPane === "topology" ? "is-active" : ""} onClick={() => store().setConceptPane("topology")}>逻辑拓扑</button>
+              <button type="button" role="tab" aria-selected={conceptPane === "inputs"} className={conceptPane === "inputs" ? "is-active" : ""} onClick={() => store().setConceptPane("inputs")}>输入上下文{inputCount ? <i className="stage-dot" /> : null}</button>
+              <button type="button" role="tab" aria-selected={conceptPane === "recognition"} className={conceptPane === "recognition" ? "is-active" : ""} onClick={() => store().setConceptPane("recognition")}>识别候选{candidate ? <i className="stage-dot" /> : null}</button>
+            </div>
+            <span>{conceptPane === "topology"
+              ? "上传拓扑图是入口；之后的唯一事实来源是这里的节点列表。"
+              : conceptPane === "inputs"
+                ? "图片与文字材料只作一次性入口，采用之后不再维护第二份状态。"
+                : "先同步输入给本地服务，再拉取候选逐个核对。"}</span>
+          </nav>
+        )}
         <div className="workflow-canvas">
           <CanvasBoundary key={`${project.projectId}:${level.kind}:${level.scopeId ?? "root"}:${level.nodeId ?? ""}:${conceptPane}:${splitOpen ? currentGeometry?.id ?? "" : ""}`}>
             <Suspense fallback={<div className="workspace-loading">正在载入编辑工作面…</div>}>

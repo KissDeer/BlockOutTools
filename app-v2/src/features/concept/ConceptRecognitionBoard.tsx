@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CircleAlert, Download, ImageOff, RefreshCw, Upload } from "lucide-react";
+import { CircleAlert, Download, ImageOff, ImagePlus, RefreshCw, Upload } from "lucide-react";
 import { LOGIC_KINDS } from "../../domain/concept";
 import { recognitionCandidateSchema, summarizeCandidate, validateCandidate, type RecognitionCandidate } from "../../domain/concept-candidate";
 import { useProjectStore } from "../../store/project-store";
 import { useCurrentTopology } from "./use-current-topology";
+
+const IMAGE_FIELD_KIND = "logic-topology" as const;
 
 export function ConceptRecognitionBoard() {
   const project = useProjectStore((state) => state.project);
@@ -14,9 +16,11 @@ export function ConceptRecognitionBoard() {
   const setCandidate = useProjectStore((state) => state.setCandidate);
   const selectCandidateNode = useProjectStore((state) => state.setSelectedCandidateNode);
   const updateCandidateNode = useProjectStore((state) => state.updateCandidateNode);
+  const addLogicInput = useProjectStore((state) => state.addLogicInput);
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
   const [size, setSize] = useState({ width: 900, height: 620 });
   const [status, setStatus] = useState("");
   const [dragging, setDragging] = useState<string | null>(null);
@@ -85,6 +89,29 @@ export function ConceptRecognitionBoard() {
     }
   }
 
+  /**
+   * 在识别这一步直接收图。
+   * 候选要落在图上，所以范围图是识别的前置；让入口停在这里，人就不用先猜"要去哪一格加图"。
+   */
+  async function addTopologyImage(file: File) {
+    if (file.size > 10 * 1024 * 1024) { setStatus("图片请限制在 10MB 以内"); return; }
+    try {
+      const data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const image = new window.Image();
+      image.src = data;
+      await image.decode();
+      addLogicInput({ kind: IMAGE_FIELD_KIND, name: file.name, ref: file.name, imageData: data, pixelSize: [image.width, image.height] });
+      setStatus(`已加入拓扑图 ${file.name}（${image.width}×${image.height}）。现在同步给本地服务，让我读图。`);
+    } catch {
+      setStatus("图片读取失败");
+    }
+  }
+
   function onPointerMove(event: React.PointerEvent<SVGSVGElement>) {
     if (!dragging) return;
     const rect = event.currentTarget.getBoundingClientRect();
@@ -106,8 +133,20 @@ export function ConceptRecognitionBoard() {
           if (file) void importFile(file);
         }}
       />
+      <input
+        className="sr-only"
+        ref={imageRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        onChange={(event) => {
+          const file = event.currentTarget.files?.[0];
+          event.currentTarget.value = "";
+          if (file) void addTopologyImage(file);
+        }}
+      />
 
       <header className="recognition-bar">
+        <button type="button" className="secondary-command" onClick={() => imageRef.current?.click()}><ImagePlus size={14} />添加拓扑图</button>
         <button type="button" className="secondary-command" onClick={() => void syncInputs()}><Upload size={14} />同步输入给本地服务</button>
         <button type="button" className="secondary-command" onClick={() => void pullCandidate()}><Download size={14} />拉取候选</button>
         <button type="button" className="secondary-command" onClick={() => fileRef.current?.click()}><RefreshCw size={14} />从文件导入</button>
@@ -251,7 +290,7 @@ export function ConceptRecognitionBoard() {
         <div className="empty-workspace concept-empty">
           <h3>还没有识别候选</h3>
           <p>
-            先把「同步输入给本地服务」，然后在 DSH 里让我读图并给出候选；<br />
+            先「添加拓扑图」并「同步输入给本地服务」，然后在 DSH 里让我读图并给出候选；<br />
             再点「拉取候选」，逐条确认后套用。也可以直接「从文件导入」一份候选 JSON。
           </p>
         </div>
