@@ -1,0 +1,23 @@
+# Keep final whitebox artifacts and reproducible manifests in Git.
+# Raw research caches, intermediate previews and binary backups remain local.
+cathedral-of-the-deep/*.umap
+cathedral-of-the-deep/v1-backup/*.umap
+cathedral-of-the-deep/*-native.png
+cathedral-of-the-deep/*-check.png
+cathedral-of-the-deep/available-meshes.json
+cathedral-of-the-deep/nave.png
+cathedral-of-the-deep/overview.png
+cathedral-of-the-deep/overview-initial.png
+cathedral-of-the-deep/overview-final.png
+cathedral-of-the-deep/references/*.html
+cathedral-of-the-deep/references/*.txt
+cathedral-of-the-deep/references/bing*.json
+cathedral-of-the-deep/references/search-*.json
+
+high-wall-of-lothric/backup/*.umap
+high-wall-of-lothric/*-native.png
+high-wall-of-lothric/*-check.png
+high-wall-of-lothric/wyvern-final.png
+high-wall-of-lothric/references/*.html
+high-wall-of-lothric/references/*.txt
+high-wall-of-lothric/references/guide0.jpg

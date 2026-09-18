@@ -1,0 +1,126 @@
+{
+  "timestamp_utc": "2026-09-18T03:47:12.081928+00:00",
+  "target_level": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT",
+  "status": "pass",
+  "checks": 26285,
+  "passed": 26285,
+  "failed": 0,
+  "evidence": "Editor static geometry and collision queries only; not PIE or gameplay traversal proof. Capsule clearance is measured above the actual sampled floor with a 45 cm step-height allowance plus 2 cm margin; this is not a ground-following CharacterMovement simulation.",
+  "parameters": {
+    "sample_spacing_cm": 50.0,
+    "floor_tolerance_cm": 18.5,
+    "capsule_radius_cm": 34.0,
+    "capsule_half_height_cm": 100.0,
+    "pawn_measurement_source": "BP_Miya measured in PIE: capsule radius 30 cm, half-height 100 cm, max step height 45 cm; audit radius increased to 34 cm conservatively.",
+    "step_height_allowance_cm": 45.0,
+    "capsule_center_above_measured_floor_cm": 147.0
+  },
+  "errors": [],
+  "routes": [
+    {
+      "name": "arrival_to_chapel",
+      "samples": 73,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "Graveyard_Ascent",
+      "samples": 69,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "chapel_graveyard_ascent",
+      "samples": 493,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "nave_altar",
+      "samples": 236,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "UpperEntrance_Descent",
+      "samples": 41,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "Gallery_to_Nave",
+      "samples": 41,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "upper_entry_to_nave",
+      "samples": 231,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "gallery_circuit",
+      "samples": 649,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "shortcut_west",
+      "samples": 401,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "shortcut_east",
+      "samples": 339,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "Belfry_Stair",
+      "samples": 41,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "roof_to_belfry",
+      "samples": 429,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "rafters",
+      "samples": 587,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "rosaria",
+      "samples": 85,
+      "failures": 0,
+      "status": "pass"
+    }
+  ],
+  "actors": {
+    "manifest": 2693,
+    "actual_with_prefix": 2711,
+    "static_meshes": 2681,
+    "manifest_collision_disabled": 508
+  },
+  "material_usage": {
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Candle.MI_COTD_Candle": 40,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Cloth.MI_COTD_Cloth": 7,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Earth.MI_COTD_Earth": 9,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Floor.MI_COTD_Floor": 16,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Recess.MI_COTD_Recess": 7,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Rock.MI_COTD_Rock": 34,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Roof.MI_COTD_Roof": 62,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Stone.MI_COTD_Stone": 365,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_StoneDark.MI_COTD_StoneDark": 359,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_StoneWarm.MI_COTD_StoneWarm": 364,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Trim.MI_COTD_Trim": 986,
+    "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Wood.MI_COTD_Wood": 432
+  },
+  "errors_truncated": false
+}

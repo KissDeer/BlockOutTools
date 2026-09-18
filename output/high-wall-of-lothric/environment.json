@@ -1,0 +1,374 @@
+{
+  "map": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2",
+  "source_references": [
+    "references/overview0.jpg",
+    "references/first-bonfire0.jpg"
+  ],
+  "assumptions": [
+    "Qualitative palette and lighting reconstruction, not measured original light settings."
+  ],
+  "materials": {
+    "Floor": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Floor",
+      "srgb": [
+        0.55,
+        0.55,
+        0.51
+      ],
+      "linear_readback": [
+        0.2632734179496765,
+        0.2632734179496765,
+        0.22341398894786835,
+        1.0
+      ]
+    },
+    "Stone": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Stone",
+      "srgb": [
+        0.61,
+        0.62,
+        0.6
+      ],
+      "linear_readback": [
+        0.33034372329711914,
+        0.34239163994789124,
+        0.31854677200317383,
+        1.0
+      ]
+    },
+    "StoneDark": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_StoneDark",
+      "srgb": [
+        0.31,
+        0.32,
+        0.3
+      ],
+      "linear_readback": [
+        0.07828831672668457,
+        0.08353512734174728,
+        0.07323895394802094,
+        1.0
+      ]
+    },
+    "StoneWarm": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_StoneWarm",
+      "srgb": [
+        0.53,
+        0.43,
+        0.34
+      ],
+      "linear_readback": [
+        0.24286681413650513,
+        0.15487249195575714,
+        0.09462962299585342,
+        1.0
+      ]
+    },
+    "Roof": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Roof",
+      "srgb": [
+        0.32,
+        0.34,
+        0.35
+      ],
+      "linear_readback": [
+        0.08353512734174728,
+        0.09462962299585342,
+        0.10048151016235352,
+        1.0
+      ]
+    },
+    "Trim": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Trim",
+      "srgb": [
+        0.68,
+        0.68,
+        0.64
+      ],
+      "linear_readback": [
+        0.4200332760810852,
+        0.4200332760810852,
+        0.36724647879600525,
+        1.0
+      ]
+    },
+    "Recess": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Recess",
+      "srgb": [
+        0.16,
+        0.18,
+        0.18
+      ],
+      "linear_readback": [
+        0.021980946883559227,
+        0.027211781591176987,
+        0.027211781591176987,
+        1.0
+      ]
+    },
+    "Moss": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Moss",
+      "srgb": [
+        0.3,
+        0.32,
+        0.23
+      ],
+      "linear_readback": [
+        0.07323895394802094,
+        0.08353512734174728,
+        0.043233636766672134,
+        1.0
+      ]
+    },
+    "Earth": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Earth",
+      "srgb": [
+        0.29,
+        0.26,
+        0.22
+      ],
+      "linear_readback": [
+        0.06838485598564148,
+        0.05497173219919205,
+        0.03968190774321556,
+        1.0
+      ]
+    },
+    "Rock": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Rock",
+      "srgb": [
+        0.37,
+        0.37,
+        0.34
+      ],
+      "linear_readback": [
+        0.11280478537082672,
+        0.11280478537082672,
+        0.09462962299585342,
+        1.0
+      ]
+    },
+    "Wood": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Wood",
+      "srgb": [
+        0.23,
+        0.19,
+        0.15
+      ],
+      "linear_readback": [
+        0.043233636766672134,
+        0.0300741046667099,
+        0.01960664801299572,
+        1.0
+      ]
+    },
+    "Candle": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Candle",
+      "srgb": [
+        0.76,
+        0.68,
+        0.5
+      ],
+      "linear_readback": [
+        0.5382355451583862,
+        0.4200332760810852,
+        0.21404114365577698,
+        1.0
+      ]
+    },
+    "Cloth": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Cloth",
+      "srgb": [
+        0.28,
+        0.12,
+        0.13
+      ],
+      "linear_readback": [
+        0.06372379511594772,
+        0.0134117491543293,
+        0.015325203537940979,
+        1.0
+      ]
+    }
+  },
+  "map_saved_by_this_script": false,
+  "environment": {
+    "sun_lux": 12000.0,
+    "sun_pitch": -11.999999999999998,
+    "sun_yaw": -44.99999999999998,
+    "sky_intensity": 1.0,
+    "fog_density": 0.004000000189989805,
+    "fog_height_cm": 2800.0,
+    "fog_max_opacity": 0.3499999940395355,
+    "min_ev100": 7.0,
+    "max_ev100": 12.0,
+    "exposure_bias": -0.30000001192092896,
+    "exposure_adaptation": "EV100 7.0 to 12.0 with -0.3 bias limits outdoor washout while retaining indoor adaptation; practical lights support enclosed chambers.",
+    "volumetric_fog": false
+  },
+  "lights": [
+    {
+      "label": "HWL_Atmosphere_Light_TowerUpper",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_0",
+      "position_cm": [
+        8000,
+        2000,
+        5700
+      ],
+      "lumens": 18000.0,
+      "radius_cm": 2400.0,
+      "temperature_k": 4200.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_WyvernUndercroft",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_1",
+      "position_cm": [
+        3500,
+        1400,
+        3850
+      ],
+      "lumens": 16000.0,
+      "radius_cm": 2100.0,
+      "temperature_k": 3300.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_GreiratCell",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_2",
+      "position_cm": [
+        8000,
+        6800,
+        2600
+      ],
+      "lumens": 12000.0,
+      "radius_cm": 1800.0,
+      "temperature_k": 3100.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_BarracksWest",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_3",
+      "position_cm": [
+        -2400,
+        6100,
+        2650
+      ],
+      "lumens": 18000.0,
+      "radius_cm": 2400.0,
+      "temperature_k": 3000.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_BarracksEast",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_4",
+      "position_cm": [
+        -500,
+        6900,
+        2650
+      ],
+      "lumens": 18000.0,
+      "radius_cm": 2400.0,
+      "temperature_k": 3300.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_DancerDoor",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_5",
+      "position_cm": [
+        -6000,
+        17350,
+        3050
+      ],
+      "lumens": 24000.0,
+      "radius_cm": 2700.0,
+      "temperature_k": 3000.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_DancerNave",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_6",
+      "position_cm": [
+        -6000,
+        19000,
+        3700
+      ],
+      "lumens": 25000.0,
+      "radius_cm": 3400.0,
+      "temperature_k": 3800.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_DancerAltar",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_7",
+      "position_cm": [
+        -6000,
+        20500,
+        3100
+      ],
+      "lumens": 22000.0,
+      "radius_cm": 2300.0,
+      "temperature_k": 2900.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_VordtWest",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_8",
+      "position_cm": [
+        -1800,
+        13500,
+        650
+      ],
+      "lumens": 18000.0,
+      "radius_cm": 2300.0,
+      "temperature_k": 6500.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_VordtEast",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_9",
+      "position_cm": [
+        1800,
+        13500,
+        650
+      ],
+      "lumens": 18000.0,
+      "radius_cm": 2300.0,
+      "temperature_k": 6500.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    },
+    {
+      "label": "HWL_Atmosphere_Light_VordtGate",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PointLight_10",
+      "position_cm": [
+        0,
+        15500,
+        800
+      ],
+      "lumens": 22000.0,
+      "radius_cm": 3000.0,
+      "temperature_k": 6000.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.MOVABLE: 2>"
+    }
+  ],
+  "player_start": {
+    "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2.L_HighWallofLothric_Test_GPT2:PersistentLevel.PlayerStart_0",
+    "location": [
+      -8500,
+      -9000,
+      6120
+    ],
+    "yaw": 0
+  }
+}

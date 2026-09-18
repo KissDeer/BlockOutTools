@@ -1,0 +1,190 @@
+{
+  "timestamp_utc": "2026-09-18T04:19:19.489123+00:00",
+  "target_level": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT2",
+  "status": "pass",
+  "checks": 53316,
+  "passed": 53316,
+  "failed": 0,
+  "evidence": "Editor static geometry and collision queries only; not PIE or gameplay traversal proof. Capsule clearance is measured above the actual sampled floor with a 45 cm step-height allowance plus 2 cm margin; this is not a ground-following CharacterMovement simulation.",
+  "parameters": {
+    "sample_spacing_cm": 50.0,
+    "floor_tolerance_cm": 18.5,
+    "capsule_radius_cm": 34.0,
+    "capsule_half_height_cm": 100.0,
+    "pawn_measurement_source": "BP_Miya measured in PIE: capsule radius 30 cm, half-height 100 cm, max step height 45 cm; audit radius increased to 34 cm conservatively.",
+    "step_height_allowance_cm": 45.0,
+    "capsule_center_above_measured_floor_cm": 147.0
+  },
+  "errors": [],
+  "routes": [
+    {
+      "name": "01_HighWall",
+      "samples": 134,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "02_InnerWall",
+      "samples": 91,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "03_WyvernPass",
+      "samples": 117,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "04_TowerAscent",
+      "samples": 129,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "05_TowerDescent",
+      "samples": 130,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "06_RoofDescent",
+      "samples": 101,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "07_CourtDescent",
+      "samples": 94,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "08_Procession",
+      "samples": 131,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "09_ChapelStair",
+      "samples": 131,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "10_VordtDescent",
+      "samples": 124,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "11_Exit",
+      "samples": 101,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "12_DeadEnd",
+      "samples": 91,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "13_Watchtower",
+      "samples": 89,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "14_Greirat",
+      "samples": 94,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "15_ReturnEntry",
+      "samples": 107,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "16_ReturnLower",
+      "samples": 141,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "17_ReturnUpper",
+      "samples": 121,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "18_ReturnHub",
+      "samples": 71,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "19_UndercroftDescent",
+      "samples": 79,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "20_UndercroftRoof",
+      "samples": 103,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "21_BarracksSearch",
+      "samples": 79,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "22_ChapelApse",
+      "samples": 61,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "23_Courtyard_Circuit",
+      "samples": 145,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "24_Chapel_Nave",
+      "samples": 81,
+      "failures": 0,
+      "status": "pass"
+    },
+    {
+      "name": "25_Starting_Lookout",
+      "samples": 53,
+      "failures": 0,
+      "status": "pass"
+    }
+  ],
+  "actors": {
+    "manifest": 5338,
+    "actual_with_prefix": 5355,
+    "static_meshes": 5338,
+    "manifest_collision_disabled": 1709
+  },
+  "material_usage": {
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Cloth.MI_HWL_Cloth": 58,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Floor.MI_HWL_Floor": 29,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Recess.MI_HWL_Recess": 466,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Rock.MI_HWL_Rock": 205,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Roof.MI_HWL_Roof": 240,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Stone.MI_HWL_Stone": 1282,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_StoneDark.MI_HWL_StoneDark": 311,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_StoneWarm.MI_HWL_StoneWarm": 1077,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Trim.MI_HWL_Trim": 1454,
+    "/Game/MyGame/Map/HighWallofLothric/HighWallWhitebox/Materials/MI_HWL_Wood.MI_HWL_Wood": 216
+  },
+  "errors_truncated": false
+}

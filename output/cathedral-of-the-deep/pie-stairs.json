@@ -1,0 +1,1704 @@
+{
+  "test": "live_character_four_stair_ascents",
+  "coverage": "Four independent low-to-high stair flights; not a continuous level playthrough.",
+  "setup": "One runtime-only teleport to the supported lower landing before each flight; all ascent uses movement input.",
+  "status": "passed",
+  "success": true,
+  "flights": [
+    {
+      "name": "Graveyard_Ascent",
+      "status": "passed",
+      "success": true,
+      "planned_start": [
+        7000,
+        -5900,
+        0
+      ],
+      "planned_end": [
+        7000,
+        -2500,
+        1800
+      ],
+      "horizontal_run_cm": 3400.0,
+      "setup_teleport": {
+        "requested": [
+          7000.0,
+          -5980.0,
+          105.0
+        ],
+        "actual": [
+          7000.0,
+          -5980.0,
+          105.0
+        ]
+      },
+      "teleports_during_ascent": 0,
+      "before": [
+        7000.0,
+        -5980.0,
+        105.0
+      ],
+      "min_z_cm": 102.15000200271606,
+      "max_z_cm": 1902.1499837548276,
+      "max_speed_cm_s": 300.0000089407111,
+      "samples": [
+        {
+          "seconds": 0.313,
+          "position": [
+            7000.0,
+            -5980.0,
+            102.15000200271606
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 0.641,
+          "position": [
+            7000.0,
+            -5902.49997875318,
+            120.08325773836759
+          ],
+          "velocity": [
+            0.0,
+            299.99999105931073,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 0.969,
+          "position": [
+            7000.0,
+            -5802.4999571278695,
+            173.8821374208958
+          ],
+          "velocity": [
+            0.0,
+            300.00000894068927,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.297,
+          "position": [
+            7000.0,
+            -5702.499935521186,
+            227.54388236609293
+          ],
+          "velocity": [
+            0.0,
+            299.99999105931073,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.641,
+          "position": [
+            7000.0,
+            -5602.49991266653,
+            281.06368566739843
+          ],
+          "velocity": [
+            0.0,
+            300.00000670551697,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.969,
+          "position": [
+            7000.0,
+            -5502.499890445173,
+            334.4343164536567
+          ],
+          "velocity": [
+            0.0,
+            299.9999977648277,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.297,
+          "position": [
+            7000.0,
+            -5402.499869155139,
+            387.64551843989966
+          ],
+          "velocity": [
+            0.0,
+            300.0000022351723,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.641,
+          "position": [
+            7000.0,
+            -5302.499845127016,
+            440.6830898607427
+          ],
+          "velocity": [
+            0.0,
+            300.0000089407111,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.969,
+          "position": [
+            7000.0,
+            -5202.499822905659,
+            493.527279004461
+          ],
+          "velocity": [
+            0.0,
+            299.9999977648277,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.313,
+          "position": [
+            7000.0,
+            -5102.499800218641,
+            546.1501534913973
+          ],
+          "velocity": [
+            0.0,
+            300.00000894068927,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.641,
+          "position": [
+            7000.0,
+            -5002.499777680635,
+            598.5108738312595
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.969,
+          "position": [
+            7000.0,
+            -4902.49975503087,
+            650.5463419541704
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.313,
+          "position": [
+            7000.0,
+            -4802.499732008576,
+            702.1503625766595
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.641,
+          "position": [
+            7000.0,
+            -4702.499709247052,
+            753.117146626759
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.969,
+          "position": [
+            7000.0,
+            -4602.499686485528,
+            804.1499935833378
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.313,
+          "position": [
+            7000.0,
+            -4502.499665679783,
+            858.1499887085754
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.641,
+          "position": [
+            7000.0,
+            -4402.4996434211735,
+            912.149988290555
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.969,
+          "position": [
+            7000.0,
+            -4302.499621125311,
+            966.1500049557476
+          ],
+          "velocity": [
+            0.0,
+            299.99999105931073,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.313,
+          "position": [
+            7000.0,
+            -4202.499599108845,
+            1020.0832553956714
+          ],
+          "velocity": [
+            0.0,
+            300.00000894068927,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.641,
+          "position": [
+            7000.0,
+            -4102.499576924742,
+            1073.8821809260899
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.969,
+          "position": [
+            7000.0,
+            -4002.49955483377,
+            1127.543982269201
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.297,
+          "position": [
+            7000.0,
+            -3902.4995331712075,
+            1181.0637856181886
+          ],
+          "velocity": [
+            0.0,
+            300.00000670551697,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.641,
+          "position": [
+            7000.0,
+            -3802.4995113596333,
+            1234.4344134361356
+          ],
+          "velocity": [
+            0.0,
+            299.9999932944721,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.969,
+          "position": [
+            7000.0,
+            -3702.4994895853115,
+            1287.6456667658176
+          ],
+          "velocity": [
+            0.0,
+            299.9999977648277,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 8.313,
+          "position": [
+            7000.0,
+            -3602.499467773737,
+            1340.6832589648395
+          ],
+          "velocity": [
+            0.0,
+            299.99999329448303,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 8.641,
+          "position": [
+            7000.0,
+            -3502.499444285781,
+            1393.5275257495655
+          ],
+          "velocity": [
+            0.0,
+            300.0000067055279,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 8.969,
+          "position": [
+            7000.0,
+            -3402.499395298214,
+            1446.1504244479067
+          ],
+          "velocity": [
+            0.0,
+            299.9999910593094,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 9.313,
+          "position": [
+            7000.0,
+            -3302.4993726111957,
+            1498.511226815677
+          ],
+          "velocity": [
+            0.0,
+            300.0000089407002,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 9.641,
+          "position": [
+            7000.0,
+            -3202.4993501476947,
+            1550.5467861098493
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 9.969,
+          "position": [
+            7000.0,
+            -3102.4993280567232,
+            1602.1509226037642
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 10.313,
+          "position": [
+            7000.0,
+            -3002.4993065617987,
+            1653.1178156349927
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 10.641,
+          "position": [
+            7000.0,
+            -2902.49928424731,
+            1704.1499721313737
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 10.969,
+          "position": [
+            7000.0,
+            -2802.4992633298048,
+            1758.1499784026773
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 11.313,
+          "position": [
+            7000.0,
+            -2702.49924099669,
+            1812.1500107433674
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 11.641,
+          "position": [
+            7000.0,
+            -2602.4992173224696,
+            1866.1500095986923
+          ],
+          "velocity": [
+            0.0,
+            300.0000089407002,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 11.969,
+          "position": [
+            7000.0,
+            -2502.4991954550155,
+            1902.1499837548276
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 12.313,
+          "position": [
+            7000.0,
+            -2402.4991734758028,
+            1902.1499837548276
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        }
+      ],
+      "after": [
+        7000.0,
+        -2402.4991734758028,
+        1902.1499837548276
+      ],
+      "after_velocity": [
+        0.0,
+        300.0,
+        0.0
+      ],
+      "final_movement_mode": "<MovementMode.MOVE_WALKING: 1>",
+      "projection_cm": 3497.5008265241972,
+      "top_height_error_cm": 2.1499837548276446,
+      "reason": "Reached upper landing through movement input.",
+      "elapsed_seconds": 12.313
+    },
+    {
+      "name": "UpperEntrance_Descent",
+      "status": "passed",
+      "success": true,
+      "planned_start": [
+        2500,
+        4000,
+        900
+      ],
+      "planned_end": [
+        2500,
+        6000,
+        1800
+      ],
+      "horizontal_run_cm": 2000.0,
+      "setup_teleport": {
+        "requested": [
+          2500.0,
+          3920.0,
+          1005.0
+        ],
+        "actual": [
+          2500.0,
+          3919.9999999999995,
+          1005.0
+        ]
+      },
+      "teleports_during_ascent": 0,
+      "before": [
+        2500.0,
+        3919.9999999999995,
+        1005.0
+      ],
+      "min_z_cm": 1002.1500020027161,
+      "max_z_cm": 1902.0905374781814,
+      "max_speed_cm_s": 300.0000089407111,
+      "samples": [
+        {
+          "seconds": 0.328,
+          "position": [
+            2500.0,
+            3919.9999999999995,
+            1002.1500020027161
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 0.656,
+          "position": [
+            2500.0,
+            3997.5000212468194,
+            1020.0832636749901
+          ],
+          "velocity": [
+            0.0,
+            299.9999910592998,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.0,
+          "position": [
+            2500.0,
+            4097.563763683288,
+            1064.6146438958276
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.328,
+          "position": [
+            2500.0,
+            4197.5637857742595,
+            1110.0874480922912
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.656,
+          "position": [
+            2500.0,
+            4297.5684835143375,
+            1154.619700116199
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.0,
+          "position": [
+            2500.0,
+            4397.568506182729,
+            1200.087758567202
+          ],
+          "velocity": [
+            0.0,
+            299.99999105931073,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.328,
+          "position": [
+            2500.0,
+            4497.571075925231,
+            1244.6224779016259
+          ],
+          "velocity": [
+            0.0,
+            300.0000000000218,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.656,
+          "position": [
+            2500.0,
+            4597.571098463238,
+            1290.0879230228504
+          ],
+          "velocity": [
+            0.0,
+            300.0000089407111,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.984,
+          "position": [
+            2500.0,
+            4697.611774460972,
+            1334.6659809296582
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.328,
+          "position": [
+            2500.0,
+            4797.611796402932,
+            1380.0905164880924
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.656,
+          "position": [
+            2500.0,
+            4897.611818605662,
+            1424.6660414370326
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.0,
+          "position": [
+            2500.0,
+            4997.611840547621,
+            1470.090518416023
+          ],
+          "velocity": [
+            0.0,
+            299.9999910592889,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.328,
+          "position": [
+            2500.0,
+            5097.611863532662,
+            1514.6660776853182
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.656,
+          "position": [
+            2500.0,
+            5197.611885586381,
+            1560.0905330874295
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.984,
+          "position": [
+            2500.0,
+            5297.611907565593,
+            1604.6661255088286
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.328,
+          "position": [
+            2500.0,
+            5397.611930345744,
+            1650.0905335490909
+          ],
+          "velocity": [
+            0.0,
+            300.0000089407111,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.656,
+          "position": [
+            2500.0,
+            5497.611953330786,
+            1694.6661809140514
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.0,
+          "position": [
+            2500.0,
+            5597.611975105107,
+            1740.0905389817817
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.328,
+          "position": [
+            2500.0,
+            5697.612024129928,
+            1784.6662375709743
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.656,
+          "position": [
+            2500.0,
+            5797.612045773864,
+            1830.0905446528939
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.0,
+          "position": [
+            2500.0,
+            5897.612067417801,
+            1874.6662966120866
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.328,
+          "position": [
+            2500.0,
+            5997.612089061738,
+            1902.0905374781814
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.656,
+          "position": [
+            2500.0,
+            6097.61211104095,
+            1902.0905374781814
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        }
+      ],
+      "after": [
+        2500.0,
+        6097.61211104095,
+        1902.0905374781814
+      ],
+      "after_velocity": [
+        0.0,
+        300.0,
+        0.0
+      ],
+      "final_movement_mode": "<MovementMode.MOVE_WALKING: 1>",
+      "projection_cm": 2097.6121110409504,
+      "top_height_error_cm": 2.0905374781814317,
+      "reason": "Reached upper landing through movement input.",
+      "elapsed_seconds": 7.656
+    },
+    {
+      "name": "Gallery_to_Nave",
+      "status": "passed",
+      "success": true,
+      "planned_start": [
+        2500,
+        -1000,
+        0
+      ],
+      "planned_end": [
+        2500,
+        1000,
+        900
+      ],
+      "horizontal_run_cm": 2000.0,
+      "setup_teleport": {
+        "requested": [
+          2500.0,
+          -1080.0,
+          105.0
+        ],
+        "actual": [
+          2500.0,
+          -1080.0,
+          105.0
+        ]
+      },
+      "teleports_during_ascent": 0,
+      "before": [
+        2500.0,
+        -1080.0,
+        105.0
+      ],
+      "min_z_cm": 102.15000200271606,
+      "max_z_cm": 1002.0832979235088,
+      "max_speed_cm_s": 300.00000894069746,
+      "samples": [
+        {
+          "seconds": 0.328,
+          "position": [
+            2500.0,
+            -1080.0,
+            102.15000200271606
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 0.656,
+          "position": [
+            2500.0,
+            -1002.4999787531797,
+            120.08326367499012
+          ],
+          "velocity": [
+            0.0,
+            299.99999105930254,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 0.984,
+          "position": [
+            2500.0,
+            -902.4999566622082,
+            164.54612933522412
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.312,
+          "position": [
+            2500.0,
+            -802.4999350182716,
+            210.08326954279028
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.656,
+          "position": [
+            2500.0,
+            -702.4999130390588,
+            254.54617873825737
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.984,
+          "position": [
+            2500.0,
+            -602.4998902030286,
+            300.08326760238447
+          ],
+          "velocity": [
+            0.0,
+            300.00000894069746,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.312,
+          "position": [
+            2500.0,
+            -502.4998680002984,
+            344.54622775982307
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.656,
+          "position": [
+            2500.0,
+            -402.49984613284437,
+            390.0832618949671
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.984,
+          "position": [
+            2500.0,
+            -302.49982359483806,
+            434.54627237064733
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.312,
+          "position": [
+            2500.0,
+            -202.49980090781983,
+            480.08325960885895
+          ],
+          "velocity": [
+            0.0,
+            300.0000089406968,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.656,
+          "position": [
+            2500.0,
+            -102.49977915212452,
+            524.5463286520642
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.984,
+          "position": [
+            2500.0,
+            -2.499757172912224,
+            570.0832715325014
+          ],
+          "velocity": [
+            0.0,
+            299.9999910593033,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.328,
+          "position": [
+            2500.0,
+            97.5002657003702,
+            614.5463683395501
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.656,
+          "position": [
+            2500.0,
+            197.5002869717775,
+            660.0832816203219
+          ],
+          "velocity": [
+            0.0,
+            299.9999910593032,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.984,
+          "position": [
+            2500.0,
+            297.5003092862664,
+            704.5464102920148
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.328,
+          "position": [
+            2500.0,
+            397.50033119097316,
+            750.0832764612776
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.656,
+          "position": [
+            2500.0,
+            497.5003523878749,
+            794.5464586460205
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.0,
+          "position": [
+            2500.0,
+            597.5003741621967,
+            840.083291186344
+          ],
+          "velocity": [
+            0.0,
+            299.9999910593053,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.328,
+          "position": [
+            2500.0,
+            697.5003969237205,
+            884.5464946499458
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.656,
+          "position": [
+            2500.0,
+            797.5004183627665,
+            930.0832938712745
+          ],
+          "velocity": [
+            0.0,
+            300.0000089406947,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.984,
+          "position": [
+            2500.0,
+            897.5004403419792,
+            974.54654447023
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.328,
+          "position": [
+            2500.0,
+            997.5004624329507,
+            1002.0832979235088
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.656,
+          "position": [
+            2500.0,
+            1097.5004844121636,
+            1002.0832979235088
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        }
+      ],
+      "after": [
+        2500.0,
+        1097.5004844121636,
+        1002.0832979235088
+      ],
+      "after_velocity": [
+        0.0,
+        300.0,
+        0.0
+      ],
+      "final_movement_mode": "<MovementMode.MOVE_WALKING: 1>",
+      "projection_cm": 2097.5004844121636,
+      "top_height_error_cm": 2.0832979235087805,
+      "reason": "Reached upper landing through movement input.",
+      "elapsed_seconds": 7.656
+    },
+    {
+      "name": "Belfry_Stair",
+      "status": "passed",
+      "success": true,
+      "planned_start": [
+        -6500,
+        5350,
+        1800
+      ],
+      "planned_end": [
+        -6500,
+        7350,
+        2800
+      ],
+      "horizontal_run_cm": 2000.0,
+      "setup_teleport": {
+        "requested": [
+          -6500.0,
+          5270.0,
+          1905.0
+        ],
+        "actual": [
+          -6500.0,
+          5270.0,
+          1905.0
+        ]
+      },
+      "teleports_during_ascent": 0,
+      "before": [
+        -6500.0,
+        5270.0,
+        1905.0
+      ],
+      "min_z_cm": 1902.150002002716,
+      "max_z_cm": 2902.1275211741,
+      "max_speed_cm_s": 300.00000670551697,
+      "samples": [
+        {
+          "seconds": 0.313,
+          "position": [
+            -6500.0,
+            5270.0,
+            1902.150002002716
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 0.657,
+          "position": [
+            -6500.0,
+            5347.500022271275,
+            1919.940409723536
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 0.985,
+          "position": [
+            -6500.0,
+            5447.500044120103,
+            1972.151450757889
+          ],
+          "velocity": [
+            0.0,
+            300.0000022351723,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.313,
+          "position": [
+            -6500.0,
+            5547.500065633654,
+            2022.3447909570036
+          ],
+          "velocity": [
+            0.0,
+            300.0000022351723,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.657,
+          "position": [
+            -6500.0,
+            5647.500086010992,
+            2069.4592650796303
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 1.985,
+          "position": [
+            -6500.0,
+            5747.500108586251,
+            2116.435712766419
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.313,
+          "position": [
+            -6500.0,
+            5847.500129894911,
+            2169.9404044529083
+          ],
+          "velocity": [
+            0.0,
+            299.9999910592889,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.657,
+          "position": [
+            -6500.0,
+            5947.500151706486,
+            2222.1514840872283
+          ],
+          "velocity": [
+            0.0,
+            300.00000670551697,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 2.985,
+          "position": [
+            -6500.0,
+            6047.500173667072,
+            2272.3448535760635
+          ],
+          "velocity": [
+            0.0,
+            300.0000022351723,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.313,
+          "position": [
+            -6500.0,
+            6147.514178113638,
+            2319.4768825180045
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.657,
+          "position": [
+            -6500.0,
+            6247.514199720322,
+            2366.4356973628815
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 3.985,
+          "position": [
+            -6500.0,
+            6347.51500013619,
+            2419.941391969428
+          ],
+          "velocity": [
+            0.0,
+            299.99999105930516,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 4.657,
+          "position": [
+            -6500.0,
+            6447.515021165454,
+            2472.1562435405235
+          ],
+          "velocity": [
+            0.0,
+            299.99999329448303,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.0,
+          "position": [
+            -6500.0,
+            6652.623845554344,
+            2574.4898182866286
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.329,
+          "position": [
+            -6500.0,
+            6752.623866378717,
+            2620.180650686444
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 5.672,
+          "position": [
+            -6500.0,
+            6852.623888190292,
+            2670.007120664797
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.0,
+          "position": [
+            -6500.0,
+            6952.623910653792,
+            2723.3081704563765
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.329,
+          "position": [
+            -6500.0,
+            7052.623932800643,
+            2774.99628348481
+          ],
+          "velocity": [
+            0.0,
+            299.99999329448303,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 6.672,
+          "position": [
+            -6500.0,
+            7152.623954891615,
+            2824.4899022895197
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.0,
+          "position": [
+            -6500.0,
+            7252.62397701984,
+            2870.1807703090703
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.329,
+          "position": [
+            -6500.0,
+            7352.638607762211,
+            2902.1275211741
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        },
+        {
+          "seconds": 7.672,
+          "position": [
+            -6500.0,
+            7452.638629741424,
+            2902.1275211741
+          ],
+          "velocity": [
+            0.0,
+            300.0,
+            0.0
+          ],
+          "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+        }
+      ],
+      "after": [
+        -6500.0,
+        7452.638629741424,
+        2902.1275211741
+      ],
+      "after_velocity": [
+        0.0,
+        300.0,
+        0.0
+      ],
+      "final_movement_mode": "<MovementMode.MOVE_WALKING: 1>",
+      "projection_cm": 2102.6386297414238,
+      "top_height_error_cm": 2.127521174099911,
+      "reason": "Reached upper landing through movement input.",
+      "elapsed_seconds": 7.672
+    }
+  ],
+  "per_flight_timeout_seconds": 25.0,
+  "overall_timeout_seconds": 99.0,
+  "world": "/Game/MyGame/Map/HighWallofLothric/UEDPIE_0_L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT",
+  "pawn_class": "/Game/MyGame/Blueprints/CharacterBase/miya/BP_Miya.BP_Miya_C",
+  "capsule_radius_cm": 30.0,
+  "capsule_half_height_cm": 100.0,
+  "max_step_height_cm": 45.0,
+  "reason": "All four independent stair trials completed.",
+  "elapsed_seconds": 35.359
+}

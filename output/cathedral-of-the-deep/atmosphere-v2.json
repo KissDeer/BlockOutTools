@@ -1,0 +1,379 @@
+{
+  "map": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT",
+  "source_references": [
+    "references/wikidot-exterior.jpg",
+    "references/cleansing-chapel.jpg",
+    "references/deacons-hall.jpg",
+    "references/rosaria.jpg"
+  ],
+  "assumptions": [
+    "Qualitative palette and lighting reconstruction, not measured original light settings."
+  ],
+  "materials": {
+    "Floor": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Floor",
+      "srgb": [
+        0.52,
+        0.51,
+        0.47
+      ],
+      "linear_readback": [
+        0.23302200436592102,
+        0.22341398894786835,
+        0.1873166710138321,
+        1.0
+      ]
+    },
+    "Stone": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Stone",
+      "srgb": [
+        0.59,
+        0.58,
+        0.53
+      ],
+      "linear_readback": [
+        0.3069993257522583,
+        0.295699805021286,
+        0.24286681413650513,
+        1.0
+      ]
+    },
+    "StoneDark": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_StoneDark",
+      "srgb": [
+        0.31,
+        0.32,
+        0.3
+      ],
+      "linear_readback": [
+        0.07828831672668457,
+        0.08353512734174728,
+        0.07323895394802094,
+        1.0
+      ]
+    },
+    "StoneWarm": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_StoneWarm",
+      "srgb": [
+        0.56,
+        0.49,
+        0.37
+      ],
+      "linear_readback": [
+        0.27383843064308167,
+        0.2049017697572708,
+        0.11280478537082672,
+        1.0
+      ]
+    },
+    "Roof": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Roof",
+      "srgb": [
+        0.25,
+        0.28,
+        0.28
+      ],
+      "linear_readback": [
+        0.05087608844041824,
+        0.06372379511594772,
+        0.06372379511594772,
+        1.0
+      ]
+    },
+    "Trim": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Trim",
+      "srgb": [
+        0.67,
+        0.65,
+        0.59
+      ],
+      "linear_readback": [
+        0.4064483046531677,
+        0.38005632162094116,
+        0.3069993257522583,
+        1.0
+      ]
+    },
+    "Recess": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Recess",
+      "srgb": [
+        0.16,
+        0.18,
+        0.18
+      ],
+      "linear_readback": [
+        0.021980946883559227,
+        0.027211781591176987,
+        0.027211781591176987,
+        1.0
+      ]
+    },
+    "Moss": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Moss",
+      "srgb": [
+        0.3,
+        0.32,
+        0.23
+      ],
+      "linear_readback": [
+        0.07323895394802094,
+        0.08353512734174728,
+        0.043233636766672134,
+        1.0
+      ]
+    },
+    "Earth": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Earth",
+      "srgb": [
+        0.29,
+        0.26,
+        0.22
+      ],
+      "linear_readback": [
+        0.06838485598564148,
+        0.05497173219919205,
+        0.03968190774321556,
+        1.0
+      ]
+    },
+    "Rock": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Rock",
+      "srgb": [
+        0.37,
+        0.37,
+        0.34
+      ],
+      "linear_readback": [
+        0.11280478537082672,
+        0.11280478537082672,
+        0.09462962299585342,
+        1.0
+      ]
+    },
+    "Wood": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Wood",
+      "srgb": [
+        0.23,
+        0.19,
+        0.15
+      ],
+      "linear_readback": [
+        0.043233636766672134,
+        0.0300741046667099,
+        0.01960664801299572,
+        1.0
+      ]
+    },
+    "Candle": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Candle",
+      "srgb": [
+        0.76,
+        0.68,
+        0.5
+      ],
+      "linear_readback": [
+        0.5382355451583862,
+        0.4200332760810852,
+        0.21404114365577698,
+        1.0
+      ]
+    },
+    "Cloth": {
+      "path": "/Game/MyGame/Map/HighWallofLothric/CathedralWhitebox/Materials/MI_COTD_Cloth",
+      "srgb": [
+        0.28,
+        0.12,
+        0.13
+      ],
+      "linear_readback": [
+        0.06372379511594772,
+        0.0134117491543293,
+        0.015325203537940979,
+        1.0
+      ]
+    }
+  },
+  "map_saved_by_this_script": false,
+  "environment": {
+    "sun_lux": 12000.0,
+    "sun_pitch": -11.999999999999998,
+    "sun_yaw": -44.99999999999998,
+    "sky_intensity": 1.0,
+    "fog_density": 0.004999999888241291,
+    "min_ev100": 7.0,
+    "max_ev100": 10.5,
+    "exposure_bias": 0.0,
+    "exposure_adaptation": "Bounded automatic adaptation brightens the enclosed interior while capping exterior EV100 at 10.5.",
+    "volumetric_fog": false
+  },
+  "lights": [
+    {
+      "label": "COTD_Atmosphere_Light_ChapelAltar",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_0",
+      "position_cm": [
+        0,
+        -5920,
+        390
+      ],
+      "lumens": 12000.0,
+      "radius_cm": 1650.0,
+      "temperature_k": 2900.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_ChapelDoor",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_1",
+      "position_cm": [
+        0,
+        -7900,
+        510
+      ],
+      "lumens": 9000.0,
+      "radius_cm": 1600.0,
+      "temperature_k": 3300.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_NaveWest01",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_2",
+      "position_cm": [
+        -2680,
+        500,
+        680
+      ],
+      "lumens": 16000.0,
+      "radius_cm": 2300.0,
+      "temperature_k": 3100.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_NaveEast01",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_3",
+      "position_cm": [
+        2680,
+        500,
+        680
+      ],
+      "lumens": 16000.0,
+      "radius_cm": 2300.0,
+      "temperature_k": 3100.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_NaveWest02",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_4",
+      "position_cm": [
+        -2680,
+        3450,
+        680
+      ],
+      "lumens": 16000.0,
+      "radius_cm": 2300.0,
+      "temperature_k": 3100.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_NaveEast02",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_5",
+      "position_cm": [
+        2680,
+        3450,
+        680
+      ],
+      "lumens": 16000.0,
+      "radius_cm": 2300.0,
+      "temperature_k": 3100.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_AltarWest",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_6",
+      "position_cm": [
+        -950,
+        7700,
+        1080
+      ],
+      "lumens": 16000.0,
+      "radius_cm": 2400.0,
+      "temperature_k": 2800.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_AltarEast",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_7",
+      "position_cm": [
+        950,
+        7700,
+        1080
+      ],
+      "lumens": 16000.0,
+      "radius_cm": 2400.0,
+      "temperature_k": 2800.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_GalleryWest",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_8",
+      "position_cm": [
+        -3300,
+        3500,
+        2350
+      ],
+      "lumens": 12000.0,
+      "radius_cm": 1700.0,
+      "temperature_k": 3800.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_GalleryEast",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_9",
+      "position_cm": [
+        3300,
+        3500,
+        2350
+      ],
+      "lumens": 12000.0,
+      "radius_cm": 1700.0,
+      "temperature_k": 3800.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_RoseChapel",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_10",
+      "position_cm": [
+        -8800,
+        9400,
+        3200
+      ],
+      "lumens": 15000.0,
+      "radius_cm": 2000.0,
+      "temperature_k": 3000.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    },
+    {
+      "label": "COTD_Atmosphere_Light_VaultFill",
+      "path": "/Game/MyGame/Map/HighWallofLothric/L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT:PersistentLevel.PointLight_11",
+      "position_cm": [
+        0,
+        4300,
+        4200
+      ],
+      "lumens": 16000.0,
+      "radius_cm": 3200.0,
+      "temperature_k": 6800.0,
+      "cast_shadows": false,
+      "mobility": "<ComponentMobility.STATIONARY: 1>"
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "test": "live_possessed_character_add_movement_input",
+  "coverage": "Short +X walking segment across the open chapel only; not a complete playthrough.",
+  "status": "passed",
+  "success": true,
+  "timeout_seconds": 8.0,
+  "finish_x_cm": 700.0,
+  "minimum_travel_cm": 500.0,
+  "maximum_floor_drop_cm": 3.999997138977051,
+  "maximum_speed_cm_s": 300.0,
+  "samples": [
+    {
+      "seconds": 0.328,
+      "position": {
+        "x": 0.0,
+        "y": -7000.0,
+        "z": 106.1500015258789
+      },
+      "velocity": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    },
+    {
+      "seconds": 0.766,
+      "position": {
+        "x": 77.5000218987465,
+        "y": -7000.0,
+        "z": 106.1500015258789
+      },
+      "velocity": {
+        "x": 300.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    },
+    {
+      "seconds": 0.985,
+      "position": {
+        "x": 177.50004387795926,
+        "y": -7000.0,
+        "z": 106.1500015258789
+      },
+      "velocity": {
+        "x": 300.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    },
+    {
+      "seconds": 1.313,
+      "position": {
+        "x": 277.500065857172,
+        "y": -7000.0,
+        "z": 105.19735956192017
+      },
+      "velocity": {
+        "x": 300.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    },
+    {
+      "seconds": 1.657,
+      "position": {
+        "x": 377.50008783638475,
+        "y": -7000.0,
+        "z": 102.15000438690186
+      },
+      "velocity": {
+        "x": 300.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    },
+    {
+      "seconds": 1.985,
+      "position": {
+        "x": 477.5001098155975,
+        "y": -7000.0,
+        "z": 102.15000438690186
+      },
+      "velocity": {
+        "x": 300.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    },
+    {
+      "seconds": 2.313,
+      "position": {
+        "x": 577.5001317948103,
+        "y": -7000.0,
+        "z": 102.15000438690186
+      },
+      "velocity": {
+        "x": 300.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    },
+    {
+      "seconds": 2.641,
+      "position": {
+        "x": 677.5092464625835,
+        "y": -7000.0,
+        "z": 102.15000438690186
+      },
+      "velocity": {
+        "x": 300.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    },
+    {
+      "seconds": 2.985,
+      "position": {
+        "x": 777.5092684417963,
+        "y": -7000.0,
+        "z": 102.15000438690186
+      },
+      "velocity": {
+        "x": 300.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "movement_mode": "<MovementMode.MOVE_WALKING: 1>"
+    }
+  ],
+  "world": "/Game/MyGame/Map/HighWallofLothric/UEDPIE_0_L_HighWallofLothric_Test_GPT.L_HighWallofLothric_Test_GPT",
+  "before": {
+    "x": 0.0,
+    "y": -7000.0,
+    "z": 106.1500015258789
+  },
+  "before_velocity": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "pawn_class": "/Game/MyGame/Blueprints/CharacterBase/miya/BP_Miya.BP_Miya_C",
+  "capsule_radius_cm": 30.0,
+  "capsule_half_height_cm": 100.0,
+  "initial_movement_mode": "<MovementMode.MOVE_WALKING: 1>",
+  "after": {
+    "x": 777.5092684417963,
+    "y": -7000.0,
+    "z": 102.15000438690186
+  },
+  "after_velocity": {
+    "x": 300.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "final_movement_mode": "<MovementMode.MOVE_WALKING: 1>",
+  "travel_x_cm": 777.5092684417963,
+  "reason": "Reached +X endpoint on foot.",
+  "elapsed_seconds": 2.985
+}
